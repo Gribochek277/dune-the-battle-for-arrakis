@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c5b31e9943a7ec1ef065e7aa58475981a8fb22bd
+date: 2026-10-12T13:16:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: wire install/check gates and enable review
+- install: scripts/install-tools.sh (links the untracked toolchain and dump into
+  a worktree, so the gates can run there)
+- check: tests/run_all.sh -- the project's own verification: structural
+  validation, byte-exact rebuild, per-line verification against the dump, and the
+  modified-header check
+- review: enabled on strata/qwen3.8-flash-next-unsloth-ud-iq4_xs, a different
+  model family from the worker (opencode-go/deepseek-v4.1-flash). The provider was
+  probed directly (HTTP 200 on /models) because the other configured providers are
+  unreachable from here.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
