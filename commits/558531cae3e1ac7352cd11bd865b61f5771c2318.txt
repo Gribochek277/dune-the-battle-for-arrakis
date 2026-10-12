@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 558531cae3e1ac7352cd11bd865b61f5771c2318
+date: 2026-10-12T13:04:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+static code discovery: +7 KB of code without playing, and an honest metric
+scripts/scan_code_likeness.py scores every unclaimed region by how well it
+disassembles (share of real instructions vs the dc.w fallback, plus whether
+control flow terminates). Of 90 unclaimed regions only 31 are code-shaped
+(6790 bytes); feeding them to the splitter together with --min-code 4 raised the
+claimed code from 129592 to 136644 bytes (6.18% -> 6.52%) in one pass -- far more
+than a playthrough session (which adds ~200 addresses), and without a human.
+
+scripts/assess_coverage.py reports the numbers that matter instead of the
+misleading percentage: 2643 of 2670 executed addresses are inside code segments,
+every known call target is inside one, and the rest of the body is 25.5% padding,
+55.1% structured data and 4.6% high-entropy graphics/samples. So the code is
+essentially claimed; what remains for Epic 2 is understanding (names, RAM map,
+docs), not more code.
+
+Verified end to end: build clean, image byte-exact apart from the intended header
+modification, all 9 checks pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
