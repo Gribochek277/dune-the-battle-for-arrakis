@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e2ec555d2f1983134ab24f01d2f1f2336be440f2
+date: 2026-10-12T16:43:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: record the 99.962% share, the fixture method and the decisions
+Update the coverage numbers, the 15 remaining invalid encodings, the fixture
+and sweep counts, and the boot-stub instruction mix. Add D17-D19 to
+docs/decisions.md: the interpreter is fixed wherever the two paths disagree,
+the full-ROM sweep is part of `make test`, and invalid encodings stay
+MD68K_FALLBACK. install-tools.sh now also checks that the extracted asset blobs
+it links are present, since tests/run_all.sh cannot assemble without them.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
