@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f0a875f239f4213ddcbf47789145678cb605dfc0
+date: 2026-10-12T22:01:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: record every work-RAM access with the pc that made it
+The understanding phase needs to know where the game keeps its state, and
+reading code answers that slowly. The runtime now offers every access whose
+first byte is in work RAM to a hook (md68k_set_ram_hook), once per access with
+the width and the pc of the instruction that made it, and the headless harness
+writes that trace with --ram-log plus a '# frame N' marker at every VBlank
+entry, so the accesses of one frame interval can be told from the next.
+
+The interrupt frame the harness pushes is the machine's write, not an
+instruction's, and is traced like any other, with the interrupted instruction
+as its pc -- the same thing the 68000 would report. The counters under
+port.ram_accesses are always reported, logged or not.
+
+scripts/ram_map.py aggregates the trace into analysis/ram-map.json (one record
+per address, the pcs and clusters that touch it, the blanket RAM
+initialisations) and cross-checks it against two reference captures.
+tests/test_ram_map.sh proves the map, its determinism and the cross-check
+without the emulator; tests/run_all.sh runs it. The map and the trace are
+derived data and git-ignored.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
