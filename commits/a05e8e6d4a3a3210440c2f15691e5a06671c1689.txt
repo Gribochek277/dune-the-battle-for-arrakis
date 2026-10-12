@@ -1,0 +1,63 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a05e8e6d4a3a3210440c2f15691e5a06671c1689
+date: 2026-10-12T22:39:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: the record subsystem, the map cell encoding and 40 more names
+Pass 2 followed the handle/record thread pass 1 left: who allocates the
+records, what their fields are, what the object word of a map cell encodes and
+who frees them. The curated table is 104 names (was 54); the regenerated
+sources spell them out (`jsr (CreateUnit).l`, `lea (StructureTypeTable).l,a0`,
+`btst #4,$2(a0)` -> `GetRecordByCell`), and copies the names into
+`src/equates.inc` and `disassembly/symbols.txt`, because
+`analysis/symbol-names.txt` itself is git-ignored by design (it is linked from
+the main checkout, see scripts/install-tools.sh).
+
+**Two pass-1 names were the wrong way round and are corrected here**:
+
+* $0005BA is `GetStructureByCell` (was `GetUnitByCell`): it tests bit 13 of the
+  cell's object word and indexes the structure table;
+* $00062A is `GetUnitByCell` (was `GetStructureByCell`): bit 12, unit table;
+* consequently the cell bits are bit 12 = unit and bit 13 = structure, not the
+  other way round as M2-1 said.
+
+Four independent witnesses, all in the committed sources: the pointer tables
+each routine loads ($01F4E0 = one-based StructureArray, $01F6E4 = one-based
+UnitArray); the dispatcher $00ED6A, which sends high-byte bit 4 (word bit 12) to
+the unit table and bit 5 (bit 13) to the structure table; the unit writer
+$00E4D0, which sets bit 12, and its remover $01C93E, which tests and clears it;
+and the class each array's allocator builds -- $006BBA allocates out of
+$FF4574 with a 19-entry type table and a multi-cell footprint, $0195DE out of
+$FF0000 with a 32-entry type table and one cell each. The names of $000610,
+$000680 and $00069A are unaffected and stand.
+
+What the pass established, with evidence in docs/reverse-engineering-notes.md
+("M2-2"):
+
+* the two record arrays and their sizes ($8C and $62), cross-checked by the
+  byte count each allocator clears before writing, and the one-index aliasing
+  in both pointer tables;
+* the handle library: index/cell -> record, handle -> record, handle -> cell and
+  handle -> 32-bit position, plus the side-relationship table at $0005B4;
+* the lifecycle: the per-type index ranges in the unit descriptors, the three
+  reserved structure slots, what allocate/create/place/free each write, and the
+  counters they keep -- all reached from the mission update
+  ($015908 -> $01595A -> seg_code_00C172);
+* the map cell word: tile word halves, object-word index/side/unit/structure
+  bits, and bit 11 as the (hypothesised) explored marker;
+* the unit, structure, side and type-descriptor field tables, with the fields
+  this pass could not pin down listed as such instead of guessed;
+* two more instances of the sega2asm resync defect ($006BEE-$006BF2 and
+  $00E52A-$00E52E), as evidence for ticket 54.
+
+No byte changed: the rebuilt image still differs from the dump in the 42 header
+bytes of modification M1 and nowhere else, and scripts/regenerate.sh ends with
+ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
