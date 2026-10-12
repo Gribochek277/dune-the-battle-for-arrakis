@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 24b4cb75d1c79dd63aa8332b9e0e37d91c99275e
+date: 2026-10-12T12:26:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+coverage: play the first mission; code split now 6.16% (118 intervals)
+Playing the game through BlastEm's window with xdotool grew execution coverage
+from 1757 to 2457 addresses: title menu, house selection, mission briefing, and
+the mission map with cursor movement, unit selection and the build panel. The
+route is recorded in docs/reverse-engineering-notes.md, and
+scripts/play-session.sh now documents the three input-path requirements (X11
+rather than Wayland key injection, keyboard capture first, nothing else competing
+for focus).
+
+Reapplying that coverage to the split: 118 code intervals, 129152 bytes of code,
+6.16% of the cartridge body (from 57 intervals / 5.73%). Build still assembles
+with no errors and the body is still byte-exact against the dump.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
