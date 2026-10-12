@@ -1,0 +1,66 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 792d95b477bfba2439aac794f235bfeeac41c6f9
+date: 2026-10-12T14:29:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: runtime core, interpreter fallback, reset-stub fixture
+Implements the runtime the generated translation needs (ticket 41):
+port/runtime/md68k.c (CPU state, flags, driver, control flow),
+md68k_mem.c (memory map) and md68k_interp.c (one decoder plus the
+interpreter fallback), so port/generated/game.c can execute 68000 code
+instead of only compiling.
+
+What the runtime does
+- Memory map: ROM $000000-$1FFFFF (read-only, writes counted), work RAM
+  $FF0000-$FFFFFF, and recording stubs for VDP $C00000-$C0000F, I/O
+  $A10000-$A1FFFF and Z80 space $A00000-$A0FFFF. Byte/word/long, and a
+  word/long access at an odd address is reported as an address error
+  rather than quietly accepted. VDP control-port register writes are
+  decoded; every access to a stub is logged.
+- Flags exactly as the manual defines them, including the extended forms
+  (X as an input, Z only ever cleared), ASL's "sign bit changed" V
+  against LSL's always-cleared V, the documented shift-count-of-zero
+  rules, and all 16 condition codes.
+- Two execution paths over one decoder: md68k_step() runs the generated
+  case for the current address, and anything the switch does not know --
+  or any MD68K_FALLBACK -- is decoded and executed by the interpreter.
+  md68k_next() takes the instruction length from that same decoder, so
+  the paths cannot drift apart. The interpreter covers the whole classic
+  68000 set, so the game runs with nothing translated at all.
+- Faults (unknown opcode, privilege violation, trap, divide by zero,
+  odd-address word/long, odd pc) go through md68k_fault: the default
+  handler prints and aborts, fixtures install a handler that records.
+  Exceptions are not pushed as frames; the game never raises them.
+- md68k_set_translation(0) forces the interpreter and md68k_get_stats()
+  reports the instruction mix.
+
+Tests: port/Makefile builds md68k-selftest from the runtime, the
+generated translation and hand-written fixtures (925 checks, no
+emulator): flag arithmetic against the manual, the memory map, ISA
+fixtures run from work RAM, and the reset stub at $000468 -- run from the
+cartridge's own reset vectors it reaches $000562 in exactly 33 087
+instructions with no fault, work RAM cleared, the VDP register file
+equal to the init table at $000510, and identical results when the same
+code is forced through the interpreter.
+
+Transpiler fixes found while wiring this up (scripts/transpile68k.py, and
+game.c regenerated): MOVEQ had register and immediate swapped, `move` in
+group 4 was mis-dispatched into the EA-move emitter, (An)+ moved by one
+byte regardless of size, (d16,PC)/(d8,PC,Xn) were relative to the opcode
+word instead of the extension word, and `lea` with a PC-relative indexed
+EA emitted an empty case that fell off the end of the generated
+function. Remaining known emitter defects are listed in
+docs/native-port.md.
+
+The ASL/LSL/V, NEGX carry and shift-count-zero rules follow the M68000
+Programmer's Reference Manual where implementations differ; the Z80 bus
+acknowledge register reads back as "granted" because the Z80 is not
+emulated and the boot code polls it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
