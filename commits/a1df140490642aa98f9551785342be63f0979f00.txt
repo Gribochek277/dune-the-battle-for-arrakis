@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a1df140490642aa98f9551785342be63f0979f00
+date: 2026-10-12T13:00:24+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+coverage: apply the owner's playthrough (2652 addresses, +213 new)
+The owner played through scripts/collect-playthrough.sh; the session reached 2652
+executed addresses, 213 of which no scripted session had reached before (93 in
+$000000-$00FFFF, 120 in $010000-$01FFFF). Applied with scripts/regenerate.sh:
+
+  code split   6.16% -> 6.18% of the body (129592 bytes, 129 code segments)
+  symbols      1940  -> 1970
+  named refs   3615  -> 3695
+  asm lines    112895 -> 115335
+
+Everything still verifies: build clean, image byte-exact against the dump apart
+from the intended header modification (42 bytes), and all 9 checks pass --
+including the per-line comparison over 43151 emitting lines.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
