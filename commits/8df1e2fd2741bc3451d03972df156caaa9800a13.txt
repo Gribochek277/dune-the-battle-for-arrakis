@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8df1e2fd2741bc3451d03972df156caaa9800a13
+date: 2026-10-12T21:51:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: unify the table and add tickets 53-54
+Pass 2 of the understanding work (subsystems, unit/structure records, the map
+cell encoding) and a fix for the decoder resync defect F10, where the listing is
+byte-exact but semantically wrong. The ticket writer keeps appending a column-less
+second table, which makes new rows invisible to the readiness scan; the table is
+unified here again.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
