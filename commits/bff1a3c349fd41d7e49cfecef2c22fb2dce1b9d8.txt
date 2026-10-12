@@ -1,0 +1,40 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bff1a3c349fd41d7e49cfecef2c22fb2dce1b9d8
+date: 2026-10-12T16:11:37+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+compare: port state vs BlastEm reference, with the first divergence
+scripts/compare_port_state.py runs port/build/headless (building it when it is
+missing), loads the reference capture for the frame the port actually reached
+-- capturing it with scripts/capture_state.py when it is absent -- and prints
+the verdict: identical, or the first differing address with both values, the
+surrounding bytes, the differing registers and the rendezvous of both sides.
+It also points at the ROM code that mentions the first differing address and at
+the first address the port reached that the reference never did (the two logs
+have different block granularities, which the report says).
+
+Exit status: 0 identical, 1 differing (a port that stalls before the requested
+frame count counts as differing), 2 when no comparison is possible (no harness,
+unusable JSON, no reference and no way to capture one). The reference side
+needs the emulator; the port side does not, and the script never writes to the
+ROM.
+
+tests/test_headless.sh proves both tools with no display and no emulator: the
+harness runs under `env -i`, two runs are byte-identical (state and address
+log), the dumped work RAM matches its own sha256, and the comparator reports
+identical / differing / missing-reference / wrong-frame correctly. It is part
+of tests/run_all.sh now.
+
+scripts/install-tools.sh also links disassembly/out/assets, which src/segments.inc
+incbins: without it a fresh worktree cannot assemble at all, so tests/run_all.sh
+failed there for reasons unrelated to the port.
+
+tests/run_all.sh: ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
