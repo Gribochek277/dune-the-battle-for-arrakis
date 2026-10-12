@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 650c2c533da52a78268b135d3111d2e733cd716c
+date: 2026-10-12T17:10:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: frames 1..3 now match; the run stops in the VDP DMA wait
+Rebased onto main with ticket 44 merged and re-measured. Ticket 44's byte/word
+move N-flag fix removed the old frame-2 divergence at $00103C, and this branch's
+MOVEP fix removed the two-byte frame-3 divergence at $FFFFC5A8, so frames 1, 2
+and 3 are now byte-identical to the reference captures (all 65536 bytes of work
+RAM and every register at each entry, rendezvous $001D40 then $0012D0).
+
+The run now stops in frame 4, in the VDP command queue flush: loc_000E68 polls
+VDP status bit 1 (DMA in progress) with the interrupt mask at 7 and the port's
+VDP stub returns the last control byte written, so the bit never clears. The
+harness reports the stall with the pc and instruction count; --frames 60 reports
+"frame 3 of 60 requested" and the comparator's "incomplete" verdict.
+
+The Z80 handshake at $0D52B6/$0D52EA that used to stop the run at frame 2 no
+longer does: it was a symptom of the emitter defects (wrong bytes copied into
+Z80 space), not a missing Z80. The three interpreter defects this harness has
+found so far -- SUB/CMP operand order, CMPM versus cmp.w An,Dn, and MOVEP's
+direction -- are listed with the fixtures that pin them.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
