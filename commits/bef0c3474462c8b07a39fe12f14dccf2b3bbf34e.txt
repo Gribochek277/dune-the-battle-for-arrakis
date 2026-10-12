@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bef0c3474462c8b07a39fe12f14dccf2b3bbf34e
+date: 2026-10-12T21:27:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: add a static call-graph and RAM-access reader
+The understanding pass needs three answers about a routine before it can be
+named: who calls it, what it reads and writes, and which hardware it touches.
+All three are visible in the committed disassembly, because this game reaches
+its state through absolute operands. This adds the tool that extracts them, so
+the reading is repeatable instead of hand-made:
+
+* the call graph, with the address of every call site, the function that
+  contains it, and the registers loaded just before the call
+* each routine's body, from Ghidra's body_end where the inventory knows the
+  address, otherwise a fall-through scan to the first terminator
+* its absolute memory operands, classified RAM / hardware / ROM and
+  read / write / read-modify-write, plus which functions touch a given RAM
+  address
+
+BlastEm coverage logs are overlaid so a name can say "reached" only when the
+address really appears in a log, and `--decoder` annotates the dc.w lines the
+committed listing falls back to (sega2asm cannot reproduce every encoding
+ClownAssembler accepts) with what `tools/blastem/dis` makes of the same words.
+The JSON output is derived data and belongs under build/.
+
+documented in docs/build-and-test.md, used by the ticket-49 pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
