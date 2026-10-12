@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ffba736e0eed0877ce7e4b5765103cf345b4d30a
+date: 2026-10-12T13:34:46+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+segmentation: assert the split is disjoint, and prune orphaned sources
+The generated sources carried duplicate instruction addresses (39 707 unique of
+59 995 seen). The splitter's intervals were disjoint: the duplicates came from
+files an earlier split had left in disassembly/out/asm/m68k, which sega2asm
+never deletes. They are not assembled, but scripts/transpile68k.py reads the
+whole directory and saw the same address twice, which inflated every count
+taken from the prototype.
+
+* make_segments.py asserts the merged intervals are sorted and non-overlapping,
+  naming the offending pair, and reports a bad tiling explicitly instead of
+  asserting the total; the candidate file is validated for reversed, empty,
+  out-of-body and overlapping regions;
+* --prune-dir deletes generated files whose segment left the split, and
+  regenerate.sh passes the two output directories on every run;
+* transpile68k.py prints the duplicate count unconditionally and exits non-zero
+  when it is not zero, so no measurement silently runs on inflated input;
+* tests/test_segment_split.py, run by tests/run_all.sh, re-checks the committed
+  artifacts: the config tiles the body exactly, src/segments.inc matches it,
+  there is exactly one generated file per code segment, no instruction address
+  repeats, and the splitter refuses overlapping intervals.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
