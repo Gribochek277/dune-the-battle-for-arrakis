@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 93443927187947225d165e3eb480a349cc3d677e
+date: 2026-10-12T20:56:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: ticket 52 for the owner-reported sprite placement defect
+The owner rendered the port's frames and reports that colours are correct while
+sprites are not always positioned as the reference puts them. Ticket 43 was
+verified pixel-exact on a plane-only frame, so the sprite path is the suspect.
+Ticket 52 requires measurement before a fix (per-sprite offset against a BlastEm
+capture of the same VDP state) and lists the attributes to implement from the
+documented behaviour - SAT base from register 5, the +128 Y/X bias and the Y being
+the sprite's bottom, size from register 12, the link field and end-of-list rule,
+priority and per-sprite palette. It is blocked by 43 so the VDP baseline lands
+first.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
