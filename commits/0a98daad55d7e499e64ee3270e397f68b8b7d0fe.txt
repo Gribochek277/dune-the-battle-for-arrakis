@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0a98daad55d7e499e64ee3270e397f68b8b7d0fe
+date: 2026-10-12T11:05:33+03:00
+author: RE Workspace <x@x>
+branches: main
+
+message:
+Track the reconstructed segment sources, ignore the stray out/ directory
+The generated .asm files are the source that modifications are made in, so they
+are version controlled. The extracted incbin blobs (disassembly/out/assets) and
+the emulator scratch stay out of Git: together with rom/original they are what
+would be needed to redistribute the game data, and this repository does not do
+that.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
