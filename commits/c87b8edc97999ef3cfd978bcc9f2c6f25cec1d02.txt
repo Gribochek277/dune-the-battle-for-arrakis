@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c87b8edc97999ef3cfd978bcc9f2c6f25cec1d02
+date: 2026-10-12T13:34:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+disassembly: regenerate without the 33 orphaned segments
+scripts/regenerate.sh (251 segments, 136 644 code bytes, 6.52 % of the body)
+pruned 33 generated sources whose segments had been merged into larger ones by
+later evidence, so 0 duplicate instruction addresses remain: 39 593 unique
+addresses, all seen once.
+
+port/generated/game.c is regenerated from those sources: 150 693 lines, 31 908
+of 39 593 instructions translated (80.6 %), and still compiles with
+gcc -std=c99 -c. src/equates.inc only loses the inflated data-reference count
+from its header comment; the names themselves are unchanged (the table is
+sticky).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
