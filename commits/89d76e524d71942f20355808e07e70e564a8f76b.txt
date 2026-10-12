@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 89d76e524d71942f20355808e07e70e564a8f76b
+date: 2026-10-12T16:11:37+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: what the port matches and what the harness found
+docs/native-port.md gains a "Differential harness" section: the exact commands,
+the frame clock defined in guest terms, the result (frame 1 matches the
+reference byte for byte: all 65536 bytes of work RAM, every register, the same
+interrupted PC and stack pointer), the first divergence (frame 2, $00103C: the
+byte/word move N-flag emitter defect sends `bpl.s $00105E` at $001042 down the
+wrong path, so the graphics decompressor at $000F8C is skipped and the scratch
+buffer the reference leaves at $FF0000+ is missing -- ticket 44 owns that fix),
+and the reason frames 3+ are unreachable (the game waits for the Z80 driver at
+$0D52EA with the interrupt mask at 7, milestone N5).
+
+It also records the two interpreter defects the harness itself found and fixed
+in the previous commit, together with the fixtures that pin them, and what the
+comparison deliberately does not cover (z80_ram, and the address logs, which
+have different block granularities on the two sides).
+
+docs/build-and-test.md documents the comparison command next to the reference
+capture and lists tests/test_headless.sh in the checks table.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
