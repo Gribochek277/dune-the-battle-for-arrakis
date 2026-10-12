@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 780a9c8c5e27639ab8c6db9087caa109daefc14a
+date: 2026-10-13T00:54:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: what the sprite measurement showed (ticket 52)
+The owner reported sprites landing in the wrong place. The frame pair that
+localises it is the port's frame 1000 and BlastEm's frame 2640: the same
+house-selection screen, reached in the reference by injecting Start at VBlank
+entry 2200 and Right at 2500 (its attract mode ignores the controller).
+
+What the measurement found, per sprite:
+
+* the port's selection frame is three entries (Y = $E8, size $0D/$05/$0D,
+  tiles $E7BC/$E7C0/$EFBC) at X = $F8/$118/$128, drawn over the second house's
+  label box;
+* the reference draws the same three-part frame at X = $A0/$C0/$D0, 88 pixels to
+  the left, over the first house -- the game's selected house, not a rendering
+  offset: the port's pad reads return "every button held" (the I/O page is a
+  plain byte store), so the game starts its demo by itself and steps the
+  selection once;
+* with the table patched to the reference's X, 384 pixels still differ: the
+  frame's right-hand third is 24 pixels to the left, because the renderer
+  mirrors each tile in place instead of mirroring the sprite as a whole (the
+  tiles are stored column by column, so the tile order has to be reversed too);
+* the frames also settle three questions ticket 52 listed as suspects: Y is the
+  sprite's top edge (rows Y-$80..Y-$80+15 on both sides), the size comes from
+  the attribute table's size byte (not register 12), and Y = 0 hides a sprite
+  without ending the list (the link byte ends it);
+* the colour difference at other frames is the cursor's fade phase, not a
+  palette error.
+
+No code changes in this commit: it records the measurement the fix is judged
+against.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
