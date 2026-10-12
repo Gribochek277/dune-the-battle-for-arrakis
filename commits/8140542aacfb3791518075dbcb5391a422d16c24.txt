@@ -1,0 +1,52 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8140542aacfb3791518075dbcb5391a422d16c24
+date: 2026-10-13T00:54:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the sprite layer, from the documented table format (ticket 52)
+The measurement in the previous commit localised two defects and settled three
+questions. This is the renderer that comes out of it, plus the fixtures and the
+frame check that pin it.
+
+port/runtime/vdp.c:
+
+* both flips now apply to the whole sprite. The tiles of a sprite are stored
+  column by column, so a horizontal flip has to reverse the tile order as well
+  as the pixels inside a tile; mirroring each tile in place is what moved the
+  selection frame's right-hand third 24 pixels to the left. With that fixed the
+  port's frame 1000 is pixel-identical to BlastEm's frame 2640.
+* the attribute table is walked as the linked list it is: the list starts at
+  entry 0, each entry's link byte names the next one, a link of 0 ends the list
+  (so entries the chain never reaches are not drawn even when they still hold a
+  previous frame's attributes) and a link past the table -- 80 entries in H40,
+  64 in H32 -- ends it too. The walk is bounded by the table size, so a chain
+  that loops back terminates.
+* X = 0 is the hardware's "do not display": the entry still uses one of the
+  line's slots, but nothing is drawn.
+* the table base comes from register $05 with the H40 $400 alignment, and the
+  size, Y bias, per-line limit and priority comparison are unchanged (the
+  frames confirmed them).
+
+port/tests/test_vdp_sprites.c (88 checks) builds a VDP state by hand and
+renders it, so it covers what a game frame does not produce: an empty list, a
+stale entry outside the chain, a link past the table, a looping chain, X = 0,
+more sprites on a line than the hardware shows, a sprite larger than the
+visible area, both flips (including the multi-tile case), the per-sprite
+palette and the priority comparison against plane A.
+
+scripts/capture_frame.py gains --press ENTRY:KEY[:HOLD], which holds a key from
+an exact VBlank entry: the reference's attract mode ignores the controller, so
+the house-selection screen is unreachable without a press. The press is
+deterministic, which is what makes tests/test_frame_sprites.sh possible: it
+compares the port's frame 1000 with the reference's frame 2640 (Start at 2200,
+Right at 2500) and requires an exact match, because the defect it exists for
+moved 41 pixels -- 0.05 %, a share the default 0.5 % threshold accepts. The
+check also proves it can fail, by comparing a frame without the selection frame.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
