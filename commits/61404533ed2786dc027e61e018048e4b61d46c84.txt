@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 61404533ed2786dc027e61e018048e4b61d46c84
+date: 2026-10-13T01:27:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: sweep count after ticket 54, and status for tickets 52/55/56
+Ticket 52 flagged that docs/native-port.md still quoted the pre-54 sweep size in
+three places (39 593); the resync fix recovered 1467 instructions, so the count is
+41 060. Also records that 52 is merged, 55 is running, and 56 started with its
+dependency on 55 waived - see the decision log.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
