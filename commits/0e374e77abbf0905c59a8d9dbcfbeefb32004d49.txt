@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0e374e77abbf0905c59a8d9dbcfbeefb32004d49
+date: 2026-10-12T13:19:34+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: renumber tickets 03-05 to 41-43
+herdr agent names are global (t<id>), and t03/t04/t05 are already used by agents
+belonging to another project on this machine, so ticket 03 failed to start with
+agent_name_taken. The slices keep their content and edges; only the numbers move
+to a free range.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
