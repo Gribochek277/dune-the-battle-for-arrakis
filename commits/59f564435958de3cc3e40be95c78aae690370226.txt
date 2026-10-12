@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 59f564435958de3cc3e40be95c78aae690370226
+date: 2026-10-12T14:38:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 41: 41-port-runtime-core
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
