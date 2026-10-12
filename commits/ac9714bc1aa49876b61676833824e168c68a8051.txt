@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ac9714bc1aa49876b61676833824e168c68a8051
+date: 2026-10-12T19:46:13+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the Z80, the driver upload and what audio still lacks
+docs/native-port.md gains the ticket-46 section: the vendored core and its
+licence, the bus protocol as the hardware does it (including where the port
+follows the hardware rather than BlastEm: the YM2612 is reachable from the
+68000 without the bus handshake), the one-instruction-per-instruction
+timing choice, the Z80's address space, the sound chips as event records
+rather than synthesis, what the cartridge's driver actually does as the
+port runs it, and a table of the evidence each fixture establishes. It also
+corrects the "What is not compared" note: the reference capture's z80_ram
+is BlastEm's open bus value (one 16-bit pattern repeated over all 8 KiB)
+because the 68000 may only read Z80 space while it holds the bus, and the
+port reports its sound RAM as port.z80 instead of pretending to compare it.
+
+docs/reverse-engineering-notes.md records F9 (the sound driver blob, its
+upload, its RAM layout and its command protocol, all from the port's own
+trace and the cartridge's code) and F10 (the listing at $0D5366 names
+`dc.w $B3FC` plus an `ori.l` where the cartridge has `cmp.l #$00A02000,a1`
+plus `bne.s`; byte-exact, but backwards, and the port decodes the ROM).
+
+port/README.md and the comparator's note text follow.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
