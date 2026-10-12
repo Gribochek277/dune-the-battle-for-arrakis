@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 11818f0f6e2d905502b81cb117f1924318529775
+date: 2026-10-12T13:18:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: ticket store and the first five slices for the native port
+docs/tasks/ holds the tracer-bullet breakdown of Epic 1: fix the overlapping
+segments (prefactoring, it inflates every count), capture reference state from
+BlastEm over its GDB stub, implement the port runtime + interpreter fallback,
+build the differential harness, then the VDP renderer. Each ticket carries its
+acceptance criteria and is verifiable on its own; 04 depends on 02+03 and 05 on
+04.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
