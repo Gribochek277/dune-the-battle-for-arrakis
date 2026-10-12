@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b99d39ba4a249e26479445ac6c3d57ead297b57c
+date: 2026-10-12T22:23:40+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: name the routine and the source line of every pc in the map
+Three things the first cut of scripts/ram_map.py got wrong or left coarse, all
+found by reading its own output:
+
+* the pc -> name lookup merged the generated block labels with the symbol table,
+  so a data label inside a routine claimed the instructions after it ($001704
+  came out as seg_data_0016CE instead of VBlankHandler). The routine name now
+  comes from disassembly/symbols.txt plus the curated names, mechanical data
+  names are kept out of it, and the block label is reported next to it;
+* the source line of an instruction was the address comment above it, not the
+  instruction, because sega2asm writes '; $001704' on its own line. The index
+  now attaches the following instruction to that address, so every pc record
+  carries the text of the access it made;
+* the per-address table was indented, which multiplied a 65536-record table by
+  four; it is now written compact, one address per line, with the head of the
+  map still indented and the result parsed back to prove it is valid JSON.
+
+Also: empty fields are left out of the per-address records, the clusters carry
+the pc indices as well as the symbol names, and the two lookups and the source
+index are cached, which takes an aggregation of the current trace from ~13 s to
+~8 s.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
