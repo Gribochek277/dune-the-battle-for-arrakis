@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 860973bd2109855e374f9743a46b43ff7312f0c5
+date: 2026-10-12T13:13:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: 68k->C transpiler prototype, generated code compiles
+Epic 1 scaffolding (docs/native-port.md records the architecture, milestones,
+verification method and the licensing choice for the interpreter):
+
+- scripts/transpile68k.py takes instruction boundaries from the *verified*
+  disassembly and operands from the ROM bytes, and emits one C case per
+  instruction with MD68K_FALLBACK for anything it does not translate
+- port/runtime/md68k.h declares the CPU state, memory access and flag helpers
+- port/generated/game.c: 151137 lines, compiles clean with gcc -std=c99 -c
+- 32010 of 39707 unique instructions translated (80.6%); biggest gaps are
+  btst/bset/bchg, movea, movem, neg, shifts, ext, swap, dbf
+
+Known issue found while doing this: the splitter's segments overlap, so the
+sources contain 20288 duplicate instruction addresses (39707 unique of 59995
+seen). The ROM build is unaffected (overlaps rewrite the same bytes at the same
+addresses, tests still byte-exact), but the duplication inflates instruction
+counts and is the first thing to fix next.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
