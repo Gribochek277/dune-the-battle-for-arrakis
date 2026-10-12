@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 778cc4343ce9ff624d6609d776cdfa70db8ce28f
+date: 2026-10-12T21:31:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: record the two decisions ticket 49 had to take
+The curated-name file stays untracked (the project keeps it out of git and
+un-ignoring it would make the merge into main collide with the untracked copy),
+and port/generated/game.c was regenerated because the translation embeds the
+listing text in comments; no code line changed. Both decisions, with their
+reasoning, are in the file this commit adds.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
