@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bf9144f50c5c10a18e52cb29ead4163966ac318e
+date: 2026-10-13T01:57:34+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: add tickets 57-58
+Two slices that do not depend on the clock or input work in flight: a CPU-driven
+dump of the reference's VDP state (ticket 52 tried the GDB stub and documented why
+it cannot work, and the missing oracle is what makes fidelity work guesswork), and
+the PSG half of audio, which is small, documented and measurable on its own.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
