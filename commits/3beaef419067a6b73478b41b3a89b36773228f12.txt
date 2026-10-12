@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3beaef419067a6b73478b41b3a89b36773228f12
+date: 2026-10-12T13:35:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: re-measure the code and instruction numbers after the fix
+goals.md: 45 489 verified source lines, 2 013 symbols, 6.52 % of the body,
+2 666 of 2 670 executed addresses inside code segments, and the refreshed
+structured/low-entropy shares (55.1 -> 54.5, 8.7 -> 8.5, 4.6 -> 4.9 %).
+
+native-port.md: 150 693 lines of C, 31 908 of 39 593 instructions (80.6 %), and
+the "known issue" section is replaced by the root cause -- orphaned generated
+sources, not overlapping intervals -- plus the four guards that now hold.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
