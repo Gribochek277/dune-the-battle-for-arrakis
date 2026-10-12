@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 58c28c2df44851b787ac577bdffadd00b06065e1
+date: 2026-10-12T21:27:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: correct the counts in the owner-facing status page
+Ticket 50 flagged that docs/project-status.md still said '10 checks' from before
+two tickets and could not tell what it counted. The gate now runs 13 checks,
+including the port's own (728 fixtures plus a 35 406-case translation sweep).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
