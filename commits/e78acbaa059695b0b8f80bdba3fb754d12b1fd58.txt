@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e78acbaa059695b0b8f80bdba3fb754d12b1fd58
+date: 2026-10-12T17:09:47+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: unify the status table again and add tickets 46-48
+The ticket writer keeps appending a column-less second table, so the same
+Blocked-by edges were lost again; one table now carries everything. New slices:
+Z80 driver + bus handshake (blocked by 42, it is what stalls the harness at frame
+3), the fresh-worktree suite fragility both workers hit, and the last 15 fallback
+opcodes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
