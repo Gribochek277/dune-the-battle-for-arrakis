@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e77e7202832c02c01bf48a64ba38a6747a44774c
+date: 2026-10-12T13:18:30+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: record the dependency edges in the status table
+The orchestrator reads blockers from a 'Blocked by' column in docs/tasks/STATUS.md,
+not from the ticket prose, so the scaffolded table made every ticket look ready.
+04 depends on 02+03, 05 on 04.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
