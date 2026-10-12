@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6f8681f3916c1249f4299a9fc2b9eb1afa93057e
+date: 2026-10-12T23:03:59+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: record the rebase-before-review and status-commit-churn decisions
+Two decisions from this campaign, both forced by measurement: the orchestrator
+rebases an open branch immediately before review (every status write lands on main
+and so invalidates requireRebase for every open branch; tickets 42, 43, 45, 47 and
+48 hit it, and a clean rebase plus the branch's own gates is cheaper and just as
+verifiable as a worker fix round), and acceptance runs on the deterministic gates
+plus the orchestrator's own reproduction of the ticket's commands while this
+session's cached config keeps the check gate and the LLM reviewer disabled.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
