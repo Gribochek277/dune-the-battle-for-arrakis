@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9744ebb3dad50229d0aeb0435b49062da2ef395c
+date: 2026-10-12T17:00:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+install-tools: drop the duplicate assets link
+Ticket 44 added the same `link disassembly/out/assets` while this branch was
+being rebased: the two lines are idempotent, but one is enough, and ticket 44's
+copy carries the better comment. The header note about who needs the extracted
+blobs (the cartridge rebuild in tests/run_all.sh, and the port tests) stays.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
