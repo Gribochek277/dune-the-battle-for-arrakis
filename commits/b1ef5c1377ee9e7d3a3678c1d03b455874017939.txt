@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b1ef5c1377ee9e7d3a3678c1d03b455874017939
+date: 2026-10-12T13:15:15+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: install script for worktrees (toolchain and dump are untracked)
+The toolchain binaries and the owner's cartridge dump are deliberately not in
+Git, so a herdr worktree has neither and cannot build or test. scripts/install-tools.sh
+links them from the main checkout -- untracked paths only, nothing copied, no
+tracked file touched -- and fails loudly if something essential is still
+missing. Configuring it as the orchestrator's install step makes the check gate
+(tests/run_all.sh) runnable inside every worker's worktree.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
