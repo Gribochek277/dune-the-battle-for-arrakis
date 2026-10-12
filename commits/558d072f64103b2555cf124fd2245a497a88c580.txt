@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 558d072f64103b2555cf124fd2245a497a88c580
+date: 2026-10-12T13:34:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+worktree: link the analysis evidence, and ignore the links
+scripts/install-tools.sh prepared a worktree with the toolchain and the dump
+only, so scripts/regenerate.sh could not run there: the Ghidra inventory, the
+BlastEm coverage logs and the curated symbol names are untracked, and
+tests/run_all.sh needs the ELF carrier. Link all four from the main checkout
+like the paths that were already handled.
+
+Those links are untracked paths, while .gitignore ignored the *contents* of the
+directories they replace -- a rule written with a trailing slash does not match
+a symlink -- so `git status` listed them. Write the rules without the trailing
+slash and ignore __pycache__ as well, now that a test imports the scripts.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
