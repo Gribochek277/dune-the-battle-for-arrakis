@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ad5c3c15575a1b5a1f5b0ced4776606aabe39e48
+date: 2026-10-12T14:05:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 01: 01-segmentation-disjoint-intervals
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
