@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 07362d913f42f82c517bbfb78376767bbeedef84
+date: 2026-10-12T11:52:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+M1+M2: coverage iteration through Ghidra seeding, and full symbolisation
+Coverage (scripts/ghidra/SeedFunctions.java + analysis/ghidra/entry-points.txt):
+- 1708 candidate entries (jsr/jmp targets, segment starts, vectors) seeded into
+  Ghidra, which grew from 689 to 934 functions and lifted the code split from
+  57 to 97 intervals, 120 040 -> 127 234 bytes (5.73% -> 6.07% of the body)
+- input-driven coverage is documented as blocked on tooling: the game has no
+  attract demo (20 000 frames = same 1757 addresses as 300) and BlastEm's modal
+  menu does not take keyboard navigation
+
+Symbolisation (scripts/make_symbols.py):
+- src/equates.inc (1787 names) included first, so names resolve in operands
+- disassembly/symbols.txt drives sega2asm; 1446 absolute-long and 1290
+  absolute-word operands now carry names, plus data_/RAM_/VDP_/Z80_ references
+- sticky symbol table, because a name used in the source is no longer
+  discoverable from a hex address
+
+Disassembler changes needed for the above, each with evidence in the comments:
+- symbol labels are no longer emitted (they collided with the equates and would
+  reintroduce the forward-reference defect); segment data labels likewise
+- names in absolute-short operands only outside $00008000-$0000FFFF, where the
+  operand has to be sign-extended
+- memory shifts always fall back to dc.w: the assembler encodes bits 11-9
+  differently ($E0DE -> $E6DE), so the word cannot be reproduced
+
+Verification: build assembles with no errors, all 9 checks in tests/run_all.sh
+pass, and the body is still byte-exact (42 differing bytes, header only, all
+from M1). tests/test_per_line.sh caught a real regression at $00E006 introduced
+by the resegmentation, which is how the memory-shift encoding gap was found.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
