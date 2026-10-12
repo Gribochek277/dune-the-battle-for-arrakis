@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2403f7cb2e07db1b1a0acdc13d13a78806344574
+date: 2026-10-12T11:55:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+gitignore: actually ignore analysis/screenshots
+The previous commit removed the screenshots from the index but the ignore pattern
+never matched (it was inserted next to a pattern that had since gained a leading
+slash), so a later 'git add -A' would have re-added them.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
