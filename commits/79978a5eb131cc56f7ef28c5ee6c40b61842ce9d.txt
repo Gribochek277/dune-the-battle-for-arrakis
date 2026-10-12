@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 79978a5eb131cc56f7ef28c5ee6c40b61842ce9d
+date: 2026-10-12T16:43:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: add translated-opcode fixtures and a full-ROM differential sweep
+test_translated.c holds 106 fixtures, one per opcode ticket 45 added: each
+names a real cartridge instruction, asserts hand-computed M68000 PRM results
+after the generated case runs, then reruns the same instruction through the
+interpreter and compares pc, SR, USP, every register and all 64 KiB of work
+RAM. The boot fixtures move with the coverage: the reset stub is now 33 087 of
+33 087 translated, and the fallback is covered by a work-RAM program plus the
+remaining MD68K_FALLBACK cases.
+
+diff_sweep.c is the systematic version, run by `make test` (and alone as `make
+sweep`): every instruction address the generated switch has a case for gets a
+deterministic pseudo-random state, runs through both paths, and the same fields
+must match. make_insn_addrs.py generates its address list from the verified
+disassembly, so it cannot drift from the switch. It reports 0 divergences over
+all 39 593 addresses and is what found the bugs fixed in the previous commit.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
