@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d24320b8a0fb1f3a2cfd677c3346dafde3c62e67
+date: 2026-10-12T23:49:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: re-measure the RAM map over 60 frames
+Ticket 43's VDP landed on main while this branch was open, so the port no longer
+stops in the DMA-busy wait at $000E68: it runs to 60 frames and beyond, and the
+port's frame 60 equals the emulator's frame-60 capture (all 65536 bytes of work
+RAM and all registers), which is what anchors the map now.
+
+The documented run is therefore 60 frames instead of 3 (the tool's default), and
+the findings change with it:
+
+* 1151835 instructions, 571402 work-RAM accesses (527842 reads, 43560 writes),
+  223 pcs; 510520 of the reads are WaitVBlank polling VBlankCounter, so 97% of
+  the run's memory traffic is the game waiting for the frame;
+* 10945 bytes are touched by code for a purpose, 54591 only by the two blanket
+  initialisations, 0 never at all;
+* the capture cross-check spans the whole run now: 304 bytes change between
+  frames 1 and 60 and all 304 are written in the same window;
+* the structures table gains the two the longer run exposes: the DMA queue in
+  real use (21 transfers, 19 entries, 20 of them a 128-byte CRAM transfer from
+  PaletteShadow = $FFE2B4, which M2-2 named from the code) and the four
+  precomputed VDP register words at $FFC5A8-$FFC5AF;
+* the section is renumbered M2-3, because M2-2 is the understanding pass that
+  landed in the meantime, and it now states two measurement caveats: an
+  instruction with no generated case runs in the interpreter, which advances the
+  pc before executing, so its accesses are recorded one instruction late (5248
+  of the run's instructions, and the reason the byte writes into the VDP
+  register words are attributed to $000E3A); and the DMA's work-RAM reads are
+  visible only because the port's VDP reads through the memory map.
+
+The record arrays M2-1 and M2-2 named are still untouched in these 60 frames,
+so their layout remains established by reading the code, not by measurement.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
