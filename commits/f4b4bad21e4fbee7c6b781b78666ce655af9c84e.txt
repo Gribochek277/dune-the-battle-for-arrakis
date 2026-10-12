@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f4b4bad21e4fbee7c6b781b78666ce655af9c84e
+date: 2026-10-13T02:10:00+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: count cycles, price DMA, and clock frames from them
+Ticket 55. The frame clock was an 18 000-instruction budget standing in for a
+frame; it now counts cycles:
+
+- runtime/md68k_cycles.c charges every instruction the 68000 clocks the M68K
+  PRM gives it, cross-checked against BlastEm 1.0.0's translators so the port
+  follows the emulator's timeline, and the harness asserts the VDP's VBlank
+  every 128 006 cycles (262 scanlines of 3420 master clocks at 7 master clocks
+  per 68000 cycle -- BlastEm's own grid). The constants are in
+  runtime/timing.h, each with the observation behind it.
+- the VDP keeps ticket 43's status semantics but prices the DMA busy window the
+  way BlastEm does (16 master clocks per word in H40, 20 in H32, doubled for a
+  V-RAM destination or a copy, plus the 12 slots of start-up a 68k -> VDP
+  transfer gets), so the game's $000E68 poll waits as long as it does on the
+  emulator.
+- fixtures: tests/test_cycles.c pins the per-instruction times for the forms
+  the game uses, the two execution paths charging the same, the reset stub's
+  cycle total (363 792) and both DMA costs.
+
+Measured: compare_port_state.py --frames 100 is identical (all 65 536 bytes of
+work RAM and every register); frames 1..823 agree frame by frame; the guest's
+frame counter stays in step with the reference to frame 10 000, where the
+previous clock had lost it by frame ~900. The first divergence is frame 824 --
+the VBlank callback pointer at $FFFFE002 and the VDP command queue at
+$FFFFC5A8 -- a phase effect of the estimated cycle counts: this stretch of the
+intro does nearly a frame's work per frame, so the residual error decides
+whether a boundary catches the emulator inside a routine the port has already
+left. Scaling the DMA cost by +-25 % does not move it, which rules the DMA
+model out and is why no constant was tuned. The intro's pictures still differ
+at frame 1000 (36.86 % of pixels), while the timeline does not.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
