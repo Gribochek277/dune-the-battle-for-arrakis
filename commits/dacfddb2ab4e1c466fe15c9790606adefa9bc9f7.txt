@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dacfddb2ab4e1c466fe15c9790606adefa9bc9f7
+date: 2026-10-12T14:39:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: one status table for all tickets
+The ticket writer appended a second table without the Blocked by column, which
+confused the dependency edges (43 showed as ready while 42 was still open). One
+table now carries every row, and 44/45 are recorded as blocked by 41.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
