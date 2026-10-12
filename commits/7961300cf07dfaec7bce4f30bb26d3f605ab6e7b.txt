@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7961300cf07dfaec7bce4f30bb26d3f605ab6e7b
+date: 2026-10-12T12:06:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+coverage: interactive session reached the game's own menus (1780 addresses)
+Driving BlastEm through XWayland with xdotool advanced execution coverage from
+1757 to 1780 addresses: title menu, 'Select your House', and the 'Join House
+Atreides?' dialog. The input path is now documented because each part of it was
+a blocker until verified:
+
+- wtype (Wayland virtual keyboard) is ignored by BlastEm's SDL/XWayland window;
+  xdotool key --window <id> works. Verified against BlastEm's own 'p' screenshot
+  binding, which writes $HOME/blastem_<timestamp>.png.
+- pad bindings require keyboard capture first (Control_R = ui.toggle_keyboard_captured)
+- any other desktop activity competing for focus stops input reaching the
+  emulator, so unattended runs should not use the GUI
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
