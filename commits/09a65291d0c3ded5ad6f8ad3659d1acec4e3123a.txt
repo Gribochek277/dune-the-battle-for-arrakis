@@ -1,0 +1,39 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 09a65291d0c3ded5ad6f8ad3659d1acec4e3123a
+date: 2026-10-12T11:04:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Verify dump, build toolchain, and establish a byte-identical rebuild
+Environment and toolchain:
+- record the host, tool inventory, and every install step (docs/)
+- build sega2asm (Go), ClownAssembler (C), BlastEm 1.0.0 (source, headless +
+  gdb stub + address log) and Ghidra 12.1.4 user-locally under tools/
+- register REA 6.4.0 as a project-scoped pi MCP server
+
+ROM forensics:
+- 2 MiB raw big-endian image, sha256 1f0f56cd...
+- reproduction-cartridge header (2024, placeholder serial), internal checksum
+  mismatch reproduced independently (declared BC9E vs computed BB92)
+
+Decoder/toolchain fixes (patches/sega2asm-0001-*.patch, 663 lines):
+- placeholder decodes now fall back to dc.w instead of emitting text no
+  assembler accepts
+- effective-address class validation per instruction family, measured against
+  the assembler's own behaviour
+- corrected bit-op mnemonics, EXT/SWAP vs MOVEM/PEA ordering, EXG selection,
+  ALU size/direction fields, group-0 immediate word order, MOVEM register masks,
+  index-extension validation, 000 displacement overflow
+- refuse decodes that read past a segment end instead of inventing zero words
+- emit absolute addresses where the assembler mishandles forward label operands
+- disable the byte-dropping jump-table rewrite pass
+
+Result: src/ assembles to a byte-identical 2 MiB image and the rebuilt ROM
+executes an identical code trace in BlastEm.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
