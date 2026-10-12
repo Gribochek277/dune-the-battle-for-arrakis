@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 17a47462efcc72d72a7d84bda199c90c5a3ca540
+date: 2026-10-12T22:23:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the work-RAM map and what it measured (M2-2)
+The understanding pass said it needed the instrument that measures executions;
+this is its result. docs/reverse-engineering-notes.md gains 'M2-2', which
+records the run (reset to the third VBlank entry, 107162 instructions, 43217
+work-RAM accesses from 211 pcs), the two blanket RAM initialisations that make
+the never-touched list empty, the capture cross-check (165 bytes change between
+frames 1 and 3 and all 165 are written in the same window), and the structures
+the measurement established with their ranges, widths, initialisers and
+readers: the frame state block, the DMA queue entry and its pointers, the sound
+queue's drain, the countdown pair, the decompressor's 4 KiB destination, a
+208-node linked list nothing has read yet, and the stack.
+
+It also states what the measurement cannot see: the record arrays M2-1 named
+(UnitArray, StructureArray, SideRecords, MapCells) lie entirely in the bytes
+only the initialisations touch, so their layout is not measurable until a run
+reaches gameplay -- which needs the VDP work, because the port stops in the
+DMA-busy wait at $000E68.
+
+docs/build-and-test.md describes the new gate check and its cost, port/README.md
+and docs/native-port.md the harness option, README.md the derived analysis
+output.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
