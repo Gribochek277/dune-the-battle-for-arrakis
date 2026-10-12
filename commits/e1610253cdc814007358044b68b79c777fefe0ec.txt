@@ -1,0 +1,70 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e1610253cdc814007358044b68b79c777fefe0ec
+date: 2026-10-12T19:46:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: run the game's sound driver on a real Z80
+The 68000's Z80 handshake had nothing on the other side of it: $A00000+
+was a byte store that only looked like RAM, and the driver's answer could
+never come. This vendors a Z80 and puts a machine around it.
+
+The core is superzazu/z80 by Nicolas Allemand (MIT, two dependency-free C99
+files, upstream states zexdoc/zexall pass), taken verbatim from commit
+d64fe10a2274e5e40019b1086bf7d8990cbc5f23, recorded in tools/REVISIONS.txt
+and with its licence, hashes and provenance in port/runtime/z80/README.md.
+port/runtime/mdz80.c owns everything around it:
+
+  - the 8 KiB of sound RAM both CPUs see ($A00000-$A01FFF from the 68000,
+    $0000-$1FFF from the Z80, mirrored over the lower half of each window
+    as BlastEm decodes it), the $A11100 bus request/acknowledge handshake
+    (the Z80 acknowledges at its next instruction boundary, bit 0 of the
+    byte reads 1 until then, and 68000 accesses made without the bus are
+    dropped and counted), and the $A11200 reset line;
+  - the Z80's own address space: the YM2612's four byte ports
+    ($4000-$4003), the nine-bit bank register ($6000), the VDP window
+    ($7F00-$7F0F, routed to the port's VDP stub) and the PSG ($7F11);
+    $8000-$FFFF is the 68000 bus at (bank << 15) | offset, read and
+    written through the same decode the 68000 uses, with no contention;
+  - one Z80 instruction after every 68000 instruction: the port has no
+    cycle model for either CPU, so this is the whole timing model;
+  - YM2612 and PSG register writes recorded in order as events (a 256-deep
+    ring with counters that keep counting), address/data latches shared by
+    both CPUs, no synthesis yet;
+  - a write hook that offers every 68000 write in $A00000-$A0FFFF in order,
+    with whether the handshake applied it: that is the driver-upload trace.
+
+md68k_mem.c now hands the Z80 area over byte by byte (so a word write
+reaches the YM2612 as the two port operations it is) and answers $A11100
+and $A11200 from the machine's bus state instead of storing them.
+
+The differential harness carries the same Z80: its JSON gains port.z80
+(instructions, cycles, pc, sp, interrupt and bus state, bank register, the
+YM/PSG counters and the whole of sound RAM), --z80-log writes the upload
+trace, and the VBlank it delivers also pulses the Z80's interrupt input.
+Frames 1, 2 and 3 still equal the reference byte for byte with the Z80
+running, and --frames 60 still stops in the same place: frame 4 in the VDP
+DMA wait, which is the 68000 spinning, not the Z80. By that stall the Z80
+has run 132 303 instructions and is still in its own command loop.
+
+port/tests/test_z80.c runs the cartridge's own routines rather than a
+re-implementation: a hand-assembled program out of sound RAM (YM2612, PSG,
+RAM, halt), the handshake and reset semantics, the control registers, the
+bank register and its window, the YM2612 events, the upload at $0D5330
+traced byte for byte against $08514A-$0869AB (8192 writes: the driver, its
+zero terminator and the padding to $A02000), the restart at $0D5374, the
+driver's own start-up (PSG silence, voice table, the $2B7 patch, main
+loop), its interrupt handler at $0038 and a second VBlank after it, the
+$0D52B6 handshake, and the game's sound init at $0D542E -- upload, restart,
+command 11 -- whose 14 queued bytes the driver consumes, leaving the game's
+12 parameter bytes at $A6C.
+
+md68k-selftest: 4 390 -> 35 406 checks, 0 failures. Sweep and fixture
+suites unchanged. tests/run_all.sh: ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
