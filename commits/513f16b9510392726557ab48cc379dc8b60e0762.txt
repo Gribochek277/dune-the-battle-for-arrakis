@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 513f16b9510392726557ab48cc379dc8b60e0762
+date: 2026-10-12T17:10:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+compare: a stalled run is incomplete, not a pass
+The port now matches every frame it reaches and still stops early (it waits for
+the VDP's DMA-busy bit inside the command queue flush). Comparing at the frame it
+did reach would exit 0, which a gate would read as "60 frames verified" when 57
+of them were never run. The verdict now says so explicitly:
+
+  verdict:   incomplete: frames 1..3 equal the reference (65536 bytes of work
+             RAM and all registers each), then the port stopped: 57 of the
+             requested 60 frames were not run
+
+and exits 1. Exit 0 still requires every requested frame to have been reached and
+to match. tests/test_headless.sh asserts the new verdict and exit status.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
