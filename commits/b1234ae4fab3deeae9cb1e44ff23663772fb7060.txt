@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b1234ae4fab3deeae9cb1e44ff23663772fb7060
+date: 2026-10-12T11:15:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: environment, ROM analysis, disassembly, build/test, decisions, RE notes
+Also adds scripts/update_checksum.py, tests/test_mod_header.sh, README.md and
+AGENTS.md (the AGENTS.md section on assembler gotchas collects the five
+behaviours that silently corrupt a rebuild).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
