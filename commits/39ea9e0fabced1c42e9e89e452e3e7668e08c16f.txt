@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 39ea9e0fabced1c42e9e89e452e3e7668e08c16f
+date: 2026-10-12T13:18:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: tell ticket 02 to link the toolchain first
+The orchestrator's install step is cached as unconfigured in this session, so each
+ticket brief must state that scripts/install-tools.sh has to run in a fresh
+worktree before anything can build or emulate.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
