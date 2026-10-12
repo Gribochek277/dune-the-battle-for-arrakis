@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 91eeef2d9567f011a288684f0d97cedea87d0569
+date: 2026-10-12T15:59:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: fix two interpreter ALU decoding defects
+The differential harness (next commit) found both of these on its first run:
+with them, the port faulted at $FFFFFF after 128 254 instructions, in the
+middle of the boot.
+
+* SUB and CMP computed their operands the wrong way round in both directions:
+  `sub.w a0,d0` ($9048) ran as A0 - D0 instead of D0 - A0, and `cmp.w a1,d1`
+  set the flags of A1 - D1. The boot's work-RAM guard at $000B08 is that
+  instruction, so the guard ran past the end of RAM and overwrote its own
+  return address. BlastEm's answer for $9048 was checked through its GDB stub
+  (D0 = D0 - A0) and is what the fix follows.
+
+* `cmp.w a1,d1` ($B249) was decoded as `cmpm (a1)+,(a1)+`: the decoder took
+  "bits 5-3 = 001" alone as the CMPM marker, but CMPM also needs opmode 1xx.
+  Every compare against an address register therefore post-incremented that
+  register, which broke the free-memory list build at $001518.
+
+Both are pinned by new fixtures in port/tests/test_isa.c with hand-computed
+expectations (the reversed answers differ from the expected ones, so the
+fixtures can fail).
+
+port/tests/test_isa.c: fixture count 925 -> 973 checks, 0 failures.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
