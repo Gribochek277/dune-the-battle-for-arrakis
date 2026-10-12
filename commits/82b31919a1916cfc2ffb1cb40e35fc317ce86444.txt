@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 82b31919a1916cfc2ffb1cb40e35fc317ce86444
+date: 2026-10-12T17:42:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+transpiler: translate the last 15 fallbacks as illegal-opcode faults
+The fifteen instructions ticket 45 left behind were not emitter gaps.
+Checked against the manual and two decoders: ADDQ/SUBQ with an
+address-register destination is defined for word and long only, and
+`bchg d5,#$FF` uses the immediate operand, which no bit operation
+accepts. The interpreter's decoder rejects both, BlastEm's
+m68k_decode() returns M68K_INVALID for both, and none of the fifteen
+addresses appears in any coverage log -- they are inline data that the
+disassembler decoded as code.
+
+Performing the operation would put the translated path at odds with the
+interpreter that diff_sweep compares every case against, so
+Emitter.illegal_encoding() emits exactly what the decoder does:
+md68k_next() for the instruction length, then
+md68k_fault(MD68K_FAULT_OPCODE, addr, op). The address, opcode word and
+pc after the fault are therefore identical on both paths, immediate
+word included. The bit-op emitter mirrors the decoder's other
+rejection too: a modifying form with a PC-relative destination would
+need a store the 68000 never performs.
+
+scripts/transpile68k.py now reports 39 593 of 39 593 (100.000 %),
+0 fallbacks and 0 duplicates; the duplicate guard and the printed share
+are unchanged. MD68K_FALLBACK stays in the runtime for addresses the
+switch has no case for, which this cartridge no longer uses.
+
+Coverage in make -C port test: three rows in test_translated.c naming
+the real cartridge encodings ($01F5D2, $01FEE8, $01F73E) with the
+hand-computed expectation of a fault and untouched state, and three
+hand-assembled dual-path fixtures in tests/fixtures/fixtures.asm whose
+harness now compares the recorded faults of the translated and
+interpreted runs. test_boot.c's $01F73E fixture asserts that the fault
+comes from the generated case instead of the fallback. The full-ROM
+sweep still agrees on all 39 593 addresses.
+
+Docs: native-port.md (coverage table, evidence table, a ticket 48
+section explaining why these encodings are faults), decisions.md D20
+superseding D19, port/README.md.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
