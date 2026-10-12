@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6f760c779022003bb1740ca060689f55bd2c9ac3
+date: 2026-10-12T21:27:33+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: name the 29 most-called routines and 22 RAM and table locations
+The symbol table was 2 013 mechanically generated names plus three curated
+ones; it is now 54 curated names, and the regenerated sources spell them out
+(`jsr (WaitVBlank).l`, `move.w (VBlankCounter).w`, `lea (MapCells).l,a0`).
+
+Every name is backed by an observation recorded in
+docs/reverse-engineering-notes.md ("M2-1"), never by a guess about what the
+game must do. The findings that carry the pass:
+
+* the V-blank frame clock: the handler at $0016CC increments $FFFFE006 and
+  $FFFFE01A at $001704/$001708, calls the frame handler whose pointer lives at
+  $FFFFE002, drains the DMA queue at $FFFFE02A through $000D60, and plays the
+  queued sound ids through the driver pointer at ROM $024024; the seven
+  reference captures show $FFFFE006 = frame-1 at frame N and the queue
+  pointers moving in steps of $0A, equal exactly when the queue is idle
+* the DMA queue: $000A06 appends 10-byte entries and waits for a V-blank when
+  the queue is full, $0012C2 waits for it to drain, $000D60 is the V-blank
+  side; the write/read pointers, the 64-entry wrap at $280 and the flag byte
+  are all named
+* two tagged record classes: a unit handle is $4000 | index and a structure
+  handle is $8000 | index, which is what the accept rules of $000680/$000610
+  encode (the argument is doubled twice and used as a word index, so the tag
+  falls out modulo 65536), what $00069A builds explicitly, and what $000762
+  validates; the map keeps 4-byte cells whose object word has bit 13 and bit 12
+  for the two classes and whose low byte is the index
+* the fixed arrays: 128 unit records of $8C bytes at $FF0000, 128 structure
+  records of $62 bytes at $FF4574 and five side records of $82 bytes at
+  $FF7612, each addressed through a pointer table whose entries are exactly
+  base + k * size
+* the rest: the 3-byte LFSR at $FFFFE017, the sound wrappers and their
+  deferred command queue, the VDP register-1 shadow, the text writer's VRAM
+  base, the two arithmetic helpers and the map bounds check
+
+Two limits are recorded rather than papered over: the 98-byte records are
+called structures on the strength of the two-class code structure (their game
+meaning needs a post-mission capture to confirm), and the naming pass could not
+attribute register-based accesses, only absolute operands.
+
+The cartridge is unchanged: the rebuild still differs from the dump in the 42
+header bytes of modification M1 and nowhere else, and tests/run_all.sh ends
+with ALL CHECKS PASSED after scripts/regenerate.sh regenerated the split,
+symbols and sources from this table.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
