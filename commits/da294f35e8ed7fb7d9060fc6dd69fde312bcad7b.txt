@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: da294f35e8ed7fb7d9060fc6dd69fde312bcad7b
+date: 2026-10-13T00:38:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 54: 54-fix-resync-listing-defect
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
