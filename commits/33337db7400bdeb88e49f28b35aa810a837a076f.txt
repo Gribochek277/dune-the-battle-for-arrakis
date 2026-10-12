@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 33337db7400bdeb88e49f28b35aa810a837a076f
+date: 2026-10-13T02:59:11+03:00
+author: orchestrator <orchestrator@local>
+branches: main
+
+message:
+docs: give the frame-1000 and frame-10000 divergence counts separately
+The row spanning frames 1000..10000 stated the frame-10 000 figure (724 bytes
+below the stack area) as if it held from frame 1 000 on. Measured: 691 bytes
+below the stack area at frame 1 000 (1 339 counting it) and 724 at frame
+10 000 (844 counting it), so the difference grows slowly rather than not at
+all. No other figure in the table changes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
