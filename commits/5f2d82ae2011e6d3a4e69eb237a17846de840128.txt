@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5f2d82ae2011e6d3a4e69eb237a17846de840128
+date: 2026-10-12T11:06:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+mod: valid initial stack pointer, self-consistent checksum, rebuild stamp
+First source-level modification, all inside $000000-$0001FF:
+
+- Initial SSP $FFFFFFFA -> $00FF0000. The supplied dump points the initial
+  stack outside work RAM, so any exception raised before the game installs its
+  own stack would push to a non-existent address. Nothing else in the vector
+  table changes (reset PC stays $00000468).
+- Recompute the internal checksum ($BC9E -> $BB92, scripts/update_checksum.py)
+  so the header matches the cartridge body for the first time.
+- Mark the image as a project build in the title fields, serial number and
+  copyright date so it can never be confused with the untouched dump.
+
+Verification (tests/test_mod_header.sh, docs/reverse-engineering-notes.md):
+- 42 bytes differ from the dump, all within the header
+- validate_rom.py: all checks pass, including the checksum
+- BlastEm: boots cleanly; the 900-frame executed-address trace is identical to
+  the original, so behaviour is preserved
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
