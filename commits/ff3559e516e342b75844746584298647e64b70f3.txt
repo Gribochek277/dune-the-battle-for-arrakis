@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ff3559e516e342b75844746584298647e64b70f3
+date: 2026-10-12T15:12:55+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: fix the four emitter defects, with dual-path fixtures
+Ticket 44. Four defects were recorded in docs/native-port.md and deliberately
+left unpatched until each had a test; this fixes them and adds the fixture
+mechanism that makes "fails before, passes after" reproducible.
+
+The fixtures
+- port/tests/fixtures/fixtures.asm is the single source of truth: the Makefile
+  assembles it into build/fixtures.bin (copied into work RAM) and runs
+  scripts/transpile68k.py over the same file into build/fixtures.c, so the
+  bytes the test executes and the emitters it exercises cannot drift.
+- md68k-fixture-test links that generated translation as md68k_translated_step
+  (the game's name, in a binary that does not link game.c), so
+  md68k_set_translation() really selects between the generated cases and the
+  interpreter. Each fixture runs twice and the runs must agree on every
+  register, SR and all of work RAM, on top of the PRM expectation the fixture
+  asserts; a translated run that falls back to the interpreter fails the
+  fixture.
+- transpile68k.py gains --rom-base (read extension words from an image at its
+  own origin) and --function (generated entry-point name); the branch and
+  write-EA operand readers now go through the same base-aware helpers as the
+  rest of the decoder.
+
+The fixes
+- md68k_set_nz() takes the operand size and masks inside it; it is now the only
+  N/Z helper (md68k_set_nz_sized() is folded into it), and move/moveq/tst pass
+  the size, so byte and word decisions cannot see stale high bits.
+- clr and tst clear V and C, as the 68000 does.
+- the DBcc emitter follows the manual: condition true leaves the counter alone
+  and falls through; otherwise the low word is decremented and the branch is
+  taken while the result is not -1. The displacement is relative to the
+  extension word. The whole DBcc family dispatches through the emitter, so dbf
+  (273 uses in the ROM) is translated too.
+- lea/pea/jsr/jmp share Emitter.ea_address(), the transpiler counterpart of the
+  interpreter's ea_address(), instead of hand-built operands; pea computes its
+  address before A7 moves, and jsr/jmp sign-extend absolute-short targets. The
+  interpreter now computes a JSR destination before pushing, so both paths
+  target the old A7 for jsr (a7) (PRM operation order; Musashi and BlastEm
+  agree).
+
+Also fixed: add/sub/and/or with a Dn destination assigned the size-masked
+result to the whole register, zeroing the high bits of a byte or word
+operation. The new fixtures found that one on their first run.
+
+Regenerated port/generated/game.c: 32 185 of 39 593 instructions translated
+(81.3 %). make -C port test runs md68k-selftest (930 checks) and
+md68k-fixture-test (545 checks); tests/run_all.sh ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
