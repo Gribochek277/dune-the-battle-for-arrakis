@@ -1,0 +1,81 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c8adc65488ab38b36f049a5812df0673e84024e1
+date: 2026-10-13T00:15:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+disassembly: fix the dc.w resync defect behind F10
+sega2asm's `dc.w` fallback emitted the opword of an instruction it could not
+write as source and then resumed one word later, so the instruction's own
+operand words were decoded as instructions of their own. At $0D5366 the
+cartridge holds `B3FC 00A02000` -- BlastEm prints `cmp.l #$A02000, a1`, the CPU
+executes CMPA.L #$00A02000,A1 -- followed by the `bne.s` of the sound-driver
+upload's zero-padding loop. The listing said
+
+    dc.w    $B3FC
+    ori.l   #$200066F4,-(a0)
+
+which reassembles to the same bytes (so `tests/test_per_line.sh` passed) while
+describing two instructions that never execute and swallowing the branch.
+
+Four inputs met at that word, and all four are decoded now because the assembler
+writes the encoded words back out for them:
+
+* `<ALU op>.<size> #imm,An` (`B0FC`/`B1FC` with the size bits of CMPA.W/CMPA.L,
+  i.e. `cmpa.w #$0050,a7` = `BEFC 0050`, `cmpa.l #$00A02000,a1` = `B3FC 00A02000`);
+* `MULU/MULS/DIVU/DIVS.W #imm,Dn` (`C0FC`, `C1FC`, `80FC`, `81FC`);
+* `MOVE` from `An` (`move.l a2,($FFFFC71C).w` = `21CA C71C`) -- the decoder used
+  the no-An class for MOVE's source, as if every `An` source were a MOVEA, and
+  hid the destination word of 1 362 instructions;
+* a brief index extension word with bit 11 set, which is the *long* index the
+  assembler encodes (`(2,a1,d0.l)` = `0802`), not a reserved bit.
+
+The fallback itself now covers every word the decode read, one `dc.w` line
+each, and the next decode starts on the instruction boundary. Two exceptions
+stay at one word, because the operand they read is not an operand at all: a byte
+immediate or bit number whose unused upper byte is non-zero, and an index word
+with the 68020-only scale or full-format bits. Those are measured, not assumed:
+the executed-address traces in `analysis/coverage/` show 12 instructions turning
+into `dc.w` without the exception (the byte after a stray `0000` word is code
+often enough -- `$000230` is an executed `moveq #0,d1`), while the naive
+one-word rule leaves 22 sites of the F10 class misread.
+
+Counts, from `scripts/scan_resync.py` over the committed sources: instructions
+39 593 -> 41 060 (`dc.w` lines 5 849 -> 4 063), F10-class sites 22 -> 0,
+BlastEm-flagged resync sites 725 -> 628, of which those containing an executed
+address 6 -> 1, and executed instructions lost 0. `scripts/regenerate.sh` ends
+with ALL CHECKS PASSED, the rebuilt image still differs from the dump in the 42
+header bytes of modification M1 and nowhere else, and `scripts/verify_listing.py`
+reports the same four header lines.
+
+The regression tests are `disasm/m68k/resync_test.go`, which ships inside the
+patch and asserts the line sequence and the byte coverage of every case above,
+and `python3 tests/test_listing_resync.py`, which is now part of
+`tests/run_all.sh`: 14 fixture points asserted verbatim, no `dc.w` holding an
+opword the decoder can render followed by a decoded word, every rejected ALU
+immediate covering its operand words, and -- with `tools/blastem/dis` present --
+no instruction starting inside the span BlastEm decodes at those addresses.
+
+`patches/sega2asm-0001-lossless-and-validated-decoder.patch` is regenerated from
+`tools/src/sega2asm` (the tool source lives outside Git by design). It had
+drifted: it was missing `segments/code.go`, the `readImmU32` truncation fix and
+the symbol-equate emission, so a from-patch build produced 125 different source
+files. A clone plus this patch now builds a tool that reproduces the committed
+listing byte for byte.
+
+`port/generated/game.c` is deliberately left at its previous revision.
+Refreshing it exposes 18 disagreements between the generated translation and the
+interpreter for the newly decoded long-index forms -- the `read_ea` value paths
+in `scripts/transpile68k.py` sign-extend the index register unconditionally,
+ignoring bit 11 -- so the port keeps falling back to the interpreter for the
+addresses its switch has no case for, which is correct but slower. Refreshing
+the translation and the port's instruction counts is the port's own ticket.
+
+Ticket 54.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
