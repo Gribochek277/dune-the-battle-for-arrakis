@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0000d5aadeb57e7c9673b7c8699025c3c0b9a89f
+date: 2026-10-12T17:14:52+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tests: prepare the shared artifacts before any check runs
+tests/test_mod_header.sh verifies build/dune.bin, but nothing built that
+image until tests/test_capture.sh did it lazily at the end of the suite, so
+a fresh worktree failed "modifications are as intended" on the first run
+and passed on the second. tests/prepare.sh now runs first: it creates
+build/ (absent in a worktree, which made the assembly and listing checks
+fail with "Could not open output file") and rebuilds build/dune.bin from
+the current sources through scripts/build.sh, so a stale image can never
+satisfy a check. The structural-validation check reads that same
+build/dune.bin instead of the file the preceding check happened to leave
+behind.
+
+The remaining shared inputs are checked rather than generated: the dump is
+the owner's cartridge, the asset blobs come from the sega2asm pass that
+also rewrites the committed per-segment sources, and a carrier generated
+just before --verify would only verify itself. A missing one is reported
+with the command that restores it.
+
+docs/build-and-test.md states the one command a fresh checkout needs and
+records the change as decision D20.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
