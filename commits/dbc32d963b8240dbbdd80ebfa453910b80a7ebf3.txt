@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dbc32d963b8240dbbdd80ebfa453910b80a7ebf3
+date: 2026-10-12T12:31:49+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: record the two goals, and automate the play-and-regenerate loop
+docs/goals.md states both goals with definitions of done, what each needs beyond
+the shared foundation, the risks, the owner's decisions (C as the target
+language, private for now, foundation first) and the M0-M6 roadmap with status.
+
+docs/collecting-coverage.md explains how a playthrough becomes analysis data,
+including the in-game checklist and the three input-path requirements that each
+cost hours to find (X11 rather than Wayland key injection, keyboard capture
+first, exclusive focus).
+
+Two scripts remove the manual step chain:
+- scripts/collect-playthrough.sh launches the emulator with the address log,
+  prints the checklist, stores the session's coverage and (with --apply) rebuilds
+  the analysis
+- scripts/regenerate.sh runs the whole chain: split from all coverage logs and
+  the Ghidra inventory, disassemble, collect symbols, disassemble again, build,
+  verify, run the test suite
+
+Verified end to end: scripts/regenerate.sh completes with all 9 checks passing
+and the image still differing from the dump only in the header (42 bytes).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
