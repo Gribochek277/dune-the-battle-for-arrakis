@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 74d8974286ca4a8941e6721bb2d0f7852a81affb
+date: 2026-10-13T02:40:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+reference: dump the VDP state from the 68000 itself (ticket 57)
+Every VDP comparison so far was indirect: a rendered frame says *that* something
+is wrong, and BlastEm's event log (a stream of writes) cannot show what the
+hardware did on its own -- ticket 52 tried the GDB stub's byte accesses and got
+BlastEm's byte-path semantics instead of the VDP's, freezing it with
+"invalid source, CD: 2". The memories are only reachable through the two VDP
+ports, and the stub only knows the 68000's address space.
+
+So the 68000 does the reading. scripts/capture_vdp_state.py stops at the Nth
+entry of the VBlank handler (the rendezvous scripts/capture_state.py defines),
+overwrites the interrupted PC in the interrupt frame with the address of a dump
+routine it has assembled into work RAM, and lets the handler's own rte enter
+it. The routine reads V-RAM, C-RAM and V-SRAM through the data port with 16-bit
+accesses and a fresh address command before every word (so the game's
+auto-increment register cannot shift it), reads the control port once first
+(which drops a command word left pending at the stop), and leaves the result in
+a 16 KiB work-RAM buffer that the stub reads back chunk by chunk. Each dump is
+written next to the existing reference captures as a JSON (metadata, evidence,
+checks, register file) and a raw file in the same layout as
+headless --vdp-dump; the routine, its assembly source and the run's address and
+event logs are kept as evidence.
+
+The VDP registers are write-only, so the register file is reconstructed by
+replaying the register writes in BlastEm's event log -- and the same capture
+replays the log's V-RAM/C-RAM/V-SRAM writes and refuses the dump unless they
+match the CPU-driven read byte for byte, which is what makes the parser and the
+dump trust each other.
+
+The dump is taken at the *end* of the VBlank handler, because that is the
+boundary the patched return address can reach; the routine proves it by reading
+the game's VBlank counter, and the capture fails if the counter says the routine
+ran before the handler. port/build/headless grows --vdp-dump-at exit to report
+the port's state at the same boundary, and scripts/compare_vdp_state.py runs
+the two sides, reports the first differing byte with the structure it belongs
+to (plane A/B, window, sprite table, hscroll table via the register file), and
+exits 0/1/2 like compare_port_state.py. Registers $13/$14 (the DMA length
+counters, which the hardware decrements during a transfer) are reported as the
+one documented difference a write-only replay cannot avoid; --strict-registers
+counts them anyway.
+
+tests/test_vdp_state.sh pins the known case: at frame 10, whose rendered frame
+tests/test_frame.sh proves pixel-identical, the port's 64 KiB of V-RAM, 128
+bytes of C-RAM, 80 bytes of V-SRAM and 23 of 24 registers are the reference's
+byte for byte (frame 60 too, checked by hand). It also proves the comparison can
+fail: one mutated V-RAM byte, C-RAM entry and register each have to be reported
+where they were changed.
+
+The check needs the emulator and the assembler but no display, and the gate
+passes: tests/run_all.sh ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
