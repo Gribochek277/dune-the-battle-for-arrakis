@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 00015d29e405184384fb2a6cc5d467e71f4664f0
+date: 2026-10-12T12:28:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+fix: truncated long immediates, found by playing the game
+Resegmenting with gameplay coverage produced segments that end in the middle of
+an instruction. decode claimed success for a 4-byte immediate that ran past the
+segment end and returned zero, so 'cmpi.l #$0002C000,d0' was written as
+'cmpi.l #$00000000,d0'. The segment then overran into the next one and the
+following incbin happened to restore the correct bytes, which is why the image
+comparison stayed clean while tests/test_per_line.sh flagged
+$003D2A/$003DDA -- the reason that check exists.
+
+The out-of-range guard added earlier covered 2-byte reads only; the 4-byte path
+is now flagged the same way, so such words become dc.w.
+
+Also records the successful play session in docs: 1757 -> 2457 executed
+addresses, code split 5.73% -> 6.16% (57 -> 118 intervals).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
