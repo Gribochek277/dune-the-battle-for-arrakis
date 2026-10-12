@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 55686c794fd552b6cce63a177639e9bfc3de27ea
+date: 2026-10-12T11:17:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tests: profile-aware suite (baseline tag vs current source)
+- test_baseline.sh rebuilds src/rom_head.asm from the baseline-byte-exact tag and
+  requires a byte-identical image
+- test_header.sh verifies the *baseline* header, since src/rom_head.asm now
+  carries the applied modifications
+- check_line_scope.py asserts no modification leaked out of the header region
+- disable pipefail around the verify_listing pipeline (that tool exits 1 when it
+  finds mismatches by design)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
