@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 888e9ad47fb2c6cbce182e84fc4ab62bf47fbda5
+date: 2026-10-12T16:11:37+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: headless differential harness (ticket 42)
+port/build/headless runs the port with no display and no emulator until N
+entries of the 68000 VBlank interrupt handler and dumps work RAM + registers
+as JSON in the same schema as scripts/capture_state.py, plus the reached block
+addresses in the same format as BlastEm's -l log. It is the port side of the
+differential comparison; scripts/compare_port_state.py (next commit) drives it.
+
+The rendezvous is the reference capture's: the interrupt frame has just been
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
