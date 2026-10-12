@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a5b6872117ad427b89b3f0239da9c5ee958dec5c
+date: 2026-10-12T13:38:24+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+capture: reference machine state from BlastEm's GDB stub
+scripts/capture_state.py runs the game headless and stops at the Nth entry of
+the 68000 VBlank handler (the ROM's vector at $000078), then records the GDB
+'g' register set, the interrupted SR/PC from the supervisor stack, work RAM and
+Z80 RAM into a deterministic JSON snapshot, together with the -l address log of
+the same run. --compare reports the first differing RAM address and every
+differing register.
+
+BlastEm's stub has no frame-count packet and its native debugger crashes in
+headless mode, so the stop is defined in guest terms instead of at BlastEm's
+frame counter; --frames N therefore means N taken VBlank interrupts, which is
+the instruction boundary the native port can rendezvous at (docs/decisions.md,
+D11).
+
+Every capture uses a private, empty HOME so SRAM is created from scratch and
+the result is reproducible; two captures of the same frame are byte-identical.
+The snapshot is derived from the cartridge and stays git-ignored like the other
+derived artefacts.
+
+tests/test_capture.sh proves byte-identity and comparator behaviour and is part
+of tests/run_all.sh.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
