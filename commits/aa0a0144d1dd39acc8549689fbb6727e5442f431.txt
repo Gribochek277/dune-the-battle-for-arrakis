@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: aa0a0144d1dd39acc8549689fbb6727e5442f431
+date: 2026-10-12T18:29:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 48: 48-transpiler-last-fallbacks
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
