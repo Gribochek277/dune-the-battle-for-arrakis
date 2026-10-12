@@ -1,0 +1,56 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c78d25f0689953a4baec6b5f112b0416d6776694
+date: 2026-10-12T20:30:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: VDP, DMA completion and the rendered frame (ticket 43)
+Implement the Mega Drive VDP in the port (port/runtime/vdp.c): the register
+file, VRAM/CRAM/VSRAM, the data and control ports with the two-word command
+latch, the status register with the DMA-busy bit the game polls at $000E68,
+all three DMA kinds (68k memory, fill, copy) and a 320x240 renderer (planes
+A/B with scroll, the window plane, sprites, the priority comparison). The
+picture is written by port/runtime/png.c, a dependency-free PNG writer.
+
+The harness can render the frame it reached (--png) and dump the raw VDP
+state (--vdp-dump); port/build/vdp-render renders a dump without a guest, and
+make -C port now builds the harness (it is the binary that writes the PNG).
+
+The frame clock spends a frame's worth of guest instructions (FRAME_BUDGET,
+--frame-budget) before a wait becomes a VBlank. Without it the guest's
+two-instruction wait for the frame counter ticked the counter hundreds of
+times per emulated frame, so the port ran the whole intro orders of magnitude
+too fast.
+
+Evidence:
+- scripts/capture_frame.py captures BlastEm's picture at a chosen VBlank
+  entry: a windowed emulator on a private Xvfb display (X11 forced, Wayland
+  dropped, private HOME, pty for stdin/stderr so warnings cannot become a
+  desktop dialog), driven by the GDB stub.
+- scripts/compare_frame.py compares that with the port's PNG. Frame 10 (the
+  SEGA logo) is pixel-identical: 0 of 76800 pixels differ. tests/test_frame.sh
+  runs that comparison and a black-frame negative case, and is part of
+  tests/run_all.sh.
+- The port's VDP state at frames 10, 400 and 600 equals BlastEm's event-log
+  state: 0 differing CRAM entries, 1 VRAM byte.
+- compare_port_state.py --frames 10 reaches frame 10. Frames 4, 6, 7, 11, 12
+  and 100 match byte for byte; 5, 8, 9 and 10 differ only in the interrupted
+  PC byte on the stack ($0012BC vs $0012B8, both inside the frame-counter
+  wait), which is the rendezvous, not the state.
+
+The boot fixture's register expectation moves with the device: the boot writes
+$8104 and $8F02 after the table and starts a VRAM fill, so reg1/reg15 and the
+fill's length counter differ from the table.
+
+docs/native-port.md documents the device, the evidence, what is deliberately
+not implemented (no cycle model, interlace, shadow/highlight, H-interrupt,
+sprite overflow/collision, 128K VRAM, byte-lane control queue, Mode 4) and the
+next blocker: the frame clock is an instruction budget, so the intro diverges
+by frame 800-1000 and later screens cannot be compared frame for frame yet.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
