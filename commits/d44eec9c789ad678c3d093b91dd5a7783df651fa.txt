@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d44eec9c789ad678c3d093b91dd5a7783df651fa
+date: 2026-10-13T00:09:45+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestration: unify the table and add tickets 55-56
+Two slices prepared while the port tickets run: a cycle-aware frame clock with a
+DMA cost model (ticket 43 documented the drift as the reason late frames cannot be
+compared), and input plus a playable loop, which is blocked by it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
