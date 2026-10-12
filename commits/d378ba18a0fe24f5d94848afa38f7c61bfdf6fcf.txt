@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d378ba18a0fe24f5d94848afa38f7c61bfdf6fcf
+date: 2026-10-12T11:54:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Keep emulator screenshots out of the repository
+They show the game's artwork, so they are treated like the extracted graphics:
+kept on disk as run evidence, git-ignored, and the reasoning recorded in
+docs/decisions.md (D5b).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
