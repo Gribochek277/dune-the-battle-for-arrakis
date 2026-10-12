@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1e6e8208337ef4aea408be775dfb416353bd55a0
+date: 2026-10-12T16:43:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: translate the remaining opcodes, and fix what the two paths disagreed on
+Ticket 45. The fallback histogram named the gap: btst/bset/bclr/bchg, movea,
+movem, the shift/rotate family, neg/negx, ext, swap, dbf and the long tail
+(adda/suba/cmpa, mulu/muls/divu/divs, not, nbcd, abcd/sbcd, exg, link/unlk,
+eor, Scc, CHK, TRAP/STOP/RTE/RTR, the group-4 SR/CCR/USP moves, jsr/jmp through
+every control effective address, and the (d8,PC,Xn) LEA). The translated share
+goes from 80.6 % to 99.962 % (39 578 of 39 593); the 15 left are invalid
+encodings that reach the interpreter through MD68K_FALLBACK (13 subq.b + 1
+addq.b with an address-register destination, 1 bchg d5,#$FF).
+
+The emitters use shared read-modify-write and address helpers so (An)+/-(An)
+steps exactly once, and the shift/rotate and BCD cores moved into the runtime
+as md68k_shift()/md68k_bcd() so a translated and an interpreted instruction
+cannot disagree about the awkward flags.
+
+Ticket 44's dual-path method exposed real disagreements in code that had been
+written long before. Both sides are fixed: the interpreter had SUB and CMP
+comparing their operands the wrong way round, MOVEA.W/L <ea>,A7 rejected as
+illegal (the boot code sets its own stack pointer with it), CLR and Scc using
+the read-modify-write store helper although they only write, the immediate
+group/ALU-to-memory/ADDQ/SUBQ stepping (An)+/-(An) twice, ADDQ/SUBQ #n,An
+setting the condition codes, and ABCD/SBCD moving A7 by one for a byte operand.
+The emitters gained the size-preserving Dn store ticket 44 documented, operand
+reads sequenced before the registers they share with the operation, and real
+MD68K_FALLBACK cases where a form is not translated instead of empty cases that
+fell off the end of md68k_translated_step().
+
+port/generated/game.c is regenerated with the merged transpiler.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
