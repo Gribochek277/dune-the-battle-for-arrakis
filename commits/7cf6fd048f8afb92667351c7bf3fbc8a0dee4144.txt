@@ -1,0 +1,58 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7cf6fd048f8afb92667351c7bf3fbc8a0dee4144
+date: 2026-10-13T10:05:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+VDP: planes are one linear 8 KiB window, so frame 400 matches
+The intro's frame 400 differed from BlastEm in 1234 of 76800 pixels (1.61 %):
+a two-cell-wide column of striped tile data down the left edge, plus the
+starfield behind it at another scroll position. The state at that boundary is
+identical on both sides, so the picture came from the same memories -- the
+renderer read them differently.
+
+Plane B's nametable holds both the stars (single cells, tiles $05D/$089) and,
+in the tail of some rows (row 9 cells 54..60, row 11 cells 45..60, ...), runs of
+consecutive tiles that render as the striped column. Zeroing 16 bytes at $E4F4
+(cells 634..641) removes exactly the column; the sprite table is empty and plane
+A contributes nothing. Fitting the reference's own 22 lit cells against the
+plane's star cells gives one rule with no mismatch:
+
+  cell = (tile_row * row_cells + ((x - hscroll) >> 3)) & 0xFFF
+  row_cells = 128 for 64x64, 64 for 64x32, 32 for 32x32
+
+which is BlastEm's addressing (read_map_scroll(): (tile_row << v_shift) plus the
+scroll's cell index, & 0x1FFF). In the 64x64 size a fetch row is *two* nametable
+rows, so those tail cells belong to the next row of the plane and the scroll
+pushes them off the 320-pixel screen; a per-row wrap -- what the port did -- put
+them at the left edge. The smaller sizes have one nametable row per fetch row,
+which is why every frame compared before this ticket was right.
+
+port/runtime/vdp.c now takes the plane pixel's position as x - hscroll in the
+plane's linear row, masks the column per size and the byte address with
+0x1FFF, and takes the vertical wrap from register $10 bits 4-5 as the reference
+does ($01/$11 for the logo, title and mission screens, $03 through the intro).
+port/tests/test_vdp_planes.c pins each piece with a hand-built state.
+
+The reference's picture of "frame N" turned out to be the state at entry N-1:
+BlastEm's video output lags its 68000 by a frame, so capture_frame.py filed the
+PNG one entry away from what compare_frame.py renders for the port -- 454
+pixels (0.59 %) of starfield phase on this screen, and 0 on every still screen,
+which is why it went unnoticed. The capture now waits one interval further, so
+both sides are the state at handler entry N. Its border rows (16 of the 240)
+are not VDP output at all but BlastEm's rolling framebuffer, so
+compare_frame.py grew --ignore-border, which the three picture checks use.
+
+Result: the port's frame 400 is pixel-identical to the reference, 0 of 71680
+active-area pixels. tests/test_frame_intro.sh holds it with a negative control
+one animation step away (454 pixels); tests/test_frame.sh, test_frame_sprites.sh
+and test_vdp_state.sh (frame 10, the selection frame, the VDP state at 10 and
+400) still pass, and bash tests/run_all.sh ends with ALL CHECKS PASSED. The
+cartridge is untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
