@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3ce134bbd2ad89debf339369d029e32a03b37f79
+date: 2026-10-13T03:02:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 55: cycle-aware frame clock and DMA cost
+One frame is 128 006 68000 cycles (262 scanlines of 3420 master clocks at 7
+per cycle, the emulator's own grid) instead of an 18 000-instruction budget,
+every instruction is charged its PRM/BlastEm time, and a DMA transfer's busy
+window is priced at BlastEm's cost (16 master clocks per word in H40, doubled
+for a V-RAM destination or a copy, plus 12 slots of start-up). The constants
+live in port/runtime/timing.h.
+
+Verified: frame 100 is identical (every register, all 65 536 bytes of work
+RAM); frame 800 is now identical too, where the instruction budget differed by
+29 bytes; the frame counter agrees with the reference to frame 10 000; the
+first state divergence is frame 824 at $FFFFE004, reported with the guest's
+activity instead of tuned away. tests/run_all.sh ends with ALL CHECKS PASSED
+and the cartridge stays byte-exact.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
