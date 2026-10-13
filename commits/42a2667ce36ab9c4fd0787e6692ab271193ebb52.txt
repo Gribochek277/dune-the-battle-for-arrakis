@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 42a2667ce36ab9c4fd0787e6692ab271193ebb52
+date: 2026-10-13T06:27:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets: merge the stray 4-column status table, and edge 60 -> 59
+docs/tasks/STATUS.md had grown a second table with only four columns
+(`# | Status | Branch | Note`), created when tickets 59-60 were added and
+extended by tickets 61-66. The scanner parses the seven-column table, so
+every ticket in the second one was invisible to it: `orchestrator_scan`
+reported "ready (0): none" while 59-62 had no blockers at all.
+
+Merge those rows into the real table, with the Blocked by column the
+scanner needs, and drop the second table.
+
+Ticket 59's own text says the VDP-state comparison route needs ticket 60
+first (capture_vdp_state.py refuses to dump the reference at frame 400),
+so record that edge in the ticket, the status table and the index rather
+than leaving it as prose.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
