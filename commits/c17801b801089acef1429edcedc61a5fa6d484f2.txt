@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c17801b801089acef1429edcedc61a5fa6d484f2
+date: 2026-10-13T04:36:46+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 56: real pads, host input and a playable port
+The controller ports are real now (port/runtime/pad.c): $A10003/$A10005 data
+and $A10009/$A1000B direction for three ports, ported from BlastEm's io.c -
+the pull-ups, the 3-button TH phases, the 6-button TH-edge counter with its
+signature reads and the 56 000-cycle timeout, now counted in ticket 55's cycle
+clock. Host input is one button bitmap per port, applied by the frame clock at
+the VBlank handler entry the frame is delivered at, so a press lasts exactly one
+frame's guest work and never changes mid-frame. The frame clock moved into
+port/runtime/mdloop.c so the harness and the window cannot drift; make -C port
+play builds the SDL2 window (port/build/dune-port) with BlastEm's key bindings.
+
+Verified: the same scripted sequence on the port and on BlastEm (windowed
+capture through xdotool) leaves identical state - 0 of 65536 RAM bytes and 0 of
+18 registers at frames 2216 and 2640 with Start held from entry 2200 - and the
+sprite frame is pixel-identical at the same boundary (port 2632 vs reference
+2640, 0 of 76800 pixels). With no input the 4 differing bytes and d3 are
+reported with addresses and values. tests/run_all.sh: 20 PASS, ALL CHECKS
+PASSED; make -C port test 35681 checks 0 failures; cartridge byte-exact.
+
+Two defects found and fixed on the way: the interpreter's memory shifts took
+their kind from the wrong bits (LSR/LSL/ROXR/ROXL/ROR/ROL ran as ASR and the
+rest were rejected - the game's lsr.w (a0) at $015454 faulted as soon as a
+mission started), and --vdp-dump-at exit (ticket 57) spun forever after the
+harness refactor because interrupted_pc was restored only after the exit dump.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
