@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5b3eb8363e8004c492a8f6dceb480abbf4ee5297
+date: 2026-10-13T07:45:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+VDP dump: hold the bits the memories store, not the read-back's own
+The reference capture refused to write a dump at frame 400: all 64 C-RAM
+entries differed between the CPU-driven read and the event-log replay, by
+exactly 0x111 each.  C-RAM stores nine bits per entry, so those five bits are
+not palette: BlastEm composes them from the VDP's read buffer (vdp.c,
+CRAM_READ/VSRAM_READ take `cram[...] & CRAM_BITS` with
+`fifo[fifo_write].value & ~CRAM_BITS`), and a probe in the dump routine showed
+the value coming back is the FIFO slot's -- the write made four writes ago.
+It is the machine's write history: 0x000 at frames 10-200, 0x110 at 250-350,
+0x111 at 400, 0x101 at 430, and no port can reproduce it.
+
+capture_vdp_state.py now keeps the bits the VDP stores in the dump (C-RAM
+0x0EEE per word, V-SRAM 0x07FF) and records what the read-back added under
+structures.<name>.unstored_bits; the replay cross-check compares stored bits,
+so a genuinely wrong dump still fails with its structure, offset and both
+values, and the frame it happened at.  compare_vdp_state.py reports a dump
+that carries read-back bits instead of reading it as state, and says which
+bits of C-RAM and V-SRAM it compares for.  The port masks writes the same way,
+so both dumps are in that convention: at frame 400 the port's V-RAM, C-RAM,
+V-SRAM and 23 of 24 registers are the reference's byte for byte, which
+tests/test_vdp_state.sh now checks alongside frame 10.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
