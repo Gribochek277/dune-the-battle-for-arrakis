@@ -1,0 +1,46 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9ae2ee532df4468ae369feef7cd2f4a99e5042c7
+date: 2026-10-14T00:37:31+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Z80: bit y,(hl) must not write back, and the register stream says so
+The vendored core's exec_opcode_cb() wrote the byte `bit y,(hl)` had just
+read back to the same address, where the Z80 only reads. Upstream's zexdoc
+and zexall cannot see it -- writing the same byte back leaves RAM
+unchanged -- but the cartridge's sound driver polls the YM2612's status at
+$4000 with `bit 7,(hl)` (BUSY) and `bit 0,(hl)` (timer A), so the write-back
+stored the status byte in the chip's address latch and the next data byte
+went to register $80 or $01 instead of the register the driver had latched.
+The driver's timer-paced DAC playback then ran without its timer reset and
+drifted away from the reference: 20 s into a 132 s mission run the port's
+register stream carried a $001 = $15 for every $027 = $15 the emulator's
+own VGM log had (129 621 extra writes), found by the comparison ticket 68
+added.
+
+The fix is one condition in that write-back. The DD/FD CB operand form
+(`bit y,(ix+d)`, the driver's BUSY wait) already guarded the BIT case, and
+the rest of the core's write-backs are genuine writes. z80.h is untouched;
+z80.c's upstream and local sha256, the reason and the regression fixture
+(tests/test_z80.c, "bit (hl) does not write back") are recorded in
+port/runtime/z80/README.md, and tools/REVISIONS.txt now says the vendored
+files carry one local patch rather than being verbatim.
+
+With the core patched the same mission run's stream has 902 412 writes
+against the reference's 897 252 and is the same sequence for the first
+12 375 writes (frames 250-1 220); the remainder is the driver's DAC burst
+timing under the port's Z80 timing model (mdz80.h), not the chip -- driving
+both cores with the reference's own write stream for the first 12 s gives
+636 912 samples with maximum difference 0. docs/native-port.md, "Audio,
+slice 2", records the long-run measurement and its limit.
+
+make -C port test: 36 177 checks, 0 failures (the new fixture included);
+tests/test_audio_compare.sh, tests/test_ym_log.sh and
+tests/test_recording.sh all pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
