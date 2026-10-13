@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 167b26db75a0b250ffd7fcbf43746954ebad62bb
+date: 2026-10-13T20:06:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Fidelity: the briefing text is the cartridge's font, and it has its own gate
+Ticket 64's report was that the briefing screen draws the glyphs with the
+bottom row missing and holes inside the letters ("ARE", "BEING",
+"PEACEABLE"). Those words are the mentat's house briefing, the three pages he
+reads after the house selection (entries 2920..3510, 3520..4000, 4010..4280),
+and the measurement says the port draws them exactly as the reference does:
+
+  * entry 3500 (page one, "HOUSE ATREIDES HAS A LONG TRADITION OF BEING FAIR
+    AND JUST ADMINISTRATORS."): 0 of 71 680 active-area pixels differ, measured
+    through two capture routes (scripts/replay-recording.py --checkpoint
+    briefing-text-page, 68.8 s, and the dashboard's own shared session);
+  * entry 3700 (page two, "OUR PEOPLE ARE LOYAL, HARD WORKING, AND
+    PEACEABLE."): 490 pixels differ, all of them the mentat's portrait
+    (x 33..76 y 145..181), none in the text rows;
+  * entry 5398 (the briefing-text checkpoint): 67 pixels differ, all of them
+    the portrait's eye (x 37..76 y 132..138).
+
+The 67 pixels, in the VDP's own terms: at the first one (39, 132) both planes
+contribute tile $000 (V-RAM $E988 and $C988), so neither plane draws it; the
+sprite attribute table at $C000 puts it on entry #9 (y 112, x 32, 3x3 tiles
+from base $589, palette 3, priority), row 3 of tile $58A at V-RAM $B14F = $A9
+-- colour index 9, CRAM palette 3 entry $46A = (174,119,87) -- where the
+reference's picture has index 10, entry $248 = (146,87,49): the same palette,
+one index apart, inside the iris. The port's own frames 5380..5420 are the
+same picture in that region (0 changed pixels), so the two sides hold
+different portrait tiles at this entry: the animation's step, not the glyphs
+and not the renderer.
+
+Why the glyphs look clipped is the cartridge: the font is a white glyph with a
+one-pixel black drop shadow baked into the tile, and the briefing screen draws
+it with palette 2, where entry 13 is white and entry 15 is black -- so the
+eighth row (and the shadow inside the strokes) is black on a black background
+on both sides. V-RAM holds the cartridge's own glyph table unchanged (letter
+'A' at ROM $057456, 'H' at $057536, 'T' at $0576B6, i.e. $057436 + (letter -
+'A' + 1) * 32), and the port's tiles at entry 3500 match those bytes exactly.
+
+So the ticket leaves behind a gate instead of a renderer change:
+analysis/checkpoints.json gains briefing-text-page (3500, pixel-exact, 0
+threshold), the frame the report is about, and tests/test_fidelity.sh now
+requires it to stay at 0 pixels and derives its checkpoint counts from the
+store so the catalog can grow. docs/native-port.md records the measurement
+(the pages table, the sprite-level evidence, the font bytes) under "The
+briefing text (ticket 64)".
+
+bash tests/run_all.sh ends with ALL CHECKS PASSED (25 pass), the baseline tag
+still rebuilds byte-identically, and no game source changed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
