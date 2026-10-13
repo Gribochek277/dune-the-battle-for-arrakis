@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9020a73b9ea5d84d15611102cbce59a3069b48da
+date: 2026-10-13T21:43:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the capture example's walk time is the one the artifact took
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
