@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c286d6e061997e81a08252bf6ae70099a7ee095a
+date: 2026-10-13T06:22:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: PSG fixtures, `--wav`, and an independent reader in the gate (ticket 58)
+The fixtures are the evidence the ticket asks for, and they state the arithmetic
+they assert rather than comparing against a re-implementation:
+
+  - the register protocol, including the two data-byte cases BlastEm gets wrong
+    (a data byte after a volume or noise latch reaches the register);
+  - the frequency relationship in both spellings (Tick/(2N) and the datasheet's
+    InputClock/(32N), so $0FE is 440.4 Hz and $1FE is 223.72 Hz), the counter's
+    flip schedule for N = 8, 1 and 0, and the 2 dB attenuator;
+  - the noise generator's four shift rates and its two modes, measured as the
+    sequences they produce: periodic noise repeats every 16 shifts with 16 ones
+    in 256 bits, white noise does not;
+  - the rendering: a programmed tone renders to 44 100 samples per simulated
+    second whose measured frequency is the programmed one within half a percent
+    (and a second tone far enough away that a wrong pitch would fail), the
+    volume steps come out at the table's ratios with 15 exactly silent, periodic
+    noise measures shift-rate/16 while white noise has no period, and the WAV
+    writer reads back byte for byte;
+  - all three write paths on the same chip the machine owns: the Z80's $7F11,
+    the 68000's $C00011 (and the even bytes that carry nothing), and $A07F11
+    through the Z80 window while the 68000 holds the bus.
+
+test_z80.c follows the driver's own four silence bytes all the way to the chip's
+volume registers, and the harness grows `--wav PATH` (plus `port.sound` in the
+state dump: rate, samples, peak, RMS and the PSG's registers) so a run's audio
+can be listened to. tests/test_audio.sh reads that file back with Python's `wave`
+module -- not the writer that made it -- and checks the shape, the length against
+the run's cycle count to the sample, and the pitch of the tone `make -C port
+test` leaves in port/build/psg-tone.wav; `tests/run_all.sh` runs it as "port: PSG
+audio is a real WAV".
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
