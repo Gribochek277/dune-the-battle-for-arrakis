@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 24a2cad3488216861bec48943162de72d49700a3
+date: 2026-10-13T06:28:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 58: audio slice 1, the PSG
+The SN76489 is implemented as a chip (port/runtime/psg.c): the latch/data byte
+protocol, three square-wave tone channels with 10-bit counters, the noise
+generator's 16-bit LFSR with its four shift rates, the documented 2 dB
+attenuator table, and the frequency arithmetic exposed for the tests
+(f = Tick/(2N), Tick = 223 721.5625 Hz, so $0FE = 440.4 Hz). port/runtime/sound.c
+owns the chip instance both CPUs write to and advances it from the 68000 cycle
+counter, so a write lands at the cycle the guest made it; it resamples to
+44 100 Hz mono 16-bit with an exact grid (a run of N cycles makes exactly
+floor(N*7*588/715909) samples, so durations can be asserted with integers).
+port/runtime/wav.c writes the RIFF file with no audio library, the counterpart
+of png.c. mdz80.c hands every Z80 $7F11 byte to the chip, md68k_mem.c gained the
+$C00010-$C00017 region the 68000 writes, and the harness gained --wav.
+
+Verified: make -C port test 35 857 checks, 0 failures (up from 35 489);
+tests/test_audio.sh measures both files with Python's wave module - the
+programmed tone comes back at 223.72 Hz (223721.5625/(2*500)) with peak 4095,
+and the run is non-silent, 0.25 s, at 44 100 Hz. Honest finding recorded: this
+cartridge's music is FM-only - a 400-frame game run with two Start presses makes
+1410 YM2612 writes and 18 PSG bytes with volumes at 15, so the game's PSG output
+is silence and the audible proof belongs to the YM2612 slice. The gate's full
+suite passes (22 m 02 s) and the cartridge stays byte-exact.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
