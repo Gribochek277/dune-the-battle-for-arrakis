@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d5a191a36dec0b271fd5aea0f4d48a7b40545ccb
+date: 2026-10-13T07:59:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+chore: record orchestrator run state and ignore session plan scratch
+.pi/orchestrator.json and .pi/orchestrator/decisions.md are tracked runtime
+files the orchestrator rewrites; leaving them uncommitted blocks the merge
+gate, which refuses to merge into a dirty base checkout. .pi/plans/ is a
+plan-mode session artefact, so it is ignored rather than committed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
