@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cf0b6f5dfcf677b662271d36e3280ebf7152b87d
+date: 2026-10-13T20:41:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 65/66: fold the owner's play-test observation into the tickets
+The owner played the build that includes tickets 59-64 and reported that the
+mission screens look right, so both tickets' premises are in doubt. Their notes
+are kept verbatim and each ticket now starts from testing the claim: attribute
+every differing pixel at the catalog's checkpoints to the recorded animation
+step or the credit counter, or find a real scroll/sprite defect.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
