@@ -1,0 +1,60 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 95eab801916e902087f50a5adc4b65bb1cab644f
+date: 2026-10-13T14:31:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Play sessions: the window records the pad, the reference replays it
+Every picture comparison stopped at the house-selection screen because
+nothing behind it can be reached with one scripted press, and no reference
+frame could be taken there. The port now records a session and the
+reference replays exactly it.
+
+`port/build/dune-port --record-input PATH` writes the pad's timeline: the
+effective state at every VBlank handler entry -- what the guest read, with
+the keyboard and the scripted presses together -- as one
+`FRAME:BUTTON[:HOLD]` line per run of a button, the language `--press`,
+`--replay-input` and `scripts/capture_frame.py` all speak. `--replay-input
+PATH` plays one back in either front end and `--dump-ram FRAME:PATH` writes
+work RAM at an entry, which is what a replay is checked against.
+`scripts/replay-recording.py` turns a checkpoint from the new
+`analysis/checkpoints.json` into the capture's `--press` options and writes
+the reference PNG for the briefing text, the mission map, the in-game HUD
+and the build panel (plus the house selection, the case that already had a
+reference); it then renders the port's frame of the same number and reports
+whether the two sides are in lockstep. `scripts/record_session.py` drives a
+sequence into the window with real key events on a private X display, which
+is how the committed recordings were made.
+
+Making the replay exact found three defects in the input path, all fixed:
+
+* the window indexed SDL_GetKeyboardState() with a keycode's low byte,
+  which is the scancode only for the arrows, so the dpad worked and
+  a/b/c/start did not;
+* md68k_pad_frame() cleared a button from every event outside its window,
+  so a later run of a button cancelled the run playing now -- which every
+  recording hits;
+* the window wrote its keyboard poll straight into the pad's effective
+  state, hiding the frame's scripted press from the handler about to run,
+  so --press never reached the game in the window.
+
+`scripts/capture_frame.py`'s retry corrects the stop entry by the measured
+error instead of the measured delay: frame 7897 was asked for three times,
+stopped at 7895 with a delay of 2 each time and never moved.
+
+Proof, in tests/test_recording.sh: the window's run and a harness replay of
+its recording hold the same 65 536 bytes of work RAM at frame 2640, and at
+9498 on the mission route; a key-driven session replays to the same state;
+an unpressed run is rejected; and scripts/compare_input.py with the
+recorded press still reports the reference identical at 2640. Every
+checkpoint was captured on the reference and agrees with the port's picture
+of the same entry within the moving units and counters: 0 of 71 680 pixels
+at the house selection, 67 at the briefing, 75 at the mission map, 45 at the
+in-game HUD and 96 at the build panel.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
