@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 63a2cf8ac577448bc2fc7dff4855aaef40cb0eef
+date: 2026-10-13T06:55:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 59-66 + toolchain: record what REA can and cannot read, measured
+REA is reachable now, so the notes that said 'its Ghidra provider rejects
+big-endian 68000' were only half the story: the same session opens the port's
+own x86-64 build and answers with the port's symbol names. Replace the
+hypothetical paragraph in each ticket with the measured table, the calling
+recipe, and the cost model that decides whether a worker can use it at all -
+the first call pays 45-60 s of whole-binary analysis and can trip a 60 s
+request timeout, which looks like a broken tool and is not.
+
+Also name the function each ticket should open first, so a worker does not
+rediscover the port's render path by eye.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
