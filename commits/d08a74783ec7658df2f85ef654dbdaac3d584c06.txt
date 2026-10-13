@@ -1,0 +1,68 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d08a74783ec7658df2f85ef654dbdaac3d584c06
+date: 2026-10-13T03:09:55+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the pads, the host input path and the playable window (ticket 56)
+The port rendered frames and matched the reference, but nobody could play
+it: the I/O page kept what was written to the controller ports, so a pad
+read came back as *every button held* and the game started its own demo
+and walked through its menus by itself. This makes the pads real, adds the
+host input path, and turns the result into something a person can play.
+
+* `port/runtime/pad.c` answers $A10003/$A10005 (data) and
+  $A10009/$A1000B (direction) for all three ports the way BlastEm's `io.c`
+  does: the control register decides which pins the console drives, the
+  rest are pulled up, and a 3-button pad reports `TH=1: C B Right Left
+  Down Up` / `TH=0: Start A 0 0 Down Up` while a 6-button pad counts TH
+  rising edges and reports `Z Y X Mode` and the signature read. The
+  counter's 56 000-cycle timeout is counted in instructions at the frame
+  clock's own exchange rate, since the port has no cycle model.
+* `md68k_mem.c` decodes the pad area as BlastEm does -- `(address >> 1) &
+  0xFF`, so both addresses of a pair are one register -- which is also
+  what makes a word write leave its low byte in the latch.
+* The host path is one bitmap of pressed buttons per port, applied by the
+  frame clock at the VBlank handler entry a frame is delivered at, so the
+  guest sees a button for a whole frame and never in the middle of one.
+  `port/build/headless --press N:BUTTON[:HOLD]` scripts a sequence for
+  tests and replays; the keys are BlastEm's own bindings, which is what
+  the reference captures press.
+* `port/runtime/mdloop.c` is the frame clock, shared by the differential
+  harness and the new playable window (`port/tests/run_play.c`,
+  `make -C port play`, SDL2 for the window, the texture and the keyboard),
+  so the frames a human sees are the frames the harness compares. The
+  window reaches the title screen, the house selection (arrows move the
+  cursor, Start or A confirms) and the mission briefing.
+
+Two defects came out of making the game reachable, both fixed here:
+
+* the interpreter read the memory-shift family's operation from the
+  register form's bits 4-3, so LSR/LSL/ROXR/ROXL/ROR/ROL executed as ASR
+  and anything but ASR was rejected as an unknown opcode -- the game's
+  `lsr.w (a0)` at $015454 (listed as `dc.w $E2D0`) faulted the run the
+  first time a real pad could take it past the house selection. The kind
+  now comes from bits 10-9 and the direction from bit 8, which is what
+  BlastEm's `(opcode & 0x8C0) == 0xC0` decode does, and
+  `port/tests/test_isa.c` pins all eight memory shifts with PRM-expected
+  flags.
+* the sprite comparison's frame pair only lined up because of the broken
+  pad; both sides are now driven with the same sequence and
+  `tests/test_frame_sprites.sh` searches a window for the pixel-exact
+  frame, because the selection frame pulses and the port is photographed
+  at a different moment of a frame than the emulator's screenshot.
+
+Verification: `scripts/compare_input.py` runs the port and BlastEm with
+the same scripted sequence and compares registers, work RAM and the bytes
+the game's own reader ($0011C2) keeps the pad state in. At entry 2216 with
+Start held from entry 2200 the two states are identical, and so are they
+at entry 2640 after the same press; `tests/test_input.sh` runs those, an
+input-free comparison at frame 1000 and a negative control that proves a
+wrong pad state is reported. `tests/run_all.sh` passes end to end.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
