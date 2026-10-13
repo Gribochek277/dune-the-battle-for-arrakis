@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cac68740a1cc66b51d50e1a77290c474a83c45a6
+date: 2026-10-13T05:00:27+03:00
+author: orchestrator <orchestrator@local>
+branches: main
+
+message:
+tests: build the fast harness every run, and capture the sprite reference when missing
+Two ways the gate could fail for reasons that are not the port, both found by
+ticket 56's merge: tests/test_frame_sprites.sh and tests/test_input.sh built
+port/build/headless-fast only when it was absent, so a binary left over from an
+earlier revision was used silently - ticket 56 added --press to the harness, and
+the stale binary answered 'unknown option --press' in a long-lived worktree
+while a fresh one passed. Both now run make every time; it is a no-op when the
+binary is current.
+
+The sprite check also required analysis/reference/frame-2640-start.png to exist
+and passed --no-capture, so a machine that had never captured it failed the
+check (the file is git-ignored derived data, and the worker's worktree happened
+to have it). It now captures the reference itself when it is missing, with the
+command its own header documents, and keeps using the cache afterwards. The
+capture is byte-identical to the one the worker had (sha256 1af8ef6e...), so the
+check's verdict is unchanged: the port's frame 2632 is pixel-identical to
+BlastEm's frame 2640.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
