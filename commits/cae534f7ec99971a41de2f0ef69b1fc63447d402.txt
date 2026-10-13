@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cae534f7ec99971a41de2f0ef69b1fc63447d402
+date: 2026-10-13T03:43:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 57: dump the reference's VDP state from the 68000 itself
+The GDB stub's byte accesses could not read the control port correctly (ticket
+52 documented why: the low byte first, and a pending first word turns the next
+write into a command word). This ticket has the guest do it instead: at the
+VBlank handler entry a 168-byte routine is uploaded to work RAM, the stacked PC
+is patched so the handler's own rte enters it, and the routine reads
+V-RAM/C-RAM/V-SRAM through $C00000 with a fresh address command before every
+word. capture_vdp_state.py writes the dump next to the existing captures and
+cross-checks it against the event log's replayed memories; compare_vdp_state.py
+reports the first differing byte per structure with its meaning.
+
+Verified: at frame 10, where the rendered frame is already pixel-identical,
+V-RAM (65 536 bytes), C-RAM (128) and V-SRAM (80) all compare 0 differ and 23
+of 24 registers agree - the exception is the write-only DMA length counter,
+which the hardware decrements during a transfer and a write-event replay cannot
+show (documented, and --strict-registers counts it). Mutated dumps are rejected
+at the changed offset. The port dumps at the handler *exit* to meet the
+reference's boundary (--vdp-dump-at exit). tests/run_all.sh: 19 PASS, ALL
+CHECKS PASSED; cartridge byte-exact.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
