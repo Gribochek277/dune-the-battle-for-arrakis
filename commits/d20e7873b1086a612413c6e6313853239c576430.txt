@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d20e7873b1086a612413c6e6313853239c576430
+date: 2026-10-14T00:53:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: what the mission's long run measures, and what it cannot
+The 132 s mission pair: 62 of 67 quarter-second windows are within 3 dB and
+50 cents at zero lag over the first 1000 frames, where the driver's register
+stream is exactly the reference's; the five that differ are note-transition
+windows, because the port changes note about 50 ms later than the reference.
+That is the Z80 timing model, not the chip -- driving both cores with the
+reference's own write stream for the first 12 s gives 636 912 samples with
+maximum difference 0. The whole run's numbers (166 of 528 windows, the
+comparator's spurious -70 ms envelope peak) are recorded rather than hidden
+behind a loose threshold.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
