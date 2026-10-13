@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 00c7eb5d52af972f35ca2320ca39f12fcc4d0116
+date: 2026-10-13T05:20:58+03:00
+author: orchestrator <orchestrator@local>
+branches: main
+
+message:
+tickets 59-60: the intro's left-edge column, and the reference VDP dump's CRAM read-back
+Both found while answering 'can I play it yet?': the playable build renders the
+house-selection screen pixel-identically (0 of 76800 pixels) but the intro's
+frame 400 differs from BlastEm by 1234 pixels, visibly a two-cell-wide column of
+garbage along the left edge that the reference does not draw. Diagnosing it
+needs the reference's VDP state at that frame, and scripts/capture_vdp_state.py
+refuses to write one: its CPU-read-versus-replay check fails with all 128 CRAM
+bytes differing, while the same check passes at frame 10.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
