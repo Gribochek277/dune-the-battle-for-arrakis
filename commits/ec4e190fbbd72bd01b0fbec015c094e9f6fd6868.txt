@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ec4e190fbbd72bd01b0fbec015c094e9f6fd6868
+date: 2026-10-13T06:22:58+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the audio slice, what it measures, and what audio still lacks (ticket 58)
+docs/native-port.md gains "Audio, slice 1: the PSG (ticket 58)": the chip and
+the two places the port deliberately follows the documentation instead of
+BlastEm (the data bytes into a volume or noise register, and register value 0
+leaving the counter idle), the clock and sample-rate arithmetic, the time base
+and what the Z80's missing cycle ratio costs it, the three write paths, the
+command that writes a WAV, the measurement table behind every fixture, and what
+remains -- the YM2612's FM synthesis, mixing levels and stereo, the rate and the
+resampler, the Z80's timing inside a frame, the YM2612's timers, and the
+window's missing audio device.
+
+It also corrects what this work measured and what ticket 46's note had wrong:
+the game's PSG is silent because its driver silences it (four volume writes, all
+four registers at 15, a silent WAV), and its music path *is* reached now -- a
+400-frame run with two Start presses produces 1410 YM2612 register writes and 18
+PSG bytes, the tone registers being programmed while the volumes stay at 15,
+because this cartridge's music is FM-only. The milestone table, the prototype
+status and the next-steps list reflect the split of N5; port/README.md gets the
+new modules, the fixtures and the `--wav` command, docs/build-and-test.md the
+new gate check, and docs/project-status.md the honest audio limitation.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
