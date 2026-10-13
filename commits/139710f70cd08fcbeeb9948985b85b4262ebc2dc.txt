@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 139710f70cd08fcbeeb9948985b85b4262ebc2dc
+date: 2026-10-14T02:16:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Audio: the window plays the samples the harness measures
+The renderer's buffer was a measurement sink, so the music ticket 68 synthesised
+had nowhere to go: the window opened no audio device at all. It now installs a
+streaming sink -- md68k_sound_set_sink() hands a front end every sample as it is
+made, fed by the same branch of the same sample window that appends to the
+recording -- and port/runtime/audio.c is the sink it installs: a single-producer/
+single-consumer ring SDL's audio callback pulls from, with the latency the device
+starts on (three guest frames, 2 205 samples, 50 ms), a 65 536-sample ring, and
+the two clocks' difference turned into underrun/overrun counters instead of
+noise (an overrun skips the oldest audio on the consumer's side, so the producer
+never waits).
+
+The device is asked for the renderer's own format exactly (44 100 Hz, mono,
+16-bit, 1024 samples per callback) with allowed_changes off, so the buffer the
+callback receives is the stream the machine made; a device that will not take it
+is SDL's to convert, after the callback. A machine with no sound device, or
+--no-audio, prints why and plays silent. --record-audio PATH streams what the
+sink produced to a WAV (wav.c grew begin/append/finish for it).
+
+The claim is checked two ways. port/tests/test_audio.c renders a second through
+the machine's own chip with the recorder *and* the sink on and compares all
+44 100 samples one by one with md68k_sound_samples(), plus the ring's
+push/pull/wrap-around, its underrun and overrun policies and the latency gate;
+tests/test_play_audio.sh runs the window against SDL's dummy video and audio
+drivers and requires its --record-audio WAV to be byte-identical to
+port/build/headless-fast --wav for the same 120 frames (94 937 samples, peak
+438), a paced run to report zero underruns and zero overruns with
+produced = played + buffered, the guest's rate to stay in ticket 61's band with
+the audio on (600 frames: 59.93 with the device against 59.93 with --no-audio,
+the audio path costing 0.9 ms of the 16.7 ms frame), and a missing device to
+degrade to silence and record the same audio anyway.
+
+tests/test_pacing.sh and tests/test_recording.sh now pin SDL_AUDIODRIVER=dummy
+for the same reason they pin the video driver: the host's sound server is not
+what they are measuring.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
