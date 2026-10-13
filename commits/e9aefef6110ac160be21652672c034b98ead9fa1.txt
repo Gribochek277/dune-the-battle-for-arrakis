@@ -1,0 +1,72 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e9aefef6110ac160be21652672c034b98ead9fa1
+date: 2026-10-13T11:10:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Window pacing: the wall clock runs the guest, the display does not
+The playable window advanced one guest frame and presented it, and the only thing
+that paced it was SDL_RENDERER_PRESENTVSYNC, which is not a clock. Ticket 61
+measured the guest at 34.7 frames per second that way and at 22.7 with
+--no-vsync, whose help text promised SDL_Delay pacing and whose code had no delay
+at all, so the game played in slow motion. Measured again before this change, on
+this session (load average 4.6): 300 frames in 5.30 s with vsync (56.6 fps) and
+3.73 s without (80.3 fps) -- the rate was whatever the host's output path did.
+
+port/tests/run_play.c now owns the clock. A guest frame is due every
+MD68K_SECONDS_PER_FRAME (port/runtime/timing.h: 128 006 68000 cycles at
+53.693175/7 MHz, 16.6885 ms, 59.92 Hz, the cartridge's own frame and the grid
+mdloop.c delivers the VBlank on), read from SDL's monotonic clock; the loop
+advances exactly one guest frame per period, SDL_Delay waits out the remainder,
+and the deadlines are absolute, so a late wake shifts a frame instead of
+accumulating drift.
+
+What the host cannot keep up with is the picture, never the guest: a frame is
+presented only if its guest work finished inside its slot. A present that does
+not fit costs a presented frame -- the guest runs back to back on the following
+frames until it is on schedule again -- and a present every PLAY_MAX_SKIP (30)
+frames keeps the screen from freezing whatever happens. 600 frames measure 59.93
+guest frames/s with vsync requested (597 presented, 3 dropped) and 59.93 with
+--no-vsync; with 8 busy loops on 16 cores the guest still runs at 59.90 while 50
+of 300 frames are dropped, and a --scale 8 window on the dummy video driver
+drops 36 of 180 (present 7.96 ms) at 59.67. So --no-vsync now means what its help
+text says: the present returns immediately and the wall clock alone paces the
+guest.
+
+The loop measures every stage around its own call and prints, at exit, the frame
+rate, the presented/dropped counts and the per-frame cost of the guest, the VDP
+render, the texture upload, the clear+copy, the present, the event poll and the
+wait, after naming the SDL video driver and renderer it got. That is where the
+ticket's missing time went: on this machine the guest is 3.94 ms and the output
+path 10.8 ms of a 16.7 ms frame, with the VDP render (6.5 ms) the biggest single
+cost -- larger than the guest -- and the present's share moving between 0.7 and
+6 ms depending on where SDL's Wayland swap lands (which is why the display cannot
+be the clock; the XWayland path measures 59.93 too, at a 3.00 ms present).
+
+mdloop.c's stable-spin diagnostic is now optional (mdloop_config.diagnose_idle):
+it scans the visit history at every instruction boundary, and the window reports
+neither idle_pc nor idle_streak, so it turns the scan off. Measured over three
+300-frame runs the window's guest stage is 4.00/4.06/4.01 ms per frame with the
+scan off and 4.40/4.42/4.52 ms with it on: 0.4 ms per frame, a tenth of the
+guest. The differential harness keeps it on -- its JSON and --trace-idle are what
+it exists for -- and grows --no-idle-scan as the same switch for measuring it.
+A stall that has no idle pc to name now names the boundary the mask held.
+
+tests/test_pacing.sh joins the gate: against SDL's dummy video driver, where no
+display refresh can pace anything, 180 frames must take one cartridge frame each
+on the wall clock (58.5..61.5, cross-checked against the shell's own timing of
+the run, with every frame either presented or dropped), --no-vsync must pace the
+same, and a --scale 8 window must report dropped frames while the guest's rate
+stays within one frame per second of the cheap run.
+
+docs/native-port.md ("The playable window's pacing"), docs/build-and-test.md and
+port/README.md record the design, the measuring commands and the measured
+tables. No game source changed: tests/run_all.sh ends with ALL CHECKS PASSED and
+the cartridge is byte-exact.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
