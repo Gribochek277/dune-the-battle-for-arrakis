@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 975c387ceb2373e74a734e7219bd13b9da09e58c
+date: 2026-10-13T06:37:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 61-66: say which analysis front-end actually works on this target
+The owner asked the tickets to tell workers to use REA. Measured instead:
+
+* the mcp__rea__* tools are registered (154 of them) but every call is
+  refused with "disabled by the effective /tools selection" - they are off
+  in this session, and codemode goes through the same registry, so there is
+  no route around it;
+* even enabled, REA cannot read this cartridge: docs/toolchain.md records
+  both attempts (raw-binary admits only a fixed little-endian allowlist; the
+  ELF carrier in analysis/carriers/ comes back "unsupported ELF
+  architecture"), and the tool's own result schema lists
+  x86/x86_64/arm/arm64/mips and no m68k.
+
+So the tickets name the route that works - Ghidra headless with
+68000:BE:32:default for the cartridge - and keep REA where it does apply:
+the port's own native x86-64 build, which is what ticket 61's cost
+breakdown is made of. Each ticket also says to report the tools being
+absent rather than working around it silently.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
