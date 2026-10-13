@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1c7adbc78c1b0366cc0eb2a226ece4376bc354df
+date: 2026-10-13T06:22:40+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the SN76489 PSG, its samples and the WAV they go into (ticket 58)
+The port had no sound: the Z80's and the 68000's register writes to the two
+sound chips were recorded as ordered events and nothing was synthesised. This
+is the first half of that -- the PSG -- and the machine's whole audio path
+around it.
+
+port/runtime/psg.c is the chip: the latch/data byte protocol of the SN76489
+(including the volume and noise data bytes the smspower page says are not
+ignored, which BlastEm drops), three tone channels, the noise generator (a
+16-bit LFSR, so periodic noise repeats every 16 shifts -- the Sega parts -- and
+white noise feeds the parity of bits 0 and 3 into bit 15) with its four shift
+rates, the documented 2 dB attenuator, and the counters behind all of it. Its
+clock is the same one BlastEm uses: a tick every 240 master clocks,
+223721.5625 Hz, from which the documented frequency arithmetic follows
+(f = Tick/(2N) = InputClock/(32N) with the 3579545 Hz input clock).
+
+port/runtime/sound.c is what turns that into audio: the chip instance both CPUs
+write to, the machine's cycle counter as its time base (md68k_step advances it
+after every instruction, so a register write lands at the cycle the guest made
+it at), and a box-filtered resampler at 44 100 Hz mono whose sample grid is
+exact -- one sample is 715909/588 master clocks, and a run of N cycles makes
+exactly floor(N * 7 * 588 / 715909) samples. port/runtime/wav.c writes them as a
+16-bit mono WAV without an audio library, the way png.c writes a picture.
+
+Both write paths reach the chip: the Z80's $7F11 (mdz80.c) and the 68000's own
+$C00011 with its odd mirrors, a new MD68K_REGION_PSG block in md68k_mem.c whose
+even bytes carry nothing, as the hardware's data bus does. The PSG is not reset
+by the Z80's reset line: BlastEm resets the YM2612 there and the chip's
+registers are the guest's to keep.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
