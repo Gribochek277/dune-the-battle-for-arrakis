@@ -1,0 +1,52 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 66f593b546a1f1806fa7e65512736e14ca7966fe
+date: 2026-10-13T21:24:59+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Audio: record what the cartridge sounds like, and compare two recordings
+The port can write its own audio as a WAV and nothing could say whether that
+audio is what the cartridge makes, so "the port has no sound" and "the port's
+sound is wrong" were the same sentence. This adds both halves of the
+measurement and no chip: the port's 44 100 Hz output is untouched.
+
+The reference is BlastEm's own recorder, not a rendering of its VGM log. The
+`i` key (ui.record_video) calls render_save_audio(), which appends the buffer
+mix_and_convert() produced -- every audio source summed after its own one-pole
+lowpass and the overall gain, 16-bit stereo at 48 000 Hz, which is the byte
+stream the sound device gets. The other strings the binary carries are not
+audio: -y writes one WAV per YM2612 channel before the mix and without the PSG,
+and the VGM log is the chips' register writes, whose renderer would have to be
+a YM2612 -- the very thing a port-side comparison is measuring.
+scripts/capture_audio.py drives the recording with the same GDB-stub session
+the reference pictures use (presses at exact VBlank entries, the recorder's key
+typed while the CPU is stopped) and writes
+analysis/reference/checkpoint-<name>.wav. Two runs of it are byte-identical
+(sha256 d8a4b87b for the house-selection checkpoint, twice), because the pinned
+configuration syncs the emulator to audio and the toggles land at fixed
+emulated positions.
+
+scripts/compare_audio.py reads both files with Python's wave module, downmixes
+and normalises them, finds the delay between the two recordings from their RMS
+envelopes, and reports peak, RMS, the dominant spectral peak and the
+differences per 0.25 s window, ending in a verdict that names the first window
+that fails and one of six reasons -- length, time shift, silence, level, pitch,
+envelope -- or a pass. It never resamples: each side's features are measured at
+its own rate, which is why a 48 kHz stereo copy of a 44.1 kHz mono file still
+passes.
+
+What it says today: the house-selection reference (2640 frames, 2 125 824
+frames = 44.288 s, peak -17.0 dBFS) against the port's WAV of the same run
+(1 953 209 samples of zero) is FAIL (silence) -- the honest answer before the
+YM2612 slice, from ticket 58's FM-only music. The same pair exists for the
+mission-map checkpoint (132.5 s of in-game music). tests/test_audio_compare.sh
+proves the verdicts on known-answer WAVs (identical, a real resampling,
+silence, a 0.4 s shift, a different pitch, -12 dB) and the reference's two-run
+identity whenever the emulator is present.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
