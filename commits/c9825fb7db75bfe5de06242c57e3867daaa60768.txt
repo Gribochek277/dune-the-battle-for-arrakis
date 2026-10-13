@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c9825fb7db75bfe5de06242c57e3867daaa60768
+date: 2026-10-13T12:11:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 61: 61-window-pacing-60fps
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
