@@ -1,0 +1,65 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: aad8c92ea0c64e47af9f40968c697c5deba54426
+date: 2026-10-13T17:53:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Fidelity: the checkpoint catalog is one command and a gate
+Ticket 62 gave the checkpoints reference pictures; nothing said which frames
+to compare or what "good" meant, so a picture defect arrived as "it looks
+wrong". `scripts/fidelity.sh` (engine: `scripts/fidelity.py`) walks
+`analysis/checkpoints.json` and reports one row per checkpoint: both PNG
+paths, the differing pixel share over the 224 active lines, the first
+differing VDP structure and byte, the wall time and a verdict.
+`--all` adds a summary table and a contact sheet with the port, the
+reference and the difference side by side.
+
+Every checkpoint carries a `gate`. `house-selection` is `pixel-exact`
+(threshold 0, and the run fails on any difference at all); the four mission
+checkpoints are `known-bad` with the measured baseline, the differing
+region and the reason in the note, so a checkpoint that differs today stays
+*in* the catalog (it cannot be deleted to make a run pass) and a share worse
+than the recorded threshold fails. Measured today: 0 of 71 680 pixels at the
+house selection, 67 (0.09 %) at the briefing, 75 (0.10 %) at the mission
+map, 45 (0.06 %) at the in-game HUD and 48 (0.07 %) at the build panel.
+
+The VDP column: where a reference dump exists for the frame the row is
+`scripts/compare_vdp_state.py`'s verdict; none can be made for these five
+frames, because `scripts/capture_vdp_state.py` dumps through the GDB stub
+with no pad path and would capture the attract-mode screen. The row says
+that, and names the first differing *pixel* in the port's own state instead
+-- plane cell, tile, nametable offset and hscroll entry, computed with the
+renderer's rules (`render_plane` in port/runtime/vdp.c).
+
+The reference half now costs one emulator session per recording instead of
+one per checkpoint: `scripts/capture_frame.py --rendezvous 2640,5398,...`
+walks the entries once and photographs each on the way. Two things had to be
+handled, both measured on this target: a screenshot press is handled one to
+three frames after it goes out, so a press is sent on every frame from three
+entries before a checkpoint; and BlastEm names a screenshot after the second
+it is written, so two in one second would be the same file -- the session
+moves every picture it sees out of the naming pattern, which is also what
+tells it that a new picture appeared, and the interval a picture appears in
+is what says which entry it belongs to.
+
+Wall time for the whole catalog: 978 s (16.3 min) before, 300 s cold and
+93 s warm after; per checkpoint 51/106/302/333/186 s before and
+5.9/15.6/22.5/23.3/25.9 s after.
+
+Proof, in tests/test_fidelity.sh (wired into tests/run_all.sh): the store
+keeps a pixel-exact and a known-bad checkpoint with their gates; a
+three-entry rendezvous costs fewer sessions than entries and reproduces the
+single-frame capture (the first against the port's own frame 10); `--all`
+produces one row per checkpoint, the sheet and the VDP half; the
+reference-dump branch names a first differing VDP byte (exercised with the
+port's own dump standing in for a reference, in a private directory); a
+mutated reference under the pixel-exact checkpoint fails, and a known-bad
+checkpoint pushed past its threshold fails. tests/run_all.sh ends with
+ALL CHECKS PASSED and no game source was touched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
