@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 70aa06e24533eaf24486bd52e4a726365b9bfe04
+date: 2026-10-14T17:35:47+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Switch (ticket 72): one machine, two arrangements, and the equivalence gate
+The port is one emulation with two arrangements around it, and this ticket is
+the safety net that makes the second one safe to grow: a runtime switch between
+them in the same binary, the new arrangement in port/next/, and the gate that
+holds the two to the same bytes.
+
+* `--engine legacy|next` on the differential harness and the playable window;
+  `legacy` is the default and by construction, so every existing test, script
+  and habit behaves exactly as it did and no test needed changing to
+  accommodate the switch.
+* `port/next/` is linked into every front-end binary and composes the machine
+  from the modules that already exist (md68k, vdp, mdz80, sound, pad, mdloop):
+  the machine core is called, not copied, and no runtime source is edited.
+* `port/next/next_app.c` owns the arrangement's bring-up (reset, hooks, pads,
+  scripted presses, recorder) and the run through the shared frame clock;
+  `port/next/engine.c` is the switch itself.
+* The equivalence gate: one binary, two switches, the house-selection
+  recording, 2700 frames -- byte-identical PNGs, byte-identical WAVs and the
+  same 64 KiB of work RAM, with the counts printed
+  (`scripts/compare_engine_runs.py`, wired into `tests/run_all.sh` as
+  "port: the two arrangements agree byte for byte").
+* The check is proved able to fail: `--perturb pixel|audio|ram|frames`
+  deliberately breaks a next run and the gate requires the comparison to
+  report it, so a check that cannot fail cannot pass. Each state dump records
+  which arrangement ran (`port.engine`, supplied by the arrangement itself),
+  so the comparison cannot pass by comparing legacy with itself.
+* The window takes the switch too: the gate runs 60 frames through both
+  arrangements under SDL's dummy video driver and compares the work RAM at
+  entry 60.
+* Documented in `port/README.md`, `docs/native-port.md` (including the
+  measured numbers) and both binaries' `--help`.
+
+The cartridge is untouched: `scripts/compare_roms.py` still reports only the
+intended header bytes, and `tests/run_all.sh` ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
