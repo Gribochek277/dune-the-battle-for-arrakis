@@ -1,0 +1,45 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 585ad0548ea443b9fde5eff0ae9be97b749ff9bb
+date: 2026-10-14T22:59:32+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Bound the emulator's dropout flake, and name the check that failed (ticket 80)
+BlastEm intermittently dies mid-run -- `capture_state: BlastEm closed the GDB
+channel (exit code None)` -- and it has cost this campaign three gate failures
+(tickets 61, 65 and 79), each of which passed the same content on the next
+attempt. docs/toolchain.md told a human to treat it as a flake; an unattended
+gate cannot make that judgement, so this makes it mechanical and narrow:
+
+* scripts/capture_state.py retries exactly that class (EmulatorFlake: the
+  emulator failing to start or dropping its GDB channel) EMULATOR_ATTEMPTS = 3
+  times in total, logging every attempt and its reason -- and a success after a
+  stumble says so, so a green gate still records it. Nothing else is retried: a
+  wrong plausibility verdict, a comparison difference, a byte difference or a
+  missing file is a finding. Every capture script (capture_frame,
+  capture_vdp_state, capture_audio, capture_ym_log, capture_sprite_limit)
+  retries through the same helper, and BLASTEM points them at another build.
+* tests/run_all.sh keeps each check's output and ends a failed run with the
+  failed check's name, the command that runs it, the capture's retry lines and
+  the tail of its own output, instead of SOME CHECKS FAILED alone. It grows
+  --only PATTERN for tests/test_emulator_retry.sh, which drives that report
+  through the real script.
+* tests/stand-in-emulator.py is the proof: a fake BlastEm that answers a
+  headless capture's GDB packets and can be told to die once, always, or
+  mid-run. tests/test_emulator_retry.sh requires dying once to leave the suite
+  green with the retry logged, dying always to fail naming the check, the
+  command and the emulator's reason, and the controls that must never be
+  retried (an implausible capture, a comparison, a missing file, a missing
+  binary) to fail without one.
+
+docs/build-and-test.md records the policy and the stand-in tests, docs/toolchain.md
+the flake and BLASTEM, and docs/html is rebuilt. Warm gate: 878 s with the new
+check against 926 s before it, and tee adds nothing measurable to the dominant
+`make -C port test` (131/127 s without, 127/133 s with).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
