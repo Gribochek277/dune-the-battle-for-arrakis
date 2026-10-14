@@ -1,0 +1,58 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f65700653ec769de840c283cb3708b05262eaa55
+date: 2026-10-14T18:58:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Documentation site (ticket 78): a page per routine, diagrams generated from the tree
+The repository's knowledge was prose, a name file and a call graph, and there was
+no picture of the application anywhere. This is the medium the ticket asks for:
+`scripts/build_docs.py` (standard library only, no network, no JavaScript) turns
+those existing sources of truth into a static site under `docs/html/`, committed
+so it reads from a `file://` URL with no build step at all.
+
+* 1244 generated files: one page per code address (812 of them -- 77 with a
+  curated name, 735 still an address), one per curated name that is not code
+  (27), one per addressed work-RAM byte (364), the game's 16 subsystems, every
+  markdown document, and both diagrams as SVG.
+* Every page states what to edit for it: the name and the evidence line come from
+  `analysis/symbol-names.txt`, the code from the committed segment source, the
+  prose from the markdown -- which the site renders where it stands, so the
+  generator is never the place anything is written.
+* The diagrams are measured, not drawn. The port's structure is its zones and the
+  include directions between them: the zones and the allowed directions are
+  declared in `docs/port-zones.json`, and the build fails, naming the file and
+  the direction, when a module has no zone or an `#include` is not allowed (the
+  check ticket 75 will own; the diagram follows the file). The game's subsystem
+  map is the call graph grouped by the section headers of the curated names,
+  with the unnamed code as a node -- 11 calls leave their subsystem for another
+  named one and 14 for code nobody has named.
+* `scripts/analyse_code.py --committed-only` and a `build_functions` flag: the
+  site is committed, so its analysis is a function of the committed tree alone
+  (the Ghidra inventory and the coverage logs are git-ignored; `code-map.json`
+  carries the same evidence per interval), and the quadratic body scan that the
+  site does not use is skipped -- 15 s of load become 0.9 s.
+* The gate, in `tests/run_all.sh` as "docs: the committed HTML site is generated
+  and current": `tests/test_docs.sh` builds the site twice and requires the trees
+  to be byte-identical, compares the committed site against a fresh build, walks
+  every link of both trees (a page, a heading in it, or a file in the
+  repository), requires a page for every curated name, and proves five failure
+  modes with negative controls on a copy of the site -- a hand-edited page, a
+  file the generator does not produce, a broken internal link, a deleted curated
+  page and a mutated diagram are each reported by name. Build: 4.7 s. Check:
+  1.9 s.
+* AGENTS.md gains the rule this ticket exists to establish -- every finding comes
+  with documentation, a name added is a page added, a structural change updates
+  the diagram -- with the two commands; `docs/build-and-test.md` documents the
+  site and its gate; `README.md` points at it. The decisions the brief left open
+  (what a committed site may read, which addresses get pages, why the zone
+  declaration is provisional, the counts the ticket quotes differently -- the
+  file has 104 curated names, not 165, which is its line count) are in
+  `docs/decisions.md`, D27.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
