@@ -1,0 +1,67 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dbe4d9f275c20f0f4e28bbd8fde2cb5e0154f8f7
+date: 2026-10-15T00:34:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Name 120 more routines by meaning, and write the game's architecture down (ticket 73)
+The owner's request is that the game read as meaning rather than as addresses.
+Passes 1 and 2 named the most-called routines and the record subsystem; this
+pass names the paths a feature actually runs through, and writes the document
+that ties them together.
+
+Names (analysis/symbol-names.txt, curated 104 -> 239):
+
+* the boot path: BootInit $001666, InitVdp $0010BE, DetectHardwareVersion
+  $001D10, InitTitleGraphics $001D42, ClearWorkRam/ClearCram/ClearVsram,
+  the palette fade pair and UploadPalette;
+* the sprite record pool and the sprite-table upload: InitSpritePool $001502,
+  AddSpriteRecord $0012DE, BuildSpriteTable $001360, UploadSpriteTable $00216A,
+  FreeSpriteRecord/SetSpriteDelay/SortSpriteRecord;
+* the frame clock and the VBlank handler's helpers: UpdateFrameClock $00229A,
+  ResetFrameClock $002312, MarkFrameBoundary $00232A, FlushPadState $0022FE,
+  UpdateInputState $002608, plus the four pad bytes $FFFFE41A-$FFFFE41D;
+* the mission map view: InitMapRenderer/RedrawMapPlane/UploadMapRow/
+  UpdateMapViewport/UpdateCursorPosition in seg_code_00284C, the scroll side in
+  seg_code_001EC4 (SetMapScrollPosition $002522, CenterMapOnCell $00271C,
+  EnterMission $00262C, EnterPlacementMode $00267A, ...);
+* the unit update pass and its AI entry points: RunUnitUpdate $0199BE,
+  CompleteUnitConversion $01D19E, SetUnitTarget $01D2BE, AimUnitTurret $01D47C,
+  SetUnitBuildProgress $01D586, GetAngleBetweenPoints $00E30A;
+* the front-end screens: RunFrontEnd $00518E, RunAttractScreen $00CFCC,
+  RunMenuScreen $010818, RunPasswordScreen $010EE6, RunSelectorScreen $002364,
+  RunMission $00B626, LoadScreenResource $022530 and the window helpers;
+* the sound driver's 68K command interface ($0D52B6-$0D5484, called through the
+  vector table at $024000) and the wrappers on the unit/screen paths.
+
+Every name carries its evidence in the file and its reasoning in the notes
+(section "M2-4"), and every entry is reached in the coverage logs. The names
+are all applied: `jsr (BuildSpriteTable).w` where the listing said
+`jsr (sub_001360).w`. Ten names whose game term is an interpretation rather
+than an instruction-level fact are marked [HYPOTHESIS] and carry the capture
+that would settle them in the M2-4 hypothesis table. Two defects found while
+reading: the listing's $00518A `subi.l` swallows the first word of RunFrontEnd,
+and $00518E has no instruction line at all though it is the call target.
+
+docs/game-architecture.md is the other deliverable: the boot chain, the frame
+loop and the main-line/VBlank split with each screen's FrameHandler, the mission
+loop's per-frame call list, the driver command protocol (vector table, ring at
+$A01B40, index at $A00036), the record/handle model and the map cell encoding
+(summaries that point at M2-2 for the field tables), the screens and their
+state, the input path, the subsystem boundaries, and the seams a port can use --
+the driver interface, the record/handle model, the map cells, the input state,
+the register shadows, the frame clock and the sprite table -- each with what
+breaks if it is bypassed.
+
+Verification: scripts/regenerate.sh --no-tests -> "==> OK"; the rebuilt image
+differs from the dump in the 42 header bytes of M1 and nowhere else; the
+per-line listing check reports only those 4 header lines; bash tests/run_all.sh
+ends with ALL CHECKS PASSED; make -C port test is 728 checks, 0 failures;
+python3 scripts/build_docs.py --check is current (1269 pages, 239 name pages).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
