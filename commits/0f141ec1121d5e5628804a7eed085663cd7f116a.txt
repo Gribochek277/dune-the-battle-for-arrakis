@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0f141ec1121d5e5628804a7eed085663cd7f116a
+date: 2026-10-14T19:19:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 79: the curated names must be tracked before ticket 73 grows them
+analysis/symbol-names.txt is hand-written and not regenerable, but it is matched
+by .gitignore's analysis/*.txt and symlinked from the main checkout into every
+worktree by install-tools.sh -- so a worker editing it edits the shared checkout
+instead of its own branch, and the names would not appear in a commit or a diff.
+Ticket 79 tracks it, stops the symlink, audits the other pipeline inputs and adds
+a gate check; ticket 73 now waits for it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
