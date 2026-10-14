@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dd1a4cba3921bb1a04302a6a84af267530a7a866
+date: 2026-10-14T15:59:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 72..77: the next-architecture campaign, rows folded into the status table
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
