@@ -1,0 +1,65 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2d921399a06efd9c4f92269e62a1d6abc3821c51
+date: 2026-10-14T09:25:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Audio: the console's output chain, so the port's WAV is the reference's (ticket 71)
+Ticket 70 left one difference the comparator named every window: the port's
+high-frequency share was up to 8.7x the reference's on bright FM notes and its
+level up to +8.4 dB on a streamed effect. The chips were not the cause (ticket
+68 proved them sample-exact against BlastEm's own); what happens after them was.
+The reference recording is BlastEm's mixed output, and BlastEm runs every audio
+source through a one-pole lowpass (render_audio.c's lowpass_sample(),
+audio.lowpass_cutoff = 3390 Hz in the pinned default.cfg) before it mixes it and
+converts the mix to 16 bits.
+
+port/runtime/lowpass.c is that pole: BlastEm's coefficient arithmetic
+(0x10000 * dt/(dt+rc), rc from the cutoff, dt from the source's own period), its
+int16 state and its truncation. sound.c owns one instance per source, stepped
+where the chip's level changes -- the PSG at its 223721.5625 Hz tick (alpha
+5697), the YM2612 at its 53267.0387 Hz sample rate (alpha 18720) -- so the box
+filter's sample count and the WAV's shape are untouched. The truncation is kept
+because it is visible: the YM2612's raw zero-offset floor of 438 settles at 435,
+which is the reference recording's own floor (measured on its silent first
+seconds).
+
+The other half was the PSG's own level. BlastEm's PSG source carries the chip's
+unipolar output at the documented attenuator table / 14 (its PSG_VOL_DIV), where
+the port had a centred square at table >> 3: +4.9 dB of amplitude and another
+3 dB of RMS from the waveform. The port's PSG now follows BlastEm's -- unipolar,
+/14 -- which also puts the reference's DC in the port's samples. That is a
+deliberate departure from the physically accurate model, which psg.h records:
+the console AC-couples the chip's output, but the port's reference is the
+recording, and the recording carries the chip's own unipolar level.
+
+Measured on the 132 s mission pair (the 7898-frame run of ticket 70): the two
+files' total RMS +2.11 -> +0.01 dB; the above-3390 Hz share 4.7..8.7x ->
+1.0..1.7x; level-failing windows 47 -> 12 of 528; windows within 3 dB and 50
+cents 180 -> 185 strict and 257 -> 270 with --local-shift 0.02 (280 at the
+measured +36 ms offset, against 262 before). Every remaining level failure is a
+DAC burst's or a PSG effect's boundary -- each is within 0.9 dB of the reference
+over a 1-second window at +36 ms -- plus the two windows after the recording's
+frame-4298 press, which tickets 65/66 own. The 300-frame house-selection gate
+still passes, with its envelope correlation at +0.869 against +0.855.
+
+Fixtures: port/tests/test_lowpass.c pins the coefficients against BlastEm's own
+expression, the exact step response at both rates, the DC fixed point and its
+truncation bound, and the -3 dB point measured from swept tones (2861 Hz on the
+YM2612, 3242 Hz on the PSG; the coefficient's own are 2879 and 3240 -- the
+pinned 3390 Hz parameter through BlastEm's backward-Euler discretization, which
+is what the port follows, not the hardware's). test_psg.c and test_ym2612.c
+measure their chips' levels through that chain, with the reason recorded where
+an expectation moved. The runtime still needs no libm; only the test binaries
+link it, for the swept-tone fixture.
+
+docs/native-port.md has the section with the table of remaining windows and the
+commands that produce them; bash tests/run_all.sh ends with ALL CHECKS PASSED
+and the cartridge stays byte-exact.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
