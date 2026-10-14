@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2778806248aa9d34c16f4b956580d96817e3bd77
+date: 2026-10-14T09:53:19+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 71: record the measured before/after numbers in the ticket
+The acceptance criterion asked for the numbers here as well as in
+docs/native-port.md; the worker left them in its report, so the orchestrator
+folds them in.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
