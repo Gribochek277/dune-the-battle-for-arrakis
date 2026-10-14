@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 39d9af2d78c3e513a0ccfe307bf41976aecc9c6b
+date: 2026-10-14T17:00:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 72/73/78: same-binary switch instead of a branch, HTML docs before the understanding pass
+Rewrite of ticket 72 per the owner's decision: no long-lived branch, the new
+implementation grows beside the verified one in port/next/ and is selected by a
+runtime argument in the same binary, with the machine core shared and untouched.
+The equivalence gate now compares one binary against itself under both switches.
+
+New ticket 78 (static HTML documentation: one page per routine, generated
+diagrams, a gate that keeps the site current) runs before the understanding pass,
+so ticket 73's names and subsystem descriptions land in the site rather than in
+another markdown file.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
