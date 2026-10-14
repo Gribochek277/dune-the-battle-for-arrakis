@@ -1,0 +1,58 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0a118e14e863a94c632e91b14a11db30f8a6ffb0
+date: 2026-10-14T12:06:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Scroll (ticket 65): measure the mission's plane state, and gate a moving stretch
+The owner's note on the ticket says the screen looked right in play, so this is
+a measurement ticket: make the mission's scrolling comparable word by word, say
+what the comparison finds, and leave the machinery as a gate. No port code
+changed -- the renderer, the scroll decode and the frame clock are the ones
+tickets 43/55/59 wrote, and the comparison says they are right.
+
+  * `scripts/capture_vdp_state.py --press`: the reference VDP dump can now be
+    taken at a screen only a recording reaches. The walk is
+    `scripts/capture_frame.py`'s own session, so a checkpoint's picture and its
+    dump cannot drift. One witness changed with it: the game's VBlank counter is
+    reset when a screen starts (`sub_002312`), so the capture checks the
+    routine's read against the value it read at the handler entry (exactly one
+    more) instead of against the frame number.
+  * `scripts/compare_scroll_state.py`: the scroll state in the VDP's own terms --
+    register $0B's hscroll/vscroll modes, $0C and the plane size in $10, the
+    plane bases, all 224 hscroll table line entries (A and B words) and the 40
+    VSRAM words -- printing both values for whatever differs.
+  * `scripts/compare_scroll_stretch.py` + `capture_frame.py --stretch` +
+    `port/build/headless --png-stretch` / `--vdp-log`: a scrolling stretch
+    compared frame by frame, with the emulator's own frozen-framebuffer failure
+    mode detected and refused (exit 2) instead of reported as a difference.
+  * `port/tests/test_vdp_planes.c`: two fixtures for the per-column vertical
+    scroll, the mode this cartridge never sets.
+  * `analysis/checkpoints.json`: `intro-starfield` (entry 900), the catalog's
+    only 64x64 plane-size screen and a screen whose plane B scrolls every entry.
+
+Measured: at the mission-map checkpoint (7898) the port's scroll state is the
+reference's byte for byte (all 224 hscroll entries, all 40 VSRAM words, the mode
+bits, the plane size); the whole VDP state differs only in the animated unit
+icon's tiles and the counter's pixels. The intro's starfield stretch
+(entries 895..925) is pixel-identical on all 31 frames while its plane scrolls
+one pixel per entry. The mission map's own stretch (8038..8100, a held Right)
+moves both sides' hscroll 144 pixels, one entry apart in phase (the reference
+reads $00E5 at 8100, the port $00E8); its reference *pictures* could not be
+compared because BlastEm's framebuffer freezes on that screen under the walk
+(the pictures filed under 8040, 8044, 8051, 8072 and 8100 were all the state at
+8038). The cartridge never sets register $0B bit 2, so no checkpoint can
+exercise the per-column mode: the docs record that with the evidence and the
+fixtures pin the port's implementation.
+
+New checks: `tests/test_scroll_state.sh` (identical dumps compare, a mutation of
+each structure is reported with both values, and the cached mission dump must
+match) and `tests/test_scroll_stretch.sh` (the 31-frame stretch must pass, a
+mutated picture must fail, a frozen set must be refused).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
