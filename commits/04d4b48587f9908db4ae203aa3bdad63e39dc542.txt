@@ -1,0 +1,66 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 04d4b48587f9908db4ae203aa3bdad63e39dc542
+date: 2026-10-14T15:58:30+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Sprites (ticket 66): measure the mission's sprite list, and gate the limit
+The owner's note says the screen looked right in play, so the ticket's first
+job was a measurement, not a hunt. Measured: the port's sprite list at the
+mission checkpoints *is* the reference's -- the same entries, in the same
+order, at the same Y/X -- and the only drawn entry that differs is the
+animated unit icon's tile word, one animation step apart, the class tickets
+65 and 70 already record.
+
+  * `scripts/compare_sprites.py` walks the sprite attribute table's linked
+    list in both VDP dumps -- the port's `--vdp-dump-at exit` and the
+    reference's capture -- and prints every entry with its table address and
+    screen line/column, the per-line limit's outcome (which entries the 20/16
+    limit drops, with their addresses), and the first entry the two disagree
+    about, classified as *placement* (a different entry, order, Y, X or size:
+    exit 1) or *graphic* (the tile word: the animation step, exit 0, because
+    where a sprite sits is what the tool gates).
+  * Measured with it: 26/26 entries at 7898 (the first disagreement is entry
+    10, table +0x0050, same Y $0A1 X $101 size $05 link 11, tile $3E6 H-flipped
+    against $3DA V-flipped) and 33/33 at 8148 (entry 17, table +0x0088, the
+    same icon). The reference dumps are one emulator walk each with the
+    recording's presses (ticket 65's --press route).
+  * `headless --sprite-log PATH`: a per-entry summary of the walk (table base,
+    the list's length, the busiest line, overflowing lines, dropped entries),
+    so the question "is there a screen over the limit" could be asked without
+    one dump per frame. Over the whole 9 600-entry Atreides route the list
+    reaches at most 41 entries and the busiest line holds 14 of the 20 the
+    hardware shows: the cartridge never reaches the limit.
+  * `scripts/capture_sprite_limit.py` + `scripts/compare_sprite_limit.py`: the
+    reference behaviour for the limit, taken on a crafted state *inside
+    BlastEm* (the 68000 is hijacked at a VBlank entry and made to stream the
+    state into V-RAM), with the identical state dump rendered by the port's
+    own renderer. 21 entries on a line drop the twenty-first (entry 20, table
+    +0x00A0); 17 are all drawn (H40's limit is 20, not H32's 16); an entry
+    that is not on the line consumes no slot. Both pictures are BlastEm's
+    pixel for pixel, 0 of 71 680, and the two states differ from each other's
+    picture by 128 pixels (the `--cross` negative control).
+  * `scripts/compare_sprite_stretch.py`: 30 consecutive frames (7891..7920)
+    with the differing share per frame -- 0.2288 % to 0.2539 %, 164..182 of
+    71 680 active pixels -- and every differing pixel inside the three
+    rectangles the screen's own measurements give (the animated unit icon,
+    the map unit beside the selected yard, the credit counter). Three entries
+    whose interval BlastEm's presentation skips are static-stretch copies
+    (7900 = 7902, 7910 = 7912, 7919 = 7921 are pixel-identical), which the
+    check re-derives from the pictures.
+  * `analysis/checkpoints.json`: the mission-map and in-game-hud notes record
+    the sprite-list measurement; `docs/native-port.md` gains "The mission's
+    sprite placement (ticket 66)".
+  * tests: `tests/test_sprite_state.sh`, `tests/test_sprite_limit.sh` and
+    `tests/test_sprite_stretch.sh`, wired into `tests/run_all.sh`. The
+    house-selection selection-frame check keeps its exact-match threshold.
+
+No game source changed; `build/dune.bin` differs from the dump only in the
+header block, and `bash tests/run_all.sh` ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
