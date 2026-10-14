@@ -1,0 +1,54 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4b8b508512a48dc32a5876bc817b21f4374f6476
+date: 2026-10-15T02:38:30+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Stop the sweep at an instruction the emulator executed, so RunFrontEnd has a line (ticket 81)
+$00518E is RunFrontEnd, the target of the jsr at $001EDC and the loop the game
+spends its title time in, and the committed listing had no instruction line for
+it. The words before it are the front end's four-word index table; the table's
+$0000 is a dirty byte immediate, so the decoder rejected it and resumed on the
+$0480 after it, which reads as "subi.l #$000048E7,d0" -- six bytes that swallowed
+the routine's opword, and left the movem's register mask to be decoded as
+"move.b d0,d4" at $005190. BlastEm reads the same bytes the same way, so an
+oracle cannot see this one; the executed addresses can, and that is the evidence
+the fix uses.
+
+scripts/make_segments.py now writes the coverage logs' addresses to
+disassembly/code-entries.txt, disassembly/dune-arrakis.yaml hands that file to
+sega2asm as code_entries_path, and the 68000 sweep may not decode across one of
+its addresses: the words from the start of the decode up to the entry become
+dc.w and the next instruction is decoded exactly at the entry. A rejected
+instruction follows the same rule -- its fallback stops at the entry instead of
+at the last word it read.
+
+16 listing lines changed, each one a decode that contradicted an executed
+address, and 20 instructions were recovered at those boundaries: the 16 executed
+addresses that had no line have one now, and none remains inside an accepted
+instruction. Four more executed addresses sit in bin segments, where the split
+demotes fragments under --min-code bytes to data; the check reports them instead
+of failing on them. Eight of the recovered boundaries are routines the analysis
+had already named -- RunFrontEnd $00518E, UnlinkStructureFromTeamList $0101DE and
+the call targets sub_006AF4, sub_00A9AE, sub_00B0FA, sub_013928, sub_016FAC --
+and one more, $0109E6, turns four raw-address bsrs into a visible routine. All 53
+changed listing lines are within one instruction of an executed address, so
+nothing else moved.
+
+tests/test_listing_resync.py asserts the new fixture points and the class: every
+executed address inside a code interval has a line of its own, which fails on the
+pre-fix sources naming all 16. go test ./disasm/m68k/ has fixtures for the rule
+and for the byte accounting under it. verify_listing.py reports the same 4
+mismatching lines as before (all four in the intended header modifications),
+scan_resync.py reports 0 renderable-opword dc.w sites, the rebuild is
+byte-exact outside that header, and tests/run_all.sh ends with ALL CHECKS PASSED.
+docs/disassembly.md records the rule as F11 with the site table and the counts;
+disassembly/code-entries.txt is a new committed pipeline input, declared in the
+audit table and in tests/test_pipeline_inputs.py.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
