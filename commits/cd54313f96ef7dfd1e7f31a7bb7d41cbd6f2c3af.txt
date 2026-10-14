@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cd54313f96ef7dfd1e7f31a7bb7d41cbd6f2c3af
+date: 2026-10-14T17:53:13+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 72: 72-next-implementation-behind-switch
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
