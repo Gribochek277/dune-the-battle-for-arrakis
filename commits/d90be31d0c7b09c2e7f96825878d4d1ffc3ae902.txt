@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d90be31d0c7b09c2e7f96825878d4d1ffc3ae902
+date: 2026-10-14T21:30:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 79: 79-track-curated-knowledge
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
