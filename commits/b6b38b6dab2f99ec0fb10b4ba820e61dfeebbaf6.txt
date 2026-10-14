@@ -1,0 +1,71 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b6b38b6dab2f99ec0fb10b4ba820e61dfeebbaf6
+date: 2026-10-14T06:04:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Z80: the sound CPU runs at its own clock (ticket 70)
+The port ran one Z80 instruction after every 68000 instruction, which is not a
+clock: the sound CPU's speed became a function of the guest's instruction mix.
+md68k_step() now calls mdz80_run() after every 68000 instruction, which runs
+whole Z80 instructions until the Z80's clock passes the machine's -- one
+T-state is 15 master clocks against the 68000's 7 (MD68K_MCLKS_PER_Z80,
+BlastEm's own MCLKS_PER_Z80/MCLKS_PER_68K), so a nop is 8.57 68000 cycles and
+the driver's average instruction is 20.5. While the Z80 is in reset or the
+68000 owns its bus its clock is levelled, not banked: a long bus hold is not a
+debt it pays back in a burst when it is let go. mdz80_step() is still one
+instruction, which is what the driver fixtures drive.
+
+The per-instruction cost is measured, not assumed. port/tests/z80_timings.txt
+is scripts/z80_timing_probe.py's comparison of the port's core against BlastEm
+v1.0.0's own (its z80.cpu through its cpu_dsl.py in interpreter mode): every
+complete encoding of the base map and of CB, ED, DD, FD, DD CB and FD CB, each
+with every flag clear and set, 3 200 cases, one instruction each from the same
+registers and memory. 3 134 agree exactly; 66 differ (33 encodings, worst 11
+T-states) and the table commits both columns, so the error is in the file. The
+port keeps the pinned core's numbers because they are the Z80's documented
+timings (INC SP 6, CB (HL) rotate 15, INC IX 10, RETN 14, CPI 16) where
+BlastEm's core simplifies (4, 14, 8, 8, 18); port/tests/test_z80.c runs all
+3 200 cases through the core on every `make -C port test` and requires the port
+column to be what it charges, so the model cannot drift silently.
+
+Measured on the 7 898-frame mission replay: the Z80 executes 49 342 322
+instructions against 93 917 720 (its clock now covers 99.7 % of the machine's
+time, against 196.1 % -- the old model ran it at twice the hardware's speed),
+while the 68000's own trajectory does not move (94 160 928 instructions and
+1 013 551 514 cycles against 94 161 164 and 1 013 551 508). The driver's
+timer-paced DAC bursts now match the reference's within +-10 writes of 12 000-
+14 000 (0.07 %) where the old model wrote 3.3-5 % too many, and its 3 000-frame
+host cost falls from 8.40 s to 8.00 s.
+
+The music's note writes ($28, $A0/A4/B0) are the reference's in the same order
+over the whole 71 s the two machines share a game state, on plateaus of +2.77
+frames (spread 1.0) and -2.26 frames, with the step at the screen change -- and
+the old model's offsets are the same to 0.02 frames, so the ~40 ms is the
+port's cycle estimate of the boot (the port's first VBlank entry is at machine
+frame 11), not the sound CPU. The 300-frame house-selection gate pair still
+passes ticket 68's thresholds, with a better envelope correlation (+0.855
+against +0.805); the mission pair passes 180 of 528 windows at the same
+thresholds (166 before), 257 with ticket 70's --local-shift 0.02 and 351 with
+60 ms, and its remaining windows are the reference's analog-ish output chain
+(the port's share of the energy above 3 390 Hz is up to 8x the
+reference's, its level up to +5.4 dB on bright notes), the DAC bursts' residue and the post-press divergence.
+
+The one thing the clock moved: the checkpoint catalog's animated-element phase.
+The briefing portrait is now in step at 5 398 (0 pixels against 67) and a unit
+icon is one step apart at 7 898 and 8 148 (182 and 152 pixels against 75 and 45)
+-- the game's handshake waits now cost what the hardware charges and the port's
+estimated 68000 cycle model no longer has the sound CPU's error to cancel
+against. analysis/checkpoints.json records the new measurements and the reason,
+with the thresholds moved by the measured amount.
+
+docs/native-port.md's Z80 timing paragraph is replaced by the model, the
+measurement and what is still approximation (bus contention, the interrupt at
+an instruction boundary, the last instruction's overshoot).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
