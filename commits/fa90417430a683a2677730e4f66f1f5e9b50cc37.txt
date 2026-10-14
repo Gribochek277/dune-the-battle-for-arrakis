@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fa90417430a683a2677730e4f66f1f5e9b50cc37
+date: 2026-10-15T00:38:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 81: fix the listing's swallowed instruction before generating readable C
+Ticket 73 found that RunFrontEnd's entry at $00518E has no instruction line -- the
+preceding subi.l eats its first word -- the same class ticket 54 fixed once. It is
+recorded, not fixed, in the pass-3 notes. Since ticket 74 generates readable C from
+this listing and the naming work is built on it, the decoder fix runs first.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
