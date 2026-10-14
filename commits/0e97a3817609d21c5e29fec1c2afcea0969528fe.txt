@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0e97a3817609d21c5e29fec1c2afcea0969528fe
+date: 2026-10-14T21:30:05+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 80: bound the emulator dropout flake before the understanding pass
+Three gate failures this campaign (61, 65, 79) came from the same BlastEm GDB
+dropout, each green on re-run. Ticket 80 retries the flake class a bounded number
+of times with logging, keeps a persistent failure fatal, and makes the failure
+name the check instead of ending at SOME CHECKS FAILED. Ticket 73 waits for it so
+the naming work is not interrupted by it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
