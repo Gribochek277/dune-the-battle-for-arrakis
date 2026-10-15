@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d55f31f06bea6ab8888da5ab2b10c464a98aa7ad
+date: 2026-10-15T20:24:59+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 82: 82-gamepad-support
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
