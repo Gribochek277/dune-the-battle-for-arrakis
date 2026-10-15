@@ -1,0 +1,99 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b2c39a8e2006872bfbb972784246bdf7b57a8842
+date: 2026-10-15T19:13:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The second input device: a gamepad, its binding file and hot-plug
+The owner asked for controller support, and the zone model promised it was
+two things: a backend beside platform/keyboard.c and a map beside
+app/input_map.c. This is both, in both engine arrangements -- a device is
+not a feature of an engine (D32) -- and it adds no screen and changes no
+game logic.
+
+* `platform/gamepad.{c,h}`, `platform/gamepad_names.c`: SDL's game
+  controllers in the backend's own numbering (d-pad, A/B/X/Y, Start, Back,
+  the shoulders) as held/pressed bitmaps, one device per controller port,
+  hot-plug tracked by instance id, and the controls a device does not have
+  so a binding for one can be reported rather than silently inert. The names
+  live in a file of their own without SDL, so the app's file reader links no
+  device. SDL's controller subsystem is started only when the host has a
+  pad: bringing it up is SDL's whole device discovery -- ~0.4 s through
+  sdl2-compat/SDL3 inside a sandbox -- and that is the host's time, not the
+  guest's, so it happens before the frame clock and the run reports it
+  (below). The engine is not asked; the kernel's capability files are, by
+  SDL's own rule for a joystick.
+* `app/binding_file.{c,h}`: `gamepad-map.ini`, the port's first
+  configuration file (D34): one `[gamepad]` section, `control = function`
+  with both sides from closed lists, `deviceN = portP|auto|none` pins, loud
+  errors naming the line, and a whole-file writer for ticket 86's screen.
+  The file is the whole map: a control it does not mention is not bound.
+* `app/input_map.{c,h}`: the gamepad's built-in table, the closed function
+  vocabulary the file spells, and the per-port resolution --
+  `mda_input_begin()` starts a port's frame and each device's map is OR-ed
+  into it, so the keyboard and a pad at one port are a union, and a control
+  the connected pad lacks is skipped. A pad plugged in makes its port a
+  6-button pad (its Back button is Mode); F1/F2 still switch the type.
+* `app/app.{c,h}`, `app/play_backend.{c,h}`, `app/play_options.c`,
+  `app/run_play.c`: the loop resolves every controller port from the maps it
+  was configured with; the backend polls the gamepad first -- its latch is
+  an event watch, so a press that is over before the next poll still fires
+  its action -- and prints the attach, detach and missing-control lines; the
+  front end owns `--gamepad-map`, `--no-gamepad` and the default path beside
+  the binary.
+* Tests: `port/build/input-map-test` grows the gamepad table, the union and
+  the missing-control rule; `port/build/binding-file-test` is the format,
+  every error with its line, and the save/load round trip; and
+  `tests/test_gamepad.py` drives the real binary with SDL's virtual pads
+  (the `MDP_GAMEPAD_TEST_SCRIPT` hook) and asserts on what the *guest* saw:
+  every control, attach and detach, the latch, the union with a real keyboard
+  key, the ports and a pin, the missing-control line, the file's errors,
+  `--no-gamepad`, and both engine arrangements on the same twelve runs.
+* Docs: `docs/gamepad.md` is the player's page (the format, the functions,
+  the errors, what hot-plug looks like) and the maintainer's; the input
+  recipe in `docs/port-architecture.md` is what exists rather than "a gamepad
+  later"; `CONTEXT.md` gains *device* and the binding file's shape; the site
+  is regenerated.
+
+A pad attached when the run starts must not make the pacing gate red, and the
+gate may not be widened to hide it. Measured first, under the pacing check's
+own conditions (180 frames, SDL's dummy video and audio drivers), with the
+controller subsystem forced to start through the hook:
+
+    no pad path:       wall 3085 / 3086 / 3086 ms, frame clock 3.003 s, 59.94 fps
+    forced to start:   wall 3488 / 3528 / 3503 ms, frame clock 3.003 s, 59.94 fps
+                       reported start-up 0.405 / 0.446 / 0.418 s
+
+The frame clock's window and the guest's rate are identical in both -- the
+0.4 s lands entirely before `mda_pacing_begin()` -- so the init was never the
+guest's time; the check's process-wide timing was charging it to the frame
+rate, and 3504 ms is the bound. Moving it inside the run is worse (a 0.44 s
+stall drains the audio ring, which is what the underrun counters are for), so
+the port now measures its gamepad start-up and says so --
+
+    dune-port: gamepad: start-up 0.434 s before the frame clock (...)
+    wall - start-up: 3085 / 3086 / 3085 ms
+
+-- and `tests/test_pacing.sh` and `tests/test_play_audio.sh` exclude exactly
+that number, print it, and hold everything else unmoved: the 58.5..61.5 band,
+the frame clock's own window, `presented + dropped`, the audio format, the
+zero underruns/overruns and the WAV comparison are the same assertions they
+were, and the exclusion is capped by the existing 90 % lower bound so a run
+cannot hide its pacing behind the line. Both checks also run those assertions
+over reports that are wrong in one way each (a rate outside the band, a wall
+clock that does not match, a device that starved, the pad report with its
+start-up line taken away) and require them to be refused. Verified with a pad
+actually attached as well: both checks pass. Found while measuring and fixed:
+`run_play.c` opened the gamepad twice (the block that moved it before the
+window had not been removed), which leaked a backend and would have reported
+the wrong start-up.
+
+The cartridge is untouched, the fidelity checks are the ones that existed,
+and `bash tests/run_all.sh` ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
