@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3e3757a9cc4c0241a12ed8d8b634e3ad07572f7d
+date: 2026-10-15T07:50:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Zones: move the runtime into machine/chips/output, the front ends into app, and SDL into platform (check and docs pending)
+The port's tree is grouped by responsibility (ticket 75): port/machine/ is the
+68000, its memory map, the interpreter, the cycle clock, the Z80, the bus and the
+frame clock; port/chips/ the console's VDP, pads, PSG, YM2612, filters and mixer;
+port/output/ the sink and the WAV/PNG writers; port/platform/ the host (SDL's
+window, keyboard, audio device and clock); port/app/ the two front ends and the
+work they share. The two giant front ends are split along their responsibilities
+(options, the harness's reporting, its hooks and per-entry state, the window's
+session recording, its audio path, its pacing) and no hand-written file is over
+64 KiB.
+
+Still missing, and coming next: scripts/port_zones.py's negative controls wired
+into tests/run_all.sh, docs/port-architecture.md, the docs site rebuild.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
