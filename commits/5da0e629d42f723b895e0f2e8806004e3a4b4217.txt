@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5da0e629d42f723b895e0f2e8806004e3a4b4217
+date: 2026-10-15T09:40:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The renderer is a seam: the machine hands over a state, a renderer draws it
+`port/chips/vdp.c` both modelled the VDP and drew its picture, so
+"replace the renderer" meant editing the chip. It now models the chip and
+stops: the picture is an implementation of `port/output/renderer.h`, which
+is handed the VDP's state `const` and a surface the caller owns.
+
+* `output/renderer.h`, `output/renderer.c`: the interface
+  (`md_renderer_draw(renderer, vdp, surface)`), the surface rule and the
+  registry `--renderer NAME` reads. The contract a backend works from is in
+  the header: who owns the surface and how long it lives, when a draw
+  happens (one per delivered frame, at the VBlank entry, 128 006 cycles =
+  16.69 ms = 59.92 Hz), that C-RAM is re-read on every draw and no
+  palette-change signal exists, that there are no dirty regions, that a
+  partial or interrupted frame never reaches a renderer, and that
+  everything is single-threaded.
+* `output/surface.h`: the picture (RGB24, top row first, 320x240, the
+  caller's memory) as one type the renderer, the PNG writer
+  (`md68k_png_write_surface()`) and the window (`mdp_window_present()`) all
+  use, so those two sinks are backends of the same seam.
+* `output/render_software.c`: the renderer the port has always had, moved
+  out of `chips/vdp.c` with its arithmetic unchanged; the plane/sprite
+  fixtures now draw through the seam and `port/build/vdp-render` too.
+* `output/render_stub.c`: the second implementation -- one flat colour per
+  frame and a digest of the state it was handed. It is the proof that a
+  renderer is swappable rather than wrapped.
+* `chips/vdp.{c,h}`: the rendering section and `md68k_vdp_render()` are
+  gone, and the header now says what a renderer may read.
+* `--renderer NAME` selects the implementation in both front ends (software
+  by default, a typo is an error), and both create one renderer and one
+  surface and hand the surface to their sink.
+* `docs/port-zones.json`: the seven new `output/` modules and one direction
+  the renderer needs, `output -> chips` (the reverse is deliberately absent:
+  `chips/` cannot name a renderer, which is the seam).
+
+Proof. The gate that existed before the seam says no pixel moved: the
+pre-seam build (350b433) and this one rendered 168 full frames -- every
+catalog checkpoint plus the moving screens around them, frames 390..9508 --
+byte for byte identically, and `scripts/fidelity.sh --all` reports all seven
+checkpoints inside their gates (the three pixel-exact ones at 0). The second
+half is new: the boot runs through the software renderer and through the
+stub and the machine state comes out identical while the pictures differ --
+`port/tests/test_renderer.c` (5 fixtures inside `make -C port test`) and
+`tests/test_renderer.sh` (120-frame harness runs, both engine arrangements,
+`--png-stretch` through the stub, an unknown name refused, and the window's
+64 KiB of work RAM identical through both renderers). Ticket 72's
+equivalence check and ticket 61's pacing check are unmoved.
+
+docs/decisions.md gains D29 (where the seam lives, why the state is `const`,
+why the stub is a recorder) and the site is rebuilt in the same commit.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
