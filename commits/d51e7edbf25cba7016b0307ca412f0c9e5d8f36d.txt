@@ -1,0 +1,57 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d51e7edbf25cba7016b0307ca412f0c9e5d8f36d
+date: 2026-10-15T22:28:11+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+A named guest routine runs as the port's C, proved by the harness
+Ticket 83: the mechanism the C migration needs -- a table of C implementations
+keyed by the guest's own entry address, its contract, and the proof that a
+replaced routine is indistinguishable from the guest's -- plus the first
+replacement, proved on the house-selection recording.
+
+The machine gains one seam (md68k_set_replacement_hook()): the dispatch offers
+the hook every address before the generated translation and the interpreter see
+it, and nothing else about the machine moves -- the frame clock, the fallback
+and the transpiled path are byte for byte what they were, and a run that
+installs nothing (legacy, and next with no entry selected) cannot behave
+differently. A replacement returns the number of 68000 cycles the guest's code
+would have taken, and the machine charges them one clock step at a time,
+advancing the sound and the Z80 with each step, so the frame clock, the pad's
+handshake timeouts and the Z80's timing stay on the guest's clock.
+
+port/next/replacement.{c,h} owns the table (one row per routine), the selection
+(--replace NAME, refused without --engine next, because legacy has no seam to
+reach), the counters a run reports and the checks around the call: the stack
+must hold a return address inside the cartridge (the state the guest's code is
+entered in), the cost must be non-zero and pc must have moved. Each refusal
+prints which routine, where and why, and then faults (MD68K_FAULT_REPLACEMENT).
+
+The first replacement is ReadController ($0011C2), the pad protocol -- a leaf
+the house-selection recording reaches 1 418 times in 2 700 frames, chosen by
+counting the run -- transcribed into next/read_controller.c instruction by
+instruction, through the machine's own bus.
+
+The proof (tests/test_replacement.sh, scripts/compare_engine_runs.py
+--replacement): legacy against next --replace ReadController, identical picture,
+64 KiB of work RAM, VDP write counters, the Z80's whole state, the YM2612
+register timeline and the cycle count; the instruction count lower by exactly
+65 228 (1 418 calls x the guest's 47 instructions, one machine step for the C,
+and 47 per call fewer translated); the audio the same recording by
+scripts/compare_audio.py with 9 bytes of 3 994 776 differing (a Z80 write on a
+sample boundary inside a replaced window). The controls: with nothing selected,
+and with the table's row deleted from a control build, the run is byte-identical
+to legacy; the parser refuses what it must; and the mechanism's own refusals,
+including a state the guest never produces, are fixtures in
+port/tests/test_replacement.c.
+
+Documents: the recipe's mechanism and the worked example in docs/next-engine.md,
+the seam and the controls in docs/port-architecture.md, the zone declaration and
+the regenerated site. tests/run_all.sh runs the new check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
