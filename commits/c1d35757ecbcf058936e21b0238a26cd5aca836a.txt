@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c1d35757ecbcf058936e21b0238a26cd5aca836a
+date: 2026-10-15T17:42:59+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 82..86: controller support, the C migration mechanism, and the port's first screens
+82 controller support in both engines (backend, binding file, hot-plug, union,
+latched edges, ports); 83 the replacement mechanism that makes a C routine stand
+in for the guest's, proved by the differential harness; 84 the main menu screen in
+C with the row list as data; 85 PORT SETTINGS reached from a new row in the game's
+menu; 86 the GAMEPAD MAPPING screen. The chain follows docs/next-engine.md: the
+mechanism first, then one screen, then the extension.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
