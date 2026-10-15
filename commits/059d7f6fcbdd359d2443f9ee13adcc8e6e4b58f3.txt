@@ -1,0 +1,90 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 059d7f6fcbdd359d2443f9ee13adcc8e6e4b58f3
+date: 2026-10-15T11:06:47+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The app is a thing: one frame loop, a machine seam, an input map and a backend
+The loop -- the machine's bring-up, the keyboard, the pacing and the audio
+presentation -- lived in the two front ends, so the next four things the
+owner wants (controllers, a mouse, big resolutions, a swappable renderer)
+had nowhere obvious to go. It is now one loop in the app zone, and the two
+front ends are compositions: options, image, renderer, machine, backend,
+loop, report.
+
+* `app/app.{c,h}`: the frame loop. It steps the machine to the next VBlank
+  entry, counts the frame, calls the front end's per-entry work, offers the
+  frame's samples to the audio path, polls the host, resolves the controls
+  through the map, sets the pads, draws and presents if the slot has room
+  and waits for the deadline. The order is the window's since tickets
+  61/62/69 and is written out as a contract, because a recording depends on
+  it. The host arrives as function pointers (`mda_platform`), so the loop
+  names no device -- which is what lets `make headless` link it with no SDL
+  at all -- and the pacing's clock is handed in rather than read.
+* `app/app_machine.{c,h}`: the machine as the app sees it. The reset, the
+  hook order, the pads, the scripted presses, the recorder, the frame clock
+  and the `--engine legacy|next` branch, behind one `run_one()` and the
+  state a front end reads back.
+* `app/input_map.{c,h}`: the functions a physical control can have, the
+  keyboard's table, and `mda_input_apply()`. Input is data: F1 plugs a
+  3-button pad in because a row says so, not because the loop knows F1.
+* `app/play_backend.{c,h}`: the window target's backend (the window, the
+  keyboard, the clock, the audio path) as the loop's four questions.
+* `platform/keyboard.{c,h}`: reports its own controls (held and pressed
+  bitmaps) and no longer names a pad button; F1/F2/Escape are controls like
+  the pad keys, and what they mean is the map's decision. The table now
+  holds SDL scancodes, not keycodes: `SDL_GetScancodeFromKey()` returns
+  `SDL_SCANCODE_UNKNOWN` for the function keys on this SDL build, so the
+  keycode round trip lost F1 and F2 while the pad keys agreed by accident.
+  `tests/test_input_map.py` is the real key that caught it.
+* `platform/window.{c,h}`: reports the window's own event (the close box)
+  and nothing about keys.
+* `app/pacing.{c,h}`: ticket 61's policy with the time handed in -- no host
+  in the module, so the harness links it too.
+* `app/run_play.c` and `app/run_headless.c`: compositions and nothing else;
+  no frame loop, no `md68k_*` bring-up, no SDL call (the harness still
+  reads the machine's state, because writing dumps is its job).
+* `headless_hooks_install()` is gone: the hooks are handed to the machine's
+  bring-up in `mda_machine_config`.
+* `docs/port-zones.json`: the eight new app modules, the one new test
+  module, and the directions they need -- `tests -> app` and
+  `tests -> platform` for the map's own check, and `platform -> chips`
+  *removed*, because a backend that cannot name a pad button cannot press
+  one.
+* `port/tests/test_input_map.c` (`make -C port test`) checks the table:
+  every control the keyboard reports has exactly one row, the twelve pad
+  buttons are levels, the pad-type and quit actions are edges, and a control
+  with no row does nothing.
+* `tests/test_input_map.py` (wired into the suite) checks the same table in
+  the built binary: a real F1, F2 and Escape sent to the window on a private
+  X display plug a 3-button pad, a 6-button pad and end the run, with an
+  untouched run as the control that the window does not quit on its own.
+* `docs/port-architecture.md`: the zone table and the measured shapes, a new
+  "The app seam (ticket 77)" section, and "How to add" -- the three worked
+  recipes (an input device, a video backend, a resolution policy), each
+  naming the files to touch and the ones that must not need touching. D30 in
+  `docs/decisions.md` records the decisions inside the ticket, and the site
+  is rebuilt in the same commit.
+
+Proof. The checks that existed before the ticket pass unmoved:
+`tests/test_pacing.sh` (59.91 / 59.92 / 59.82 guest frames/s, inside the band,
+`--scale 8` still paying in presented frames), `tests/test_play_audio.sh` (the
+window's WAV byte-identical to the harness's, zero underruns and overruns),
+`tests/test_recording.sh`, `tests/test_renderer.sh` and
+`tests/test_engine_equivalence.sh` (`verdict: identical`, 2 700 frames,
+230 723 picture bytes, 1 997 366 samples, 65 536 RAM bytes). Beyond that the
+pre-change build (1eaa37b) and this one were run side by side: the harness
+writes byte-identical state documents, PNGs, WAVs, logs and stderr summaries
+for the same runs (both engines, `--vdp-dump-at exit`, `--png-stretch`, the
+log set, `--press`, a budget stall), and the window leaves byte-identical
+work RAM, WAV and pad recording for the same session. The new check is the
+one thing that did *not* agree with the old build's behaviour, and it was
+right: F1/F2 were broken by the first version of the table. The cartridge is
+untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
