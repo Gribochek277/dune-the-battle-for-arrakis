@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 70fcaf080d358b218784c3e8f2412457701beb4f
+date: 2026-10-15T07:56:51+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Write the port's zones down: docs/port-architecture.md, the README map and the regenerated site
+docs/port-architecture.md is the deliverable a reader opens first: each zone's
+contract, the measured and allowed include directions with the generated
+diagram, the one cycle in the tree explained (the VDP's control port takes the
+68000, so machine and chips reference each other), where a new renderer, input
+device or platform plugs in, and the bounds this ticket fixes -- 64 KiB per
+hand-written file, with the generated translation exempt and its own cap named.
+port/README.md gains the zone map and the front ends' new module list, and the
+committed site is the rebuild (the new document, the updated diagram page and
+the regenerated structure diagram).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
