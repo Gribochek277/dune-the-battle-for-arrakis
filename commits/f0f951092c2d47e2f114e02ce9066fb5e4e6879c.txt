@@ -1,0 +1,69 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f0f951092c2d47e2f114e02ce9066fb5e4e6879c
+date: 2026-10-16T01:01:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Name the pad's extra-button bytes for what they are, not a direction
+analysis/symbol-names.txt called $FFFFE41C/$FFFFE41D PadDirectionPressed and
+PadDirectionHeld -- "a dpad nibble, newly pressed and held". Ticket 83 found the
+disagreement in the first C replacement's comments and left the names alone,
+because renaming them regenerates the disassembly sources and that is a change
+with its own review. This is that change.
+
+What the bytes are. ReadController ($0011C2) runs the pad protocol's seven
+steps and keeps the low nibble of its last TH-high read ($00120E -> $001216):
+the 6-button pad's *extra* buttons -- Z on bit 0, Y on bit 1, X on bit 2, Mode on
+bit 3, 1 = pressed -- held at $FFFFE41D and newly pressed at $FFFFE41C, both
+written on the 6-button path only, with the same nibble handed to the caller in
+d0's high word ($001214/$00122E swap it in and out). The names are now
+PadExtraHeld ($FFFFE41D) and PadExtraPressed ($FFFFE41C).
+
+Why the direction reading looked right, and why it is wrong. The pad's phase
+table (chips/pad.h) puts the extra buttons on the third TH rising edge with TH
+high, and the reader's last high read follows its *fourth* $40 write -- one edge
+too late for the extras, which reads as a dpad. But the pad counts rising edges
+and the write count is not the edge count: the guest leaves TH high at the end
+of a poll, so the next poll's first $40 write is not an edge, and the poll's
+first read resets the counter the 56 000-cycle timeout expired. A poll's edges
+are therefore its 3rd, 5th and 7th write ($0011E4, $0011F8, $00120E) and the
+read the guest keeps is the extra-button phase. The one poll that reads the dpad
+phase there is the first after reset, whose first $40 write *is* an edge --
+which is why the cold poll in the port's own fixtures looked like a dpad read.
+
+The evidence, measured against the reference (BlastEm v1.0.0), not argued: with
+the extra button X held from VBlank entry 2200, the reference leaves $FFFFE41D =
+$04 at entry 2216 and the port's run of the same sequence leaves $04 too; with
+the dpad's Right held from the same entry it leaves $00 there with $08 in
+PadHeld $FFFFE41B, on both sides. Both runs are checks now
+(tests/test_input.sh, `compare_input.py --press 2200:q` / `--press 2200:Right`),
+and port/tests/test_pad.c replays the reader's poll against the chip model and
+checks the nibble ("the reader's extra-button read") plus the cold-poll case.
+
+The loop, run end to end: scripts/regenerate.sh writes the sources, the equates
+and disassembly/symbols.txt from the curated names (the old names are gone from
+every generated operand), make -C port translation regenerates port/generated/,
+and python3 scripts/build_docs.py rebuilds the site, which renames the two name
+pages with the names. The diff is the rename plus the comments that carry the
+evidence: read_controller.c's PAD_EXTRA_* defines point at the curated symbols,
+and every claim that the reader kept a dpad nibble is corrected where it stood
+(docs/native-port.md, docs/game-architecture.md, docs/next-engine.md, the M2-4
+table and its new correction in docs/reverse-engineering-notes.md,
+port/chips/pad.h, scripts/compare_input.py). The regenerated src/equates.inc
+also picks up a stale count in its own header comment -- 690 data references,
+not 691, which is what the committed sources already scan to.
+
+Checks: scripts/build.sh ends OK, tests/test_baseline.sh rebuilds the dump byte
+for byte, the per-line verification finds mismatches only in the header region,
+make -C port test is green (36 666 + 728 checks and the sweep), the replacement
+and engine-equivalence checks are green (2700 frames, identical RAM, picture,
+Z80 and YM timeline), the differential input checks agree with the reference,
+bash tests/test_docs.sh and python3 scripts/build_docs.py --check are green, and
+bash tests/run_all.sh ends with ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
