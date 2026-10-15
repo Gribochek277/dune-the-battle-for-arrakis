@@ -1,0 +1,46 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5f7895c795d53b668897b898a5237b5114a158db
+date: 2026-10-15T05:22:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Split the generated translation per segment, and name the routines in it (ticket 74)
+port/generated/ is no longer one 8.9 MB game.c. game.c is now an index that
+keeps md68k_translated_step()'s contract (1 when a case ran the instruction at
+cpu->pc, 0 when nothing has a case for it), game_segments.h declares the step
+functions, and game_seg_code_XXXXXX.c holds one disassembly segment's cases.
+Inside a file, every run of instructions is announced by the name of the routine
+that works there -- GetUnitByHandle when analysis/symbol-names.txt names the
+address, sub_000242 when it does not -- and the file's header lists its units
+with their evidence.
+
+The emitter (--split, --symbols, --names, --max-cases) takes its unit boundaries
+from the disassembly's own evidence: a named code symbol, or the instruction
+after one control flow does not fall out of when no label makes the next address
+reachable. A file holds at most 3 000 cases, cut at unit boundaries; the largest
+is 2 972.
+
+Regenerating the translation -- 1 462 cases behind the listing since ticket 54 --
+exposed the defect docs/disassembly.md had predicted: read_ea() and write_ea()
+sign-extended the index register of (d8,An,Xn) unconditionally, so the 18
+instructions using the long form (move.w d1,($0,a3,d0.l) at $006650 and 17 more)
+read or wrote a different address than the interpreter. All index sites now go
+through Emitter._index_expr() and make -C port sweep agrees on all 41 055
+addresses.
+
+Measured on this machine (single-threaded make): the translation alone builds in
+53 s at -O0 (was 1 min 32 s) and 1 min 43 s at -O1 (was 7 min 28 s); headless
+runs 300 frames in 1.90 s (was 5 min 06 s) and headless-fast in 0.82 s (was
+1.81 s), so -O0 and -O1 stay the two configurations.
+
+docs/native-port.md, "The generated translation", has the layout, the numbers
+and the recipe for adding a name; docs/disassembly.md and docs/build-and-test.md
+describe the pipeline and the refreshed sweep. The structure diagram draws the
+126 files as one declared pattern in docs/port-zones.json.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
