@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5ec877f5bbcb7b1ec45ecd9547bfeca41b510244
+date: 2026-10-15T17:41:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the port's language, the next-engine program, and decisions D31-D35
+The owner's direction after being grilled on controller support: the port has
+proved it runs the cartridge correctly, so next becomes the game reimplemented in
+C — screen by screen, new code in C only — and the point of that is to extend the
+game (PORT SETTINGS -> GAMEPAD MAPPING). CONTEXT.md fixes the vocabulary the
+tickets will use (device/backend/control/function/binding/port/pad state, and the
+device-vs-port boundary); docs/next-engine.md is the program: what next is, the
+five rules, the recipe for moving one screen across, and the UI plan.
+
+D31 one-to-one required only where nothing changed; D32 legacy frozen, features
+in next only; D33 the UI is the port's (no patched image, no guest-host mailbox,
+machine held while a port screen is up); D34 the binding file is repo-local, loud
+and saved whole; D35 no SDL mapping database.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
