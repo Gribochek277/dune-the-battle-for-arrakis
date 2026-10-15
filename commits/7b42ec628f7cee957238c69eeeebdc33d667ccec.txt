@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7b42ec628f7cee957238c69eeeebdc33d667ccec
+date: 2026-10-15T07:55:11+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Machine-check the port's zones: the model, the gate and its controls
+scripts/port_zones.py is the one implementation of the zone rule -- the
+declaration in docs/port-zones.json read into modules, zones and include
+directions -- and both the structure diagram (scripts/build_docs.py) and the
+gate (tests/test_port_zones.py) read that one model, so the picture and the
+check cannot disagree. The gate fails the build when a module has no zone, a
+pattern matches nothing, a file is in two zones or an #include goes in a
+direction the declaration does not allow; it also requires every module of the
+port's own code to state its contract (Owns: / May call: / Must not call:),
+bounds every hand-written file at 64 KiB and fails when SDL appears outside
+port/platform/. Seven negative controls provoke each failure on a throwaway tree
+and a tree that follows the rules must pass, so the check cannot pass by being
+unable to fail.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
