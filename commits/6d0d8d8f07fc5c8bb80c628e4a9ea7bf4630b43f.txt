@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6d0d8d8f07fc5c8bb80c628e4a9ea7bf4630b43f
+date: 2026-10-16T08:28:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+chore: record the ticket-84 scope correction decision
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
