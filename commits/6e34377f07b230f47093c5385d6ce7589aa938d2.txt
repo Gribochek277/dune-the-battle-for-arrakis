@@ -1,0 +1,66 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6e34377f07b230f47093c5385d6ce7589aa938d2
+date: 2026-10-16T13:26:31+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 90: the title screen is the port's C, proved, gated and documented
+The slice ticket 84 made possible and ticket 89 named: RunTitleScreen $00CFCC
+-- the screen with START GAME / OPTIONS / LEVEL, the one the owner plays on and
+the one PORT SETTINGS has to be a row on -- runs as the port's own C in `next`.
+
+Proof on analysis/recordings/house-selection.pad, --engine legacy against
+--engine next --replace RunTitleScreen:
+
+  2700 frames, 8078 calls: instructions 31859412, cycles 347408292, picture
+  230723 B / 71680 px, work RAM 65536 B (sha256 06bfd63d...), audio 1997366
+  samples, YM2612 timeline 6023353 B, 17197 control + 6685 data VDP writes and
+  1288 DMAs, the Z80's whole state -- identical, with the translation running
+  exactly 8078 fewer instructions over 8078 calls, one per call.
+  2400 frames with three DOWN presses, 14928 calls: identical again.
+
+That recording carries the screen, the dispatch and the handoff because the
+routine has two entry paths and all of them appear in it: entries 1..2007 are
+the intro, which the port does not own and hands back to the guest instruction
+by instruction; 2008 is the first frame the title screen itself draws; the
+press at 2203 is START on the first row, which leaves with the result 0.
+
+The row list is data, and that is measured, not claimed. A second binary with
+one entry added at $B8 -- the slot ticket 91 measured as the socket the removed
+tutorial row left, and the slot ticket 85's PORT SETTINGS will use -- is byte
+identical to legacy with a recording that never walks to it, and 12693 of 71680
+pixels (16.53 %) away from the guest's own cursor with the walk. No drawing code
+and no navigation code changed between the two builds. legacy keeps the guest's
+three-row range: it runs the guest's own selector, which cannot reach $B8.
+
+Added:
+  tests/test_title_screen.sh, wired into tests/run_all.sh -- the two runs, the
+    cursor walk, the nothing-selected control and the row-list-is-data control.
+    It restores port/build/headless-fast from an EXIT trap, because the control
+    builds over it and a failure between the swap and its restore would leave a
+    binary with a row the port does not have standing in the checkout.
+  analysis/checkpoints.json: title-screen at entry 2149, pixel-exact at the 0
+    threshold -- 0 of 71680 pixels against BlastEm's own picture. The screen is
+    static from 2100 to the press at 2203 (eight pixels move between 2090 and
+    2100 as the setup settles, nothing after), which is what makes an exact
+    comparison possible; 2149 rather than the middle of the window because the
+    capture's GDB walk overshoots 2150.
+  docs/port-zones.json: the four new files in the next zone, which is what the
+    zone check asked for before anything else would pass.
+  docs/next-engine.md: "The second screen", the worked example -- the region
+    rather than the address and why (the screen is entered from the intro by a
+    branch, not a call), the three part files and what each owns, the state
+    (cursor $FFFFD70E, level $FFFFC8BA, pad code $FFFFBF2B), the measurement,
+    the two controls, and what the two defects teach about the recipe.
+  docs/game-architecture.md: section 8b says which arrangement runs the screen.
+
+Corrected: the C's two references to ticket 88 as where the tutorial comes back.
+Ticket 91 measured that nothing of its screen is in this image and ticket 88 is
+cancelled, so $B8 is the port's to use and PORT SETTINGS is the fourth row.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
