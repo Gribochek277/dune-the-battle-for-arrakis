@@ -1,0 +1,56 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3a9dbcc8b8ef0aa4f80ad7120ce1981920b7d69b
+date: 2026-10-16T12:41:55+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 90: the two defects that made the title screen not the guest's screen
+Measured before (analysis/recordings/house-selection.pad, --engine next
+--replace RunTitleScreen against legacy):
+
+  1885 frames  instructions 22059810 vs 22059695, cycles 242699376 vs
+               242699378, 6787 of 71680 pixels apart (x 13..311, y 7..72 --
+               the title screen's own text band), 52 work-RAM bytes apart
+  1886 frames  stall: fault -- 'unknown opcode' at $03C28C, i.e. the machine
+               executing data. Legacy runs the same 2700 frames with no stall
+
+1. Fifty branch cases set cpu->pc and then called md68k_next(). That is wrong
+   by construction: md68k_next() decodes at the *current* pc and moves past
+   it, so setting the pc to a branch target and then calling it skips the
+   instruction at the target -- on both the taken and the not-taken path. The
+   options screen's transcription (options_screen_core.c) sets the pc and
+   returns; the title screen's now does the same. This is what turned a run
+   that left the machine in a data region into one that runs.
+
+2. Two cases answered `bsr sub_00D632` by inlining the helper and never taking
+   the call, because that is where the row list's first row wanted to be read.
+   It cost the machine the helper's instructions and left the pushed return
+   address out of the stack -- one work-RAM byte ($FFFF71) differed from the
+   guest's. The call is now taken as the guest takes it, and the row list
+   answers at $00D632 inside the helper: the port still answers exactly one
+   instruction of the guest's own per step, and the step count and the stack
+   stay the guest's. The deviation is in the same place either way; only now
+   it is in the right one.
+
+Measured after, same recording, 2700 frames:
+
+  frames, instructions, cycles, interpreted count, VDP write counters, the
+  Z80's whole state, the picture (230723 B / 71680 px), the audio (1997366
+  samples), the YM2612 timeline and the 64 KiB of work RAM (sha256
+  06bfd63d8738be5e9c7d0a3aa434306c787613ea4c8e622a3f451a5be67edb69):
+  identical, with the translation running exactly 8078 fewer instructions over
+  8078 calls -- one per call, which is the property --replacement-transcribed
+  asserts.
+
+The divergence frame localised the work: frames 1..2007 of this recording are
+the intro, which the port hands back to the guest instruction by instruction,
+and 2008 is the first frame the title screen itself runs. The address log
+named what next never entered -- $00D632, $00D64A, $00D64E -- and that was the
+skipped helper.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
