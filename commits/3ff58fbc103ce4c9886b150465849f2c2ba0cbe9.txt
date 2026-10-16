@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3ff58fbc103ce4c9886b150465849f2c2ba0cbe9
+date: 2026-10-16T13:53:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: record the ticket-91 merge, the ticket-88 cancellation, the ticket-90 takeover and the dependency-reading defect
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
