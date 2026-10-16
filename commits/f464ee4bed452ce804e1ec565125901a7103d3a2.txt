@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f464ee4bed452ce804e1ec565125901a7103d3a2
+date: 2026-10-16T08:28:00+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 89/90: the front end's screens, and the title screen the row belongs on
+Ticket 84's own report corrected the map: $010818 (called RunMenuScreen) is the
+options screen it ported, while the owner's START GAME / OPTIONS / LEVEL menu is
+drawn from RunAttractScreen $00CFCC. Ticket 89 fixes the names with evidence;
+ticket 90 ports the title screen itself; PORT SETTINGS (85) now hangs off 90, and
+the TUTORIAL row (88) off 85.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
