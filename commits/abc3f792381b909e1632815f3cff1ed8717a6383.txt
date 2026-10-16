@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: abc3f792381b909e1632815f3cff1ed8717a6383
+date: 2026-10-16T10:37:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+chore: restore the run config and record ticket 88's extra blocker
+The parallel investigation (ticket 91) needed a second slot and the strata model,
+which the extension's per-session config cache would not grant: the worker was
+started through the same herdr primitives the extension uses, and the committed
+config goes back to one slot and the default worker model. Ticket 88 now also
+waits for the investigation's answer (91).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
