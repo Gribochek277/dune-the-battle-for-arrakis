@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6b584e313764707b11f22ffd86e84a00ea69c9bc
+date: 2026-10-16T12:35:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 91: 91-investigate-tutorial-code
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
