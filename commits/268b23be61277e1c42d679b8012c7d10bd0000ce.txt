@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 268b23be61277e1c42d679b8012c7d10bd0000ce
+date: 2026-10-16T13:11:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+status: ticket 91 done, ticket 88 cancelled, and the chain for the settings menu
+Ticket 91 (merged 6b584e3, post-merge gate 43 sections ALL CHECKS PASSED) is
+the answer ticket 88 was blocked on, and the answer closes 88 rather than
+unblocking it: the TUTORIAL row's socket survives in four places and the row
+itself survives nowhere the image still describes, so putting it back would be
+a cursor stop that does nothing. Cancelled, with the evidence in its own file
+and the condition for re-opening it (a retail 1994 revision to diff against,
+which this project does not have and has declined to fetch).
+
+The dependencies were already recorded in both places the store keeps them --
+the ticket files' 'Blocked by:' lines and the status table's column -- so
+nothing needed adding: 90 <- 89, 85 <- 90, 86 <- 82 and 85, 88 <- 85 and 91.
+What the cancellation changes is the fourth slot of the title screen's row
+list: it belongs to ticket 85's PORT SETTINGS, which needs no lost code, only
+the list ticket 90 makes data. The chain to the owner's request is therefore
+90 -> 85 -> 86.
+
+Ticket 90's row records what its first run left behind and what measuring it
+found, because the next reader needs the measurement and not the reassurance:
+the transcription built, ran, and was not the guest's screen -- 50 branch cases
+that skipped their own target, and a call the port answered by inlining, which
+cost the machine the helper's steps and the stack its return address. Both
+fixed; 2700 frames identical to legacy with the translation running exactly one
+instruction fewer per call. Still open on that ticket: the title screen's own
+checkpoint, the new check in the gate, and the docs.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
