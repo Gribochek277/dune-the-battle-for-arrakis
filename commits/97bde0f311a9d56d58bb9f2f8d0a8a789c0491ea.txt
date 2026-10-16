@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 97bde0f311a9d56d58bb9f2f8d0a8a789c0491ea
+date: 2026-10-16T12:15:27+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+wip: ticket 90's title-screen transcription, as the run left it
+Not a slice yet: the port's C for RunTitleScreen ($00CFCC) builds and runs,
+but it is not the guest's screen. Measured on analysis/recordings/
+house-selection.pad (the only recording that reaches the title screen), at
+1885 frames of --engine next --replace RunTitleScreen against legacy:
+
+  instructions  22059810 vs 22059695  (115 fewer -- the C answers more than
+                                       one instruction per call, or the
+                                       machine's step count moved)
+  cycles        242699376 vs 242699378
+  picture       6787 of 71680 pixels differ, x 13..311 y 7..72 (the title
+                screen's own text band)
+  work RAM      52 bytes differ, first at $FFFFE011 (the fade block, next to
+                FadeDelay at $FFFFE010)
+
+and at frame 1886 the next run faults: 'unknown opcode' at $03C28C, i.e. the
+machine is executing data. Legacy runs the same 2700 frames with no stall.
+
+So the transcription has at least two defects: something in the fade/frame
+state (visible from the first frames) and something on the path the screen
+takes at entry 1886 -- the first frame after the title screen's own timing
+elapses, with no pad input at all (the recording's only press is at 2203).
+
+What is here and is worth keeping:
+  port/next/title_screen.{c,h}   the row list as data, the contract, the
+                                 region split
+  port/next/title_screen_core.c  $00D336 the setup, the loop and the exit
+  port/next/title_cursor.c       $00D5B0 the cursor's record and upload
+  port/next/title_selector.c     $00D64C the cursor's movement, the row a
+                                 press names, the level's value
+  port/next/replacement.c        the table's row (one region, $00CFCC-$00DA89,
+                                 delegating the intro instruction by
+                                 instruction)
+  port/Makefile                  the four files in NEXT_SRC
+
+Still missing before this is a slice: the two defects above; a checkpoint for
+the title screen pixel-exact in legacy; tests/test_title_screen.sh (the
+Makefile already names it) with the nothing-selected control and the
+row-list-is-data control; the docs/next-engine.md worked example; and the
+ticket-88 references corrected -- ticket 91 proved the TUTORIAL row cannot be
+restored from this image, so ticket 88 is cancelled and the fourth row is
+ticket 85's PORT SETTINGS, not a tutorial.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
