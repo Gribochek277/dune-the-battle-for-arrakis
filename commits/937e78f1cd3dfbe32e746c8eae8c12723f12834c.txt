@@ -1,0 +1,100 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 937e78f1cd3dfbe32e746c8eae8c12723f12834c
+date: 2026-10-16T07:13:34+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 84: the menu screen is C -- the row list, the dispatch and the proof
+The port's OPTIONS screen. `port/next/menu_screen.c` names the implementation
+and holds the row list as the port's data; the routine itself is
+`next_menu_screen()` and its regions are transcribed one case per instruction
+in the files beside it:
+
+  menu_screen_core.c    $010818  the entry, the screen's setup, the loop and
+                                 the row dispatch
+  menu_screen_rows.c    $010A26  the on/off rows' actions and the two table
+                                 walkers
+  menu_screen_values.c  $010B86  the two lists the player walks
+  menu_screen_exit.c    $010D24  the rows that leave, and the teardown
+  menu_selector.c       $0114D6  the cursor, and the navigation from the pad
+  menu_frame.c          $0115BE  the cursor's animation and the VBlank
+
+Every case is one instruction of the guest's own code, charged at its own
+address through the machine's cost model (`md68k_instruction_cost()`, newly
+exported), so the clock the machine charges is the clock the guest's code
+would have taken; every pixel is still drawn by the game's own routines (the
+resource load, the glyph channel, the sprite pool, the palette fade, the
+sound), and an address no part answers for is handed back with
+`next_replacement_delegate()` and the guest's own translation runs it.
+
+What the port owns is the logic: the row list (one entry per row: its label,
+where its value is drawn, what kind of value it is, and the action to run),
+the cursor and its slide, the values, the exit and its result. The dispatch
+reads that list instead of the guest's jump table at $0109D2. The row the list
+names is what runs; the *range* the cursor walks is still the guest's own (the
+selector's wrap constants and sub_00D632's answer), so a row the port adds is
+dispatched once the cursor is on it, and making the cursor reach it is a
+deliberate change of the screen's state that ticket 85 owns.
+
+The row list is data, and the check shows it rather than claiming it: a control
+build in `tests/test_menu_screen.sh` changes one entry's action and is
+byte-identical to legacy with a recording that never chooses that row, and
+leaves the screen by the action the data names (58.11 % of the frame apart from
+the guest's own) with one that does.
+
+The replacement mechanism gained what a screen needs: a table row owns a
+*span* of the image (the routine and the two helpers only it calls), one
+implementation may occupy several regions under one name, `--replace` enables
+the whole implementation, and a replacement may hand a single address back to
+the guest's own code. `port/Makefile` gained `NEXT_SWAP`, so a control build
+that swaps one file of the arrangement names it instead of spelling the file
+list out again.
+
+The proof (`tests/test_menu_screen.sh`, three recordings of one session,
+`legacy` against `next --replace RunMenuScreen`):
+
+| | menu-options (8 200 frames) | menu-rows (8 500) | menu-handoff (8 500) |
+|---|---|---|---|
+| calls | 4 493 | 18 908 | 10 153 |
+| instructions | 97 851 887 | 101 423 321 | 101 486 969 |
+| the translation dropped by | 4 493 | 18 908 | 10 153 |
+| cycles | 1 052 209 328 | 1 090 611 126 | 1 090 611 122 |
+
+and in every one of them the picture (230 723 PNG bytes, 71 680 pixels), the
+64 KiB of work RAM, the VDP's write counters, the Z80's whole state, the
+YM2612 register timeline, the rendered audio and the clock are identical. The
+comparator's new `--replacement-transcribed` is the arithmetic the check rests
+on: a screen answers for an instruction, it does not stand in for a whole
+routine, so the machine's step count is the guest's and what falls is the
+generated translation, by exactly one instruction per call. The three
+recordings cover the screen itself, the rows a press chooses (the dispatch only
+runs when a button is pressed *and* a row is selected) and the screen's three
+ways out: START, the re-entry the front end does afterwards, and ENTER PASSWORD
+handing the run to the guest's own password screen $010EE6.
+`analysis/checkpoints.json` gained the `menu-options` checkpoint (frame 8200,
+pixel-exact, 0 of 71 680 pixels against BlastEm, one emulator session) and
+`tests/test_fidelity.sh` gates it.
+
+Two findings worth keeping. The first proof of the screen (an idle recording)
+never reached the dispatch, which hid two defects in the two cases the port
+owns by hand -- the pc the port's table write leaves behind, and the address
+the jmp takes; the recordings that press buttons are what exercises them. And
+the control builds spelled the arrangement's file list out twice, so adding a
+file to next/ left them unable to link it: that is what NEXT_SWAP fixes, and
+the replacement check's refusal message now names two routines instead of one,
+so its expectation asserts the shape rather than the whole string.
+
+Decision recorded: the port owns the screen's *logic*, not its pixels. The
+screen's own picture carries the rows' labels and the value lines go through
+the game's glyph channel, so the port computes what to draw and the game draws
+it -- which keeps the checkpoint pixel-exact and makes ticket 85's row an entry
+in the list rather than a patch. The ticket's own wording ("the port draws with
+the machine's own entry points: the VDP's registers and VRAM, the font tiles
+the game uploads") is read literally: it calls the game's own routines.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
