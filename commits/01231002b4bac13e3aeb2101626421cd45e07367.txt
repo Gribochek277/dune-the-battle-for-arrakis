@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 01231002b4bac13e3aeb2101626421cd45e07367
+date: 2026-10-16T12:35:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: record the worker model ticket 91 ran on
+Housekeeping, per the recorded convention: the orchestrator rewrites its own
+runtime file during a run, and a dirty base checkout blocks the merge gate for
+no reason. The value is the live config.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
