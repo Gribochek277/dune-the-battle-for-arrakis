@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 81c60703e268906c3f9df5b6f9f1eed5a17795ce
+date: 2026-10-16T20:23:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: decide ticket 85's three forks for it
+The worker stopped twice on interactive questions it was told to decide itself.
+Answered from the spec: the hold lives in the next arrangement's frame step
+(mdloop_hold_one beside mdloop_run_one), because the app-loop alternative stops
+the pad script advancing during the hold and so moves the press at entry 2203 of
+house-selection.pad -- breaking the differential harness for every ticket after
+this one; the golden picture is a hash plus assertions on the plane writes, not
+committed pixels, because that is the checkpoint catalog's own discipline and
+analysis/reference/ is gitignored; and ticket 90's row-list control is inverted
+rather than deleted, so the build without the row is the one that must equal
+legacy byte for byte.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
