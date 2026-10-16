@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e5f2d1ab17746b82f7b15b6e7b044f155fa6b25a
+date: 2026-10-16T04:51:30+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 88: the title menu's TUTORIAL row, found by ticket 84
+The dump is a 2024 reproduction carrying a romhack, and the hack removed the menu's
+TUTORIAL row: its string survives at $0EC249 with no reference, the cursor slot
+$B8 that mapped to action C is outside the navigable range, the return code 2 falls
+through to the attract loop, and only three rows are drawn. The worker filed the
+reading job with the evidence and left the store alone; the orchestrator added the
+row (blocked by 84 and 85, since restoring it is port-row work) and recorded the
+fact in CONTEXT.md's entry for the original image.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
