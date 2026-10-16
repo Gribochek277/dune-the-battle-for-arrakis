@@ -1,0 +1,54 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: db13828baa0c855f14d4556b5527e4e919e17b57
+date: 2026-10-16T11:34:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 91: what the title menu's TUTORIAL row was, and what is left of it
+An investigation, not a restoration: no row, no port screen, no behaviour
+change. Ticket 88 is blocked on the answer.
+
+The answer: the row's socket survives in four places and the row itself does
+not survive anywhere the image still describes.
+
+Measured (docs/game-architecture.md section 8b, docs/reverse-engineering-notes.md
+M2-5, every claim with its address and observation):
+
+* TUTORIAL ($0EC249) is the only string in the front end's pool with no pointer;
+  the table at $02577C holds the other 14 and has no hole, and all 15 of its
+  longs are read by code.
+* The row was the fourth, below LEVEL: : the drawn rows ($0A50, $0AD0, $0B50,
+  stride $80) and the cursor stops ($A0, $A8, $B0, step 8) step together, and
+  $00D6CC still maps the missing stop $B8 to action $43, $00D4D2 still maps $43
+  to row index 2, and RunFrontEnd still has no case for 2. The bottom stop is
+  $B0 at $00D64E, one word short.
+* Corrected ticket 88 on one point: the rows were not moved up. The three that
+  are drawn sit where the three reachable stops map to; the removal took the
+  fourth draw and the bottom stop.
+* Ruled out: an orphaned screen resource (indices 1/2/3/7 are dead but carry no
+  art of their own - 1/2/3 are entry 14's lists, 7 is entry 8), an unreached
+  routine in the front end (three sub_ symbols have no reference at all, none in
+  the front end's segments, none screen-shaped), and orphaned caption text (zero
+  in $0EC000-$200000).
+* Corrected how the coverage logs may be read: $00D4E4, statically unreachable,
+  is in all ten logs while $00D6F0, taken every idle frame, is in none. The logs
+  are transfer destinations, not an execution oracle, so "never executed" cannot
+  be established from them. The $B8 measurement does not depend on them.
+* What the tutorial was is a labelled hypothesis (a slide show of pre-rendered
+  pictures, captions included), with the runs that would settle it written out
+  for ticket 88 - no emulator run was made here, another worker held the gate.
+
+Names settled and put through scripts/regenerate.sh: TitleMenuSelector $00D64C,
+MenuCursorTop $00D632, DrawTextOnTextPlane $00FC82, MenuLevelCycler $00D6F4.
+
+Cheap checks green: build_docs.py --check, tests/test_pipeline_inputs.py
+(10/10 controls), tests/test_header.sh, the listing/ROM greps behind every claim
+(20/20), and the rebuild is still this dump - 42 bytes differ, all in
+$000000-$0001FF and all modification M1.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
