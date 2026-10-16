@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4338c980c913c7d3528ad9655920357451229f35
+date: 2026-10-16T16:37:05+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: record the ticket-90 merge and the orphan herdr workspaces
+Closing a ticket that was never started through orchestrator_start updates the
+status row but leaves the multiplexer workspace behind, because the worktree and
+workspace removal is driven from the worker registry. t90 (w3X) and t91 (w3W)
+were both closed by hand on the git side and still pointed at deleted
+directories; verified each id against its checkout_path before closing so the
+live worker and the orchestrator's own session were not touched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
