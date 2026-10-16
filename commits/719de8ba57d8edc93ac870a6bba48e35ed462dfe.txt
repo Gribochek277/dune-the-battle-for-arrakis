@@ -1,0 +1,95 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 719de8ba57d8edc93ac870a6bba48e35ed462dfe
+date: 2026-10-16T09:28:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Name the front end's two screens for what they are: title screen, options screen
+analysis/symbol-names.txt called $00CFCC `RunAttractScreen` -- "the demo/attract
+screen" -- and $010818 `RunMenuScreen`, "the menu screen (argument = entry);
+returns the selected entry in d0". Ticket 84 followed that second name while
+porting a screen and found what the routine really is: $010818 is the OPTIONS
+screen (the front end opens it from the title screen's OPTIONS row, the mission
+from its own START), and the owner's menu -- START GAME / OPTIONS / LEVEL:
+NORMAL -- is drawn by $00CFCC, which the pass-3 name described only as the demo
+sequence it plays first. The two names together taught the next reader that the
+title screen's menu and the options screen are one routine.
+
+What each routine is, from the code (the full evidence is
+docs/game-architecture.md "8a" and docs/reverse-engineering-notes.md's front-end
+section):
+
+  * $00CFCC, now `RunTitleScreen`: one routine with two entry paths, chosen by
+    the word argument it reads at $34(a7) ($00CFD4). Argument 1 runs the intro
+    sequence ($00D072-$00D2E8) and then falls into the title screen; argument 0
+    -- the front end's re-entry after another screen -- goes straight to the
+    title screen's own setup at $00D336. The screen draws exactly three lines
+    through the string channel sub_00FC82: data_025780 "START GAME" at V-RAM
+    $0A50, data_025784 "OPTIONS" at $0AD0 and data_025788 "LEVEL: " at $0B50; it
+    draws the level name next to the last one ($FFFFC8BA, 0-3, indexing
+    data_0257B4 = EASY/NORMAL/HARD/MUADDIB at $0B57), installs its cursor sprite
+    ($FFFFD70C, sub_00D5B0 at $00D458) and runs the pad loop at $00D48A-$00D538.
+  * $00D64C, new name `SelectTitleScreenRow`: the title screen's row logic, the
+    one routine of its own the menu has. The pad code comes in at $4(a7); up and
+    down move the cursor's Y between the top row ($A0, or $A8 when
+    data_025286's five bytes are all zero, sub_00D632) and the LEVEL row $B0, 8
+    pixels at a time, and play sound 11; A/B/C/START return the row's letter
+    code by its Y ($A0 -> $41, $A8 -> $42, $B8 -> $43); on $B0 they (and L/R)
+    call sub_00D6F4, which increments $FFFFC8BA modulo 4 and redraws the level
+    name, and play sound 12.
+  * $010818, now `RunOptionsScreen`: the OPTIONS screen -- nine rows, their
+    value lines, the cursor and the exit -- unchanged in every other respect;
+    ticket 84's C is the same code under a name that says which screen it is.
+
+The contract the names have to carry, because it is what a reader would get
+wrong next: RunTitleScreen returns 0 (START GAME -- the front end falls out of
+its loop and GameEntry runs the mission) or 1 (OPTIONS -- the front end calls
+$010818 with argument 0). Codes 2 and 3 exist in the loop's mapping at $00D4C0
+and this image cannot produce them -- 2 needs the cursor on $B8, outside the
+$A0-$B0 range (it is the removed TUTORIAL row's slot, ticket 88), and 3 needs
+the loop's own countdown d7 to expire, and d7 is written $0384 at $00D48A and
+$00D4A8 and never decremented, so $00D4B2 appears in none of the ten coverage
+logs (the longest 20000 frames). Both would fall through to $005210 and
+re-enter the title screen. RunOptionsScreen returns 0 (leave: the front end
+re-enters the title screen, the mission resumes), 1 (restart the mission), 2
+(game time) and 3 (password). The same d0 holds two different code spaces, which
+is exactly why the two screens cannot share a name.
+
+The change is the repo's regenerate-and-review loop and nothing else:
+
+  * scripts/regenerate.sh rewrote the sources from the curated names -- the two
+    call sites in seg_code_00506C.asm, the selector call in seg_code_00CFCC.asm,
+    disassembly/symbols.txt, src/equates.inc, port/generated/ -- and the listing
+    still reassembles byte for byte (the 42 header bytes of modification M1,
+    unchanged);
+  * the port's C moved with the routine it is: next/menu_screen.{c,h} ->
+    next/options_screen.{c,h} and the five part files beside it, next_menu_* ->
+    next_options_*, NEXT_MENU_* -> NEXT_OPTIONS_*, the replacement table's name
+    RunOptionsScreen (three rows, one span), port/Makefile's NEXT_SRC and
+    docs/port-zones.json's member list;
+  * tests/test_menu_screen.sh -> tests/test_options_screen.sh (its control build
+    patches next/options_screen.c now), tests/run_all.sh's entry and comment;
+  * analysis/checkpoints.json keeps its checkpoint names, frames, gates and
+    thresholds untouched -- only the "menu-options" note's --replace name moved;
+  * the living documents say the corrected thing: game-architecture.md "8a" is
+    now both screens' contracts with the evidence, "8b" the options screen's own
+    state; reverse-engineering-notes.md's front-end section records the
+    correction; next-engine.md's ticket-84 section is the options screen, and
+    the UI plan names ticket 90 as the title screen's port (PORT SETTINGS is a
+    row of that screen); the site is regenerated (1271 pages, 240 names).
+
+Verified: scripts/regenerate.sh --no-tests, make -C port test (728 checks, 0
+failures), bash tests/test_options_screen.sh (three recordings, legacy against
+next byte-identical -- picture, 64 KiB of work RAM, chip writes, Z80, YM2612
+timeline, audio, cycles -- 10153 calls of RunOptionsScreen at its three regions,
+and the row-list control build 58.11 % of pixels apart where the data says it
+must be), bash tests/run_all.sh -> ALL CHECKS PASSED, python3
+scripts/build_docs.py --check green, build/dune.bin byte-identical to the dump
+but for M1's 42 bytes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
