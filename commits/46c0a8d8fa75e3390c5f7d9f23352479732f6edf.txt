@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 46c0a8d8fa75e3390c5f7d9f23352479732f6edf
+date: 2026-10-16T09:00:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+status: ticket 91 runs in parallel on the strata model
+The extension caches its config per session, so the second slot and the strata
+model cannot be granted through it; ticket 91's worker was started the same way
+the extension starts its own (herdr worktree + agent), on the model the owner
+named, while ticket 89 keeps the orchestrator's slot.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
