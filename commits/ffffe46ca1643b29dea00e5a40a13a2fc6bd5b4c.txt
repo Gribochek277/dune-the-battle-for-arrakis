@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ffffe46ca1643b29dea00e5a40a13a2fc6bd5b4c
+date: 2026-10-17T12:52:23+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: the resource table, measured as far as it is measured
+Entry $0E is two eight-byte descriptors -- {$0000 $0E00 $0005 $3234} and
+{$0000 $02D2 $0010 $32A0} -- in a table of sixteen-byte entries at $02243A, each
+long of an entry either zero or the address of one. Two sources $6C apart with
+lengths $0005 and $0010 is the shape of a palette and its graphics next to each
+other in one bank.
+
+Which bank is a lead and is written as one: of the candidate bases tried, $030000 is
+the only one where those offsets land on bytes that look like 4bpp tile planes
+instead of zeros or code. The ticket says what settles it -- copy the length the
+descriptor gives to the destination the descriptor gives, and compare the VDP dump
+with the options screen's own at entry 3000 of menu-options.pad -- and what a
+failure would mean, because ruling out a bank is worth an hour either way.
+
+Not written up as a section of docs/game-architecture.md yet. The ticket's criterion
+is that the format be known before the loader is written, and half-known is the
+state that produces a loader which works on the options screen and quietly does not
+on the next one.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
