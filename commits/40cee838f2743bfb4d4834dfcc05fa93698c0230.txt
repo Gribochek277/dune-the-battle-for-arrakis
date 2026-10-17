@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 40cee838f2743bfb4d4834dfcc05fa93698c0230
+date: 2026-10-17T12:48:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: where the port's screen lives, and the measurement it starts with
+Not at a guest address. The hook fires on every address so one could be invented,
+but an invented span puts addresses in the coverage log that the cartridge does not
+have and dresses port code up as guest code -- the one thing the transcriptions
+exist to avoid -- and ticket 91 already measured the tutorial's code gone from the
+image, so there is no dead span to take either.
+
+Arrangement state instead: the port's own setup, loop and teardown, stepped from
+next_app_run_one with the machine running underneath it, so the music and the
+animation keep going and ticket 85's hold and its underruns stop existing.
+
+The honest gap is named at the top of the ticket rather than discovered halfway
+through: the port has never loaded a screen resource by itself, only watched the
+guest call LoadScreenResource with an index. So the first criterion is to read the
+table at $02243A and write the format up with its numbers before a loader exists.
+The sequence the screen has to match is measured too, from the options screen's own
+setup at $010836-$010896 -- including the glyph font DMA, which is not optional,
+because the previous screen's FillVramWithZeros takes the alphabet with it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
