@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 606ee702ffd48cd1c6153facecd43b796f87adb6
+date: 2026-10-17T05:27:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 92: a port screen owns its layout, and its list scrolls inside it
+Ticket 85 drew the port's screen in the game menu's four text lines and bounded
+the row list to them. That was right for a two-row menu and is wrong for the
+screen ticket 93 is coming for -- the gamepad has thirteen functions to list --
+so a screen now says how many lines it reserves below its title, and that number
+is both the block it borrows from the plane and the height the window scrolls in.
+
+The bound is physical and measured, not chosen: the first line is the menu's own
+at y 169, each line below is 8 pixels lower, and the active area ends at y 231, so
+seven lines fit and an eighth loses its bottom row to the blanking interval. Line
+5 is not blank -- it holds a run of the game's own graphic tiles, the same in
+legacy and in next -- so a screen tall enough to reach it covers the game's art
+while it is up and puts it back on the way out, which is what a full-screen port
+screen means rather than a leak.
+
+Two properties are the point of the change, and both are checked. The borrowed
+region is exactly the drawn region, so the cells the screen does not draw are the
+cells it does not touch and does not restore. And the shipped two-row screen draws
+what it drew before the layout existed: tests/test_port_screen.sh's golden sha256
+did not move, because the spare slot it clears is the one the menu's PORT SETTINGS
+row was in either way, and a cleared cell and an untouched one both render blank
+(tile 0 and the space tile are both empty -- measured).
+
+tests/test_port_screen_scroll.sh is new. The shipped screen never overflows, so
+the window is exercised on a control binary with eight rows in six slots -- one
+constant and one array, the swap tests/test_title_screen.sh already uses. It
+checks the window follows the cursor at both ends, that wrapping starts the list
+again, that the cursor sits on a drawn line at every step of an eleven-press walk,
+and that the line below the block is the game's on the way in and the way out.
+
+Removing the old compile-time bound is part of this: it required the rows to fit
+the slots, which is precisely what scrolling cancels, and the control build failed
+on it first. That is recorded in the comment beside the bound that replaces it,
+because "why is this one here and that one gone" is the next question.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
