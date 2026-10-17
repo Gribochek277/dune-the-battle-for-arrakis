@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 889fd7fe22a86aca00ec610f18776ccf21eeaf08
+date: 2026-10-17T08:51:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 98-99: the probe's two findings, before the work
+Answering the OPTIONS code from the port's row was tried before writing the
+implementation, and it works: PORT SETTINGS opens the game's own options screen --
+the yellow artwork, its rows, PRESS *START* TO EXIT -- and START brings the title
+screen back. Two things that ticket 98's criteria got wrong came out of it, and
+they are fixed here rather than discovered later:
+
+Nothing is held on this path. The guest's screen runs its own loop, so the hold
+ticket 85 needed -- and the ~75 audio underruns per 120 held frames it documented
+-- simply do not apply. Asserting the absence is now a criterion.
+
+The round trip loses the port's row. START returns the title screen and the game
+redraws it from its own setup, which paints its own three rows and no more, so
+PORT SETTINGS is gone from the menu the player came back to. That is a defect, and
+it belongs in 98 rather than in a later ticket, because a screen you can leave and
+come back to is not usable until the row that got you in is back.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
