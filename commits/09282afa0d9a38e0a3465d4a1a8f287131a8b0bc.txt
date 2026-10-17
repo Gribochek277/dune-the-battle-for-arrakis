@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 09282afa0d9a38e0a3465d4a1a8f287131a8b0bc
+date: 2026-10-17T16:03:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: built on the game's own routines, and the last gap is one measurement
+The screen calls ClearBackdrop, DisableVdpDisplay, SetDisplayWidth,
+LoadScreenResource, the font's DMA and SetPlaneSize -- one per frame boundary -- and
+copies only the palette. That replaces the measured loader the ticket previously
+described, and it is better: the machine charges the real cycles, the code that owns
+the resource format loads the resource, and the two uploads a port-written loader
+missed are not missed.
+
+What remains is drawn plainly because guessing at it twice already cost an hour: the
+rows are in memory, correct, and under the artwork, because the tilemap sets the
+priority bit in every cell and plane A hides plane B wherever it has a pixel. The
+title survives because the sky is blank. And the title itself renders at a row that
+does not match port_screen.h's arithmetic for a plane B based at $C000 -- which is
+the header's own measurement, taken for the title screen's base, not this one. So the
+next step is one experiment: put a known character in a known cell, read back where it
+landed, derive the stride and base from the picture rather than from the comment.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
