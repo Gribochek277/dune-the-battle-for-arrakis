@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 903a3d0e1faf5e8b20415e1b17a5d8292b315cc1
+date: 2026-10-18T01:31:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the cursor wraps at its own list's ends, and what is left is named honestly
+Four criteria fell out of ticket 100 rather than needing work of their own. The
+fifth -- the cursor is the game's sprite, moved by the game's code -- did not: this
+screen draws '>' because it does not run the sprite pool, and that is the real
+remaining work, stated as such rather than quietly redefined away.
+
+The sixth is written up as a criterion that cannot be met as worded. It asks that the
+cells a value line would use be left as the backdrop left them, but an untouched
+plane B cell is tile zero, which is not blank -- it is the first tile of the backdrop,
+a solid colour -- so transparency on that plane requires writing space cells. What the
+screen does guarantee, and the test proves byte for byte, is that the backdrop's plane
+A cells are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
