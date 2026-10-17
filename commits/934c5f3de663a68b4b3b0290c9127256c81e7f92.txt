@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 934c5f3de663a68b4b3b0290c9127256c81e7f92
+date: 2026-10-17T12:46:36+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+AGENTS.md: 'if you touch it, it becomes C' is a rule, not a preference
+The owner asked for this to be internalised rather than remembered, so it goes
+where every session reads it. The old wording said 'prefer C to the listing',
+which leaves room to prefer something else on a busy day; the rule has a trigger
+and a consequence instead: a routine, screen or behaviour you changed does not
+stay in the generated listing or in assembly, and does not grow a special case
+there.
+
+The boundary is stated with it, because the same files hold the evidence that the
+port runs the cartridge and that work must not move: the transcriptions are proof,
+and proof is not a place to live. Byte-exactness still applies while the C stands
+in for the guest's routine and stops applying the moment the C does something the
+cartridge never did (D36), which is the case the last few tickets kept having to
+re-derive.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
