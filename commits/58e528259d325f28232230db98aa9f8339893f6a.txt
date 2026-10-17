@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 58e528259d325f28232230db98aa9f8339893f6a
+date: 2026-10-17T08:36:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 97: the port's features are on by default; the flag is for looking at the old
+`--engine next` used to be the cartridge, and `--replace RunTitleScreen` was the
+spell that made the fourth row appear. The owner tried to play the port and had to
+be told the spell, which is the wrong direction for a feature that has already
+shipped: so a run of `--engine next` now selects every row of the replacement
+table, and the flag is for the other way round.
+
+Two ways to leave the default, because the checks need both. `--replace NAME` keeps
+its exact meaning -- this set and only this set -- which is how
+tests/test_title_screen.sh isolates one routine and how a feature is compared with
+the guest code it stands in for; every call site that meant that still means it.
+`--no-replace` empties the selection, which is what "the two arrangements with
+nothing between them" has always meant and what the equivalence gate compares byte
+for byte. Both at once is a start-up error, and so is either with `--engine legacy`,
+which has no seam to reach.
+
+The expansion is by name, not by row: the table has five rows and three names,
+because a routine that spans frames owns an entry point per address the machine
+comes back to (next/replacement.h), and selecting RunOptionsScreen once selects all
+three of its rows.
+
+What the default run is held to is the part of this that is not a flag. It cannot
+be byte-identical to legacy -- it is the port doing what the cartridge never did --
+so the equivalence gate measures it instead of waiving it: identical frames, cycles,
+work RAM and YM register timeline; an instruction count lower by exactly (47 - 1) x
+the ReadController calls the run itself reports; and a PSG output that may drift by
+at most 32 samples at most 32 LSB, measured here at 9 samples and 10. That drift is
+not new -- docs/port-architecture.md has carried the sample-grid explanation since
+ticket 83 -- but nothing compared it over a long run with audio until the default
+made that the shipped configuration, and it is a bound rather than
+--expect-difference precisely because a waiver would pass a run whose audio was
+garbage.
+
+tests/test_title_screen.sh gains the check the whole ticket is for: one that passes
+no selection flag at all and reads PORT SETTINGS off the plane, then requires its
+picture to be the one the isolated run draws. A file that only ever passed the flag
+would keep passing if the flag became mandatory again.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
