@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 183d2d2b3f36bcee29e44f0a9336f65362fa5eb8
+date: 2026-10-18T00:33:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+merge ticket 100: the port's own settings screen, and the record of what it cost
+Resolved the ticket file in favour of the corrected findings and dropped the two
+sections that solved themselves on the way: the loader's coverage (the port calls
+LoadScreenResource instead of reimplementing it) and the row placement (the screen
+puts its text where the tilemap sets no priority, so it borrows the artwork and
+damages none of it).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
