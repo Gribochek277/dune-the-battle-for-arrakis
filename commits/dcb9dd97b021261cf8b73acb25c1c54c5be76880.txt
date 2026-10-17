@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dcb9dd97b021261cf8b73acb25c1c54c5be76880
+date: 2026-10-18T00:30:54+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: the port's screen is clean, and the two defects the owner saw are now tests
+Both were mine, and both were invisible to every check I had written:
+
+* The text was black because the palette is 128 bytes at $02A82E and I copied 48.
+  The glyph font draws its strokes with colour 8 and its outline with 15; colour 8
+  of palette 3 is $0EEE -- white -- and it lives at byte 96, past my copy.
+* The pink pixels were worse: an earlier version read the name table with
+  md68k_read2() to clear a priority bit. V-RAM is not in the 68000's address space
+  -- that is why the reference capture drives the VDP ports at all -- so the read
+  returned ROM and the write put it into the name table. Twenty-seven pixels of
+  $0E0E, a colour a Mega Drive cannot produce, were the visible half.
+
+The fix is not to clear the priority bit at all. The artwork's rows differ, and the
+screen puts its text where the tilemap sets no priority: a layout decision the port
+owns, not an edit to an asset it borrowed.
+
+The test now asserts what the eye caught. The plane A name table, the backdrop tiles
+and the glyph font must be byte for byte what the game's own options screen has --
+a screen of the port's own may add cells and may never damage what it borrowed -- and
+palette 3 colour 8 must be $0EEE with white pixels actually on the screen. Full gate:
+ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
