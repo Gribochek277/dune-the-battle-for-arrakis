@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7885953f29382d4203ea47147943ccea4459bbc6
+date: 2026-10-17T11:11:11+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 99: the screen knows which row opened it, and says so in its title
+Committed with its defect named, because the owner found it by looking at the
+screen: the title reads OPTIONS first and PORT SETTINGS a moment later. That
+flicker is not a polish item. It is the design showing. What this ticket built is
+the game's options screen with the port's word painted over the game's, at the
+last instruction of the game's setup -- which is ticket 85's overlay wearing the
+game's own clothes, and it is the opposite of what ticket 98 was for.
+
+What is worth keeping from it is the fact and where the fact lives: the two
+arrivals answer the same letter, so the difference cannot be the code, and it is
+not in work RAM either, because work RAM is what the differential harness
+compares. One value in the port's own memory, written from the row that was
+chosen. Ticket 100 needs exactly that, and needs it for a different reason: to
+pick a different screen rather than to relabel the same one.
+
+The measurements survive too. The title is sixteen name-table cells at $A114 with
+attribute $E480 | the character -- palette 7 and the priority bit, not the menu
+rows' palette 3 -- and the game centres its word in the field. Writing the
+nineteen characters the resource holds leaves three of them overwritten by a later
+write of the game's own, which is how a title grew `%T]` on the end of it for one
+evening.
+
+Superseded by ticket 100, which makes the port's screen a screen.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
