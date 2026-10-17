@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: acf7d85d2cbdba2b53ff33b1b431a0ae95547495
+date: 2026-10-17T04:31:52+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 85: acceptance criteria ticked
+Each of the six is carried by a check that ran: the row's two directions and the
+game's unchanged pixels in tests/test_title_screen.sh; the hold, the pad, the
+cells, the golden hash and the three handoffs in tests/test_port_screen.sh; the
+row lists as data in port/next/title_screen.c and port/next/port_screen.c; the
+documentation in docs/next-engine.md and docs/game-architecture.md with the site
+regenerated. tests/run_all.sh: 45 sections, ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
