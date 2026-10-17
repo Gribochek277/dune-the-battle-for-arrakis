@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a8cf3f278ad74013d2783d7516a50ea74d5f57fd
+date: 2026-10-17T10:07:54+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+scripts/sync-ticket-tables.py: the ticket tables stop drifting by hand
+orchestrator_tickets_create appends its own four-column table -- no Blocked by,
+no Ticket -- beside the six-column one the scan reads, and a row in the wrong
+table has no edges, so the ticket it describes looks ready and blocked work
+starts. Every ticket created here needed its row moved by hand; this does it from
+the ticket files, which are the truth, and --check makes it a gate line so the
+next append is caught instead of noticed.
+
+Idempotent by construction: one trailing newline, and a row that exists is left
+alone, because status, branch and note are written by people and the orchestrator
+and are not derived from anything.
+
+Also the split ticket 99 needed: it carried the arrival fact, the port's row list,
+the title line, the cursor, the selector and the scrolling, which is not one
+slice. 99 is the fact and the title, 100 is the rows, and the scrolling moves to
+93, where the thirteen-row list that needs it is the list being drawn.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
