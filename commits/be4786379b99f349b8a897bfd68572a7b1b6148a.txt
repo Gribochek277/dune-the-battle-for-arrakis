@@ -1,0 +1,64 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: be4786379b99f349b8a897bfd68572a7b1b6148a
+date: 2026-10-17T03:25:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 85: the title screen's fourth row opens the port's own settings screen
+The first extension of the game rather than a reproduction of it. `PORT
+SETTINGS` is the fourth entry in the title screen's row list, below the level
+row at the cursor stop $B8; choosing it holds the machine and puts the port's
+own menu up, which has one row today, GAMEPAD MAPPING, whose screen ticket 86
+writes by changing that entry's action and pointer.
+
+The row is data. One entry in `rows[]`, and the cursor walks to it because the
+bottom of its range is the list's last entry rather than the guest's constant
+$B0. No navigation code and no drawing code changed. Its `code` is 0 and not
+the guest's $43, so the loop's chain at $00D4C0 falls through to "nothing was
+chosen this frame" and the guest's own front end is never handed a result this
+image never had; what the row does instead is name a `next_port_screen`, and
+the selector records the request that the arrangement takes at the frame
+boundary.
+
+port/next/port_screen.{c,h} is the new module: the port's screens as data (a
+title, rows, and three kinds of row action), the one screen that is up, its
+cursor, and its picture. The picture is the game's, not imitated -- the menu's
+name-table cells at $D4A0..$D7A0, each one $6480 | the character, the encoding
+DrawTextOnTextPlane $00FC82 writes, over glyph tiles the game already uploaded
+(the whole printable ASCII range sits at $480..$4FF while the title screen is
+up, measured at entry 2149, so a port row needs cells and no tiles). A port
+screen borrows the menu's four rows, so it saves them on the way in and puts
+them back on the way out: the game draws its rows in its setup, and the setup
+does not run again when the guest resumes.
+
+The hold is mdloop_hold_one beside mdloop_run_one: the frame counter advances
+and the pad script is applied, but no instruction runs, no cycle is charged, no
+VBlank is asserted and no interrupt is delivered. Measured, not asserted in
+prose -- 100 held frames move the frame counter by 100 and the instructions,
+the cycles and all 64 KiB of work RAM by nothing, and pressing DOWN or A at the
+game while the screen is up costs it nothing at all.
+
+Two things this deliberately changes, both by intent:
+
+* tests/test_title_screen.sh is edited, not worked around. Its row-list control
+  is inverted -- it used to add a row at $B8 and compare the walk with legacy;
+  the fourth row is real now, so the control takes it *out*, and the pair it
+  proves is stronger: with the row out, `next` is `legacy` byte for byte, the
+  VDP's write counters included; with the row in, the only thing that differs is
+  the row. scripts/compare_engine_runs.py gains --expect-difference for exactly
+  that: the difference is *required*, not excused, so a row that stopped being
+  drawn fails instead of passing a stale assertion. Only chip-writes and picture
+  can be named; work RAM, cycles, instructions and audio stay byte-compared.
+* The port's screen has no reference, so its golden picture is committed the way
+  the checkpoint catalog commits one: the sha256 in git, the PNG regenerated
+  into gitignored analysis/reference/.
+
+tests/test_port_screen.sh is new and covers the screen, the hold, the pad, the
+cells, the hash and the three handoffs.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
