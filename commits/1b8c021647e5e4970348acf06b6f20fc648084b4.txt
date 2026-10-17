@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1b8c021647e5e4970348acf06b6f20fc648084b4
+date: 2026-10-17T12:25:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the flicker was a hook one instruction too late, and what replaced its test
+The paragraph said the title is written at $010974, the last instruction before the
+loop. It is written at $010958, the instruction that starts the palette fade, and
+the difference is the whole flicker: after the fade the player sees the game's word
+and then the port's; before it they see one black frame and then the port's.
+
+Recorded with the measurement that settles it -- the cells holding OPTIONS exist at
+frame 2236 and that frame has no pixel that is not black -- and with why the test
+now reads the plane and the picture at every frame of the arrival instead of either
+alone: a plane-only check passes a build that shows the game's title for a frame,
+and a picture-only check passes a build whose title was never written.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
