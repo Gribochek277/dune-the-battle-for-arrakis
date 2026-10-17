@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0840a5d54af390f5c9a0045cd75b7f4c79119c36
+date: 2026-10-17T13:08:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: the resource format, read out of LoadScreenResource rather than inferred
+An entry's non-zero longs are pointers whose low byte selects a destination record
+from the table at $022608 and whose address holds a list of {length word, source
+long} pairs ended by a zero word, bit 15 of the length word taking a different
+branch; the entry's first long goes to UploadGraphicBlocks and the routine ends with
+FlushDmaQueue. Entry $0E is graphics from $1032A0 and a second upload from
+$053234.
+
+The data is uncompressed -- VRAM $0000 matches ROM $1032A0 byte for byte for at
+least 16 KiB -- so the port's loader is a copy, not a decoder, which is the fact that
+made this ticket worth starting with the measurement instead of with the code.
+
+Three things stay open and are named as open: the length word's unit ($02D2 is 722
+and 16 KiB matched, so it is not bytes as they stand), what the destination records
+hold beyond the word read into d4, and what bit 15 selects. Guessing any of them
+produces a loader that fills this screen correctly and the next one wrongly, which is
+the failure mode worth the extra hour.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
