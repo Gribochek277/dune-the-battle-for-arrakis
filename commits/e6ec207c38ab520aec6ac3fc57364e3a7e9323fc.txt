@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e6ec207c38ab520aec6ac3fc57364e3a7e9323fc
+date: 2026-10-17T04:30:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 85: the window can switch a replacement on, so the new row is playable
+`--replace NAME` existed on the headless harness and not on `dune-port`, which
+made the fourth menu row renderable by a test and unreachable by the owner: the
+row and the screen behind it exist only when `RunTitleScreen` runs as the port's
+C. The plumbing was already there — `mda_machine_config.replacements`, set by
+run_headless.c and simply never set by run_play.c — so this is one option in the
+window's parser, with the harness's semantics kept identical: the same table
+names, the same refusal of `--replace` without `--engine next` (the mechanism is
+installed by next_app_create(), so a legacy run has no seam, and a replacement
+that could be switched on there would make every fidelity check that ran there
+mean something else), and the same default of none.
+
+Verified end to end under Xvfb: the window reaches exactly the 25 745 811
+instructions the headless held run reports, presents every frame, and holds the
+machine at the cartridge's 59.92 frames/s.
+
+Also records what the hold costs that was easy to miss and would otherwise come
+back as a bug report: the music stops with the machine, because the sound driver
+is the Z80, and the device then drains — measured at 75 underruns and ~1.7 s of
+silence over 120 held frames. `tests/test_play_audio.sh`'s 0-underrun requirement
+does not cover a held run, and deliberately so: a paused machine has nothing to
+play.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
