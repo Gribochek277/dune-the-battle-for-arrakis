@@ -1,0 +1,51 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 083a9a8d012484f68567c0c2853f5625b6abb723
+date: 2026-10-17T10:02:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 98: PORT SETTINGS opens the game's own options screen
+The port's fourth row answers $42 -- the OPTIONS row's own letter -- and that is
+the whole of what it does. The loop's chain at $00D4C0 turns it into the result
+RunFrontEnd already acts on, so the guest's own dispatch opens the guest's own
+options screen: the yellow artwork, the rows, PRESS *START* TO EXIT. The evidence
+is the comparison an overlay could never pass -- walking to PORT SETTINGS on next
+and to OPTIONS on legacy draw the same 230 723 bytes of picture, and that picture
+moved 62 987 of 76 800 pixels from the title screen to get there, on a screen the
+port does not draw and could not.
+
+This replaces ticket 85's overlay, and the overlay goes with it rather than being
+left unreachable: the request, the screen-is-up state, the borrowed-cell snapshot,
+the arrangement's hold branch and mdloop_hold_one are deleted, along with the two
+tests that drove them. What the replacement still needs is the text plane the
+row's own label is drawn from, and the window over a list longer than the screen.
+
+Nothing is held on this path, which is measured rather than asserted in prose: 100
+frames on the screen the port opened cost 1 185 831 guest instructions and
+12 800 600 cycles. Ticket 85 documented ~75 SDL underruns per 120 held frames as
+the price of a screen the game did not have; the price is gone because the machine
+is not stopped. The reason it was stopped is still true -- a settings screen is
+where the player presses buttons in order to bind them, and the game must not also
+read them -- and ticket 94 enforces that where the game reads its pad instead of
+freezing the game to keep it out.
+
+One coupling broke on the way and is worth the sentence it costs: until now "the
+port draws this row" and "this row opens a port screen" were one condition, so
+deleting the second silently deleted the first and left the player back on a
+three-row menu with no way to get where they had been. `port_label` and `code` are
+two fields now, and the round trip comes back with the row on screen, three cycles
+agreeing.
+
+The scroll window became next/port_window.{c,h} -- arithmetic over three numbers,
+so it is checked by enumerating them (3 081 checks over every list of 0..24 rows in
+every window of 1..6 slots) instead of by eleven runs of the machine that could
+only ever reach the cases a d-pad walks to. Ticket 92's end-to-end check was the
+right first shape and the wrong permanent home; the end-to-end half comes back with
+the screen that has a long list.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
