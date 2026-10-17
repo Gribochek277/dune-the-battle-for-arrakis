@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 56c5ac88ce41cfcce1234830e7740024978d2767
+date: 2026-10-18T01:29:13+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decision: ticket 100 closes on the project gate, not on the review's changes gate
+The review's only failure is `git diff --name-only main` being empty, which in solo
+mode means the work was committed rather than that it is missing. Recorded because it
+has now cost two sessions, and because the fix is ordering, not configuration: review
+before the merge commit.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
