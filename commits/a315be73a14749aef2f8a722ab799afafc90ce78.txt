@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a315be73a14749aef2f8a722ab799afafc90ce78
+date: 2026-10-18T02:44:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the sprite cursor was attempted, and the attempt is written up rather than left as dead code
+Three setup phases and a three-call frame were wired to the game's own sprite
+routines -- InitSpritePool, AddSpriteRecord with the pattern at $00D5EA, then
+BuildSpriteTable / WaitVBlank / UploadSpriteTable in the order sub_00D622 uses. All
+four routines were reached; the sprite table came back empty. The work is reverted
+rather than left inert, and the ticket now carries what the attempt settled: the
+sprite table base is reg[5] << 9 (render_software.c:202), the screen's registers
+already match the game's so the layout is not the obstacle, and the check that is
+still missing needs work RAM rather than a VDP dump.
+
+Three measurement traps are recorded too, because each one produced a wrong
+conclusion before it was seen: --address-log is a set and not a trace; START opens
+this screen rather than closing it, and the walk to it is three downs; and a dump
+taken after the screen closed is not a dump of the screen.
+
+The one real bug the attempt found stays fixed: the running-frame block sat under the
+setup switch's default, so the frame phases fell back through it and re-read the pad
+several times a frame.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
