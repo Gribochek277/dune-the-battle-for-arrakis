@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 74da51da97f8705d4c608926bf96e3820281ee9e
+date: 2026-10-17T11:19:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 100-101: the port's screen is entered from code the port already owns
+Re-scoped before writing any of it, because the cheaper seam turned out to be the
+better one. RunFrontEnd dispatches 1 to the options screen and 3 to the password
+screen and falls through to the title screen for everything else -- so result 2 is
+dead in this image, and the guest's own chain at $00D4C2 already produces it from
+$43, the letter of the tutorial row ticket 91 measured as gone. The port takes a
+slot the cartridge left empty instead of inventing one, and RunTitleScreen --
+already a port replacement owning $00CFCC-$00DA89 -- runs the port's screen from
+where that result is produced.
+
+That drops the transcription of a second long routine, which is the part of the
+old plan that carried the risk and bought nothing the player can see: the
+equivalence gate keeps comparing a front end it has always compared, and the
+port's screen is still a module the port wrote, entered by code the port wrote,
+drawing a title the game never drew.
+
+101 is the rows and the game's cursor on that screen; 93 re-points at it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
