@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6cc653057f0e9d9c0b64220b7c61bdb050220c85
+date: 2026-10-17T11:14:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 100-101: the port's settings screen is a screen the port owns
+The owner found the flaw by looking at the screen: OPTIONS appears, then becomes
+PORT SETTINGS. That is ticket 99 entering the game's options screen and painting
+over its title, which is ticket 85's overlay with better manners -- the port owns
+no screen, it edits one, and the player can watch it happen.
+
+What makes the honest route cheap was measured before writing it down:
+LoadScreenResource $022530 takes a resource index, and the options screen asks for
+$000E. The yellow artwork is therefore an asset in a table at $02243A and not part
+of the options screen's identity, so a screen of the port's own can load the same
+backdrop and have never drawn anything else. Reusing an asset is not patching a
+screen, and "no frame ever held the cells spelling OPTIONS" is a property a
+screenshot cannot fake, which is precisely what ticket 99 could not claim.
+
+The port has to own RunFrontEnd $00518E to name a screen the cartridge does not
+have -- it is not in the replacement table, which is why the cheap route was taken
+and why it was wrong. Replacing a front-end routine in C is the move tickets 84 and
+90 already made twice.
+
+100 is the front end reaching a screen the port owns, with no rows on it yet; 101
+is the rows and the game's cursor; 93 re-points at 101. Ticket 99 keeps its
+measurements and gains a note saying which part of it is being deleted.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
