@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 56e655254b3d9003371d6459e232a47bec98c8d7
+date: 2026-10-17T15:26:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+WIP ticket 100: the screen renders its own title and the backdrop's edges
+On wip/ticket-100-port-screen only. The root cause of the flat screen is found and
+fixed -- a VDP command must be one WORD write, because the model decodes a register
+write from the first word and returns, while a long leaves it pending and swallows
+the next command's first word. With that fixed all seventeen VDP registers match the
+options screen's exactly, and the picture is the title plus the artwork at the left
+and right edges.
+
+What is left is the loader's coverage, not the mechanism: the middle and bottom of
+the backdrop are missing, and measuring where they belong is unreliable by
+inspection because the resource is full of repeated blank tiles -- ROM $053234's
+first 32 bytes match V-RAM at $5A40, $5A42 and $5A46, which is zeros, not a
+destination. The next attempt should read the destination out of LoadScreenResource's
+selector table rather than infer it from a byte pattern.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
