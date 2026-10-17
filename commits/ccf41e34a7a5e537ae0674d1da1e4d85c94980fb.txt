@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ccf41e34a7a5e537ae0674d1da1e4d85c94980fb
+date: 2026-10-17T13:58:49+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decision: the port's screen cycles over $00D5A4 and $00D5A6, and RunFrontEnd stays guest code
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
