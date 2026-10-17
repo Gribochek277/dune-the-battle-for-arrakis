@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6d0d835f7e3ef39d9b0d00daac39ad5118c528a6
+date: 2026-10-18T02:44:31+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decision: ticket 101 ships the marker with the sprite criterion named unmet, not forced
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
