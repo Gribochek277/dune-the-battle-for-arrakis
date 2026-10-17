@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0d31319f509ee38d19ed9ebc7c0bc3e23854e3be
+date: 2026-10-17T13:25:15+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: the loader measured end to end, and the one problem that is left is a handoff
+Three copies, each confirmed by matching the machine's own VDP dump against the ROM
+rather than by reading a descriptor and hoping: backdrop $1032A0 -> V-RAM $0000 for
+23 104 bytes, which is exactly the 722 tiles of entry $0E's size word and so settles
+the size unit as the 32-byte tile; palette $02A82E -> C-RAM $0000 for 48 bytes, the
+same value the options screen pushes at $010952; glyph font $057DB6 -> V-RAM $9000
+for 4 096 bytes, and $9000 is tile $480 x 32, the ASCII range the text plane writes
+cells into.
+
+What is left is not the format but the handoff, and the ticket says so plainly: by
+$00D5A4 the title screen has torn itself down and the machine is free, but d0 returns
+to RunFrontEnd, which the port does not own, and every value it dispatches on either
+re-enters the title screen to draw under the port's screen or opens a game screen.
+Parked guest is ticket 85's hold with its underruns; running guest is the flicker one
+layer down; taking RunFrontEnd as a fourth replacement row is the only honest shape
+and is named as the shape to build -- not built at the tail of a day that changes what
+the equivalence gate compares.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
