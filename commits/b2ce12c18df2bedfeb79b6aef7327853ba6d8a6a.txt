@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b2ce12c18df2bedfeb79b6aef7327853ba6d8a6a
+date: 2026-10-17T13:57:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: the handoff is a cycle over addresses the port already owns -- no front end takeover
+md68k_jsr pushes md68k_next_address(cpu, cpu->pc): the return address is the next
+guest address, not something the caller picks. That is what makes the port's screen a
+two-address cycle inside RunTitleScreen's own span -- step at $00D5A4, jsr WaitVBlank,
+continue at $00D5A6, back to $00D5A4 -- and it retires the reason this ticket looked
+blocked.
+
+WaitVBlank is guest code, so the machine advances every frame: the frame handler runs,
+the music plays, nothing is held, and ticket 85's ~75 underruns per 120 frames stay
+retired. The title menu's drawing is never reached because the port took over at
+$00D5A4 and never returns to the menu's loop, so there is no second screen to fight
+over the plane. Closing is the mirror: perform the rts at $00D5AE with the choice the
+cartridge would have left, and RunFrontEnd re-enters the title screen normally.
+
+RunFrontEnd stays guest code and out of the table, so the equivalence gate compares
+what it compares today -- which is the whole reason to prefer this to taking the front
+end over.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
