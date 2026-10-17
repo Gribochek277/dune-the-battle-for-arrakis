@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0ba113f4bf8a6dd2a31334bed32326e92b6c8d97
+date: 2026-10-17T03:15:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decisions: D36 — `next` may fall out of step with the reference; the C is where the game changes
+The owner ruled this while ticket 85 was being re-queued: `legacy` is the copy
+and stays byte-exact, `next` is the iteration over the copy, and the two are not
+required to agree once `next` does something the cartridge never did. The point
+of moving the game to C is to be able to change it, and a gate that made
+extension impossible would be enforcing a property the project has stopped
+claiming.
+
+Three consequences, because each one changes what a check is for: a checkpoint
+that measures the copy belongs to `legacy` (the fidelity catalog already renders
+the default arrangement, so its pixel-exact gates keep their meaning); a test
+that compared `next` with the cartridge is edited, not deleted, and keeps the
+stronger statement with the feature removed; and the end state is C, so a routine
+that is hard to change in the listing is a reason to take it over, not a reason
+to leave it alone. The boy scout rule is recorded with it, aimed at the C
+specifically, measured by what the *next* screen costs.
+
+AGENTS.md gets the short version, because it is the file that decides what an
+agent does next.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
