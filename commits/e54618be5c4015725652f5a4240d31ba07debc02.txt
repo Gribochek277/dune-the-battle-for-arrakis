@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e54618be5c4015725652f5a4240d31ba07debc02
+date: 2026-10-17T03:55:05+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 85: a port screen that outgrows the menu's rows fails the build
+A port screen is drawn in the game's menu rows -- its title in the first, its
+rows in the ones below -- which is a real bound: a row past the last slot has no
+cell to draw in and no snapshot to restore from, and the draw loop would have
+dropped it in silence. Ticket 86 is the next person to add a row, so the bound
+belongs where the rows are written.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
