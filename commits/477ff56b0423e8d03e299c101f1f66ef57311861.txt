@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 477ff56b0423e8d03e299c101f1f66ef57311861
+date: 2026-10-17T11:20:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 100: where the port's screen is entered, measured
+RunTitleScreen leaves at $00D5A4 (move.w d6,d0) and returns at $00D5AE, and all
+fifteen instructions of teardown between them -- ClearBackdrop,
+FillVramWithZeros, the plane and sprite bases put back, the frame handler
+restored, fifteen VBlanks -- have already run. So the port's screen starts from a
+taken-apart machine, which is the same state the game's own screens start from
+(the options screen's setup opens with ClearBackdrop and LoadScreenResource for
+exactly that reason). Recorded here so the next session does not re-derive it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
