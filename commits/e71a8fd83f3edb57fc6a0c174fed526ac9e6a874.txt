@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e71a8fd83f3edb57fc6a0c174fed526ac9e6a874
+date: 2026-10-17T18:19:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+WIP ticket 100: white text, no stripes, and the magenta is now diagnosed
+Three fixes the owner's screenshots found, each of which the tests could not:
+
+* The palette is 128 bytes at $02A82E, not 48. The glyph font draws strokes with
+  colour 8 and outline with 15; colour 8 of palette 3 is $0EEE -- white -- and it
+  lives at byte 96, past the end of a 48-byte copy. The text was black because the
+  palette said so.
+* Clearing plane A's priority painted solid blocks over the artwork, because an
+  untouched plane B cell is tile zero, which is not blank. The row is now filled
+  with spaces first, so transparency is what the artwork sees.
+* The cursor marker is '>', not '*': this font draws '*' as a filled block in
+  colour 12, which palette 3 resolves to black, and it disappeared against the art.
+  The game's own cursor is a sprite, which this screen does not run.
+
+What remains is not a bug in the loader. 27 pixels of pure magenta sit at plane
+rows 12-14, and they are the backdrop's own cells: palette 1 has $0E0E at entries
+6, 7 and 14, and the artwork uses those indices there. The game shows no magenta
+because its options screen covers that band with its own panel; the port's screen
+has no panel, so the artwork shows as it was authored. That is a decision about
+what the port's screen looks like, not a defect to guess at.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
