@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5e9a609c5143d03fd79bef55609079e6750ddd39
+date: 2026-10-17T16:01:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+WIP ticket 100: the screen loads its picture through the game's own routines
+Four real bugs found and fixed, and the screen now loads the guest's resource,
+palette and font and draws its title over the artwork:
+
+* md68k_jsr pushes next_address(pc), which is right from $00D5A4 and wrong from
+  $00D5A6 -- it pushes $00D5A8, the middle of a four-byte instruction. The screen
+  now names its own return address and every call lands on the dispatcher.
+* The guest's argument convention is 'write at the caller's (a7), then jsr', which
+  means the caller owns that word. Here the title screen's saved d3 owns it, so the
+  screen takes a scratch slot of its own and gives it back on the way out.
+* A VDP register write must be one word; a long leaves the model pending and eats the
+  next command's first word.
+* Setting the plane bases is not enough: the backdrop's tilemap carries the priority
+  bit in every cell, so plane A hides plane B wherever it has a pixel. That is why
+  the title shows and the rows did not -- the rows were in memory, correct, and
+  underneath the artwork.
+
+What is left is one measurement: where on the text plane this screen's rows go so
+that they are not under the artwork. The first two guesses (the menu's rows at row
+20, then rows 4-8) are both wrong, and the title rendering at a row that does not
+match the arithmetic says the plane's row stride or the vertical scroll is not what
+port_screen.h assumes for this base. That is the next thing to measure, and it is
+measurement and not design.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
