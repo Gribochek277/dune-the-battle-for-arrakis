@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 681c356451a23844e2fdcf1bfaf94c6f30373892
+date: 2026-10-17T03:30:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 85: the UI section describes what exists, and the fourth row is a port row
+docs/next-engine.md's "The UI `next` grows first" becomes "The UI `next` has":
+the row, the port's screen behind it, where the pixels come from (the menu's
+name-table cells at $D4A0..$D7A0, $6480 | the character, over glyph tiles the
+game already uploaded -- measured at entry 2149, not assumed), the hold and what
+it costs, the three handoffs with the one piece of pad bookkeeping they need, and
+what a screen with no reference is actually proved by. The future tense was the
+problem: the section read as a plan while the thing existed, and the next person
+would have gone looking for which part was missing.
+
+docs/game-architecture.md's account of the title screen's four row slots gains
+the occupant: the cartridge keeps the socket empty, and that description stays
+byte-for-byte true of what `legacy` runs; in `next` the fourth slot is the port's
+row at the tile address $0BD0 the removed tutorial row had, it does not use the
+guest's $43 / index 2 / attract path, and the game's own three rows and their
+pixels are unchanged.
+
+The site is regenerated from both.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
