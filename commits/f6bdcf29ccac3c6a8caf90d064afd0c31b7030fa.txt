@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f6bdcf29ccac3c6a8caf90d064afd0c31b7030fa
+date: 2026-10-17T13:16:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs+ticket 100: the screen resource table, with both size units, before any loader
+Written up because the two lists an entry points at measure size differently and a
+loader that assumed one would fill the options screen and the next screen wrongly:
+UploadGraphicBlocks takes 32-byte tiles (asl.w #4 for the DMA word count, asl.w #5 to
+advance the destination) while the per-upload lists take bytes (lsr.w #1, because the
+VDP wants words). Bit 15 is RLE in both; the window position follows the lists from a
+per-selector table. Entry $0E is 722 tiles from $001032A0 plus 3 584 bytes from
+$00053234, uncompressed -- the 16 KiB verbatim match says so.
+
+Also: the docs gate is not flaky. It failed twice on 'SyntaxError: set -euo pipefail'
+because I ran it as python3 tests/test_docs.sh instead of bash. Checked before
+reporting a defect that did not exist.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
