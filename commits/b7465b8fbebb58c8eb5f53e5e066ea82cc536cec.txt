@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b7465b8fbebb58c8eb5f53e5e066ea82cc536cec
+date: 2026-10-17T08:42:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 98-99: PORT SETTINGS opens the game's own options screen
+The owner looked at what ticket 85 shipped and pointed at the screen they meant:
+the game's OPTIONS screen, the yellow artwork with the rows on it, entered as a
+screen and left as one. Rendered it before deciding (menu-options.pad, entry
+8200) so the plan rests on a picture rather than on a memory of one.
+
+That is cheaper than what it replaces, not dearer. RunOptionsScreen is already a
+port C replacement that runs the guest's code (ticket 84), its row list is
+already the port's data (ticket 90), and the title screen already leaves for that
+screen with d0 = 1 and comes back from it -- so the panel, the palette, the
+cursor sprite and PRESS *START* TO EXIT come from the guest for free, along with
+the return path ticket 85 had to hand-build out of a borrowed-cell snapshot.
+Reproducing the art would have meant the port owning tiles it does not
+understand, plus a full-plane snapshot to put back.
+
+Two tickets, in the order that de-risks them: 98 is the round trip with nothing
+of the port on screen yet, which is where the unknowns are; 99 puts the port's
+title and rows on it, and makes the screen know which row opened it. 93 re-points
+at 99, and 85 carries a note that its overlay is superseded while the text
+helpers and the scrolling ticket 92 built from them are kept -- the port's row
+list on the new screen is what they serve.
+
+Also closes out the bookkeeping: 92 and 97 are done and gate-green, and the
+dependency table in README.md matches the tickets.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
