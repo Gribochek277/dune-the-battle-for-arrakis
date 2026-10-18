@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 48b780aa93f5bbc548bda13b3bbeac90ffce8118
+date: 2026-10-18T23:46:51+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the upload is a VDP DMA, which redirects the search off the pool entirely
+Read rather than guessed. UploadSpriteTable calls through $024000 -- which holds
+$000D52B6, a valid code address, so the indirect call was never what segfaulted, and
+chasing it as a pool problem cost a session for nothing -- then sets registers 15, 16
+and 17 from SpriteTableShadow's own address and derives register 5 from it too. The
+upload is a 68K-to-VDP DMA, and the machine model implements those in the instruction,
+so the question is no longer 'does the game build a sprite table' (it does, six
+entries, proven) or 'is the pool right' (it is) but 'what does the DMA write, and why
+is the destination zero'.
+
+That is a question about two files in the port rather than about the cartridge, which
+is a much better place for the next attempt to start.
+
+Also recorded: the routine rewrites reg 3 (interrupts off) and reg 4 (a plane size)
+while doing it. A screen that runs this with the port's own plane registers set is
+asking for the layout to change underneath it -- which is the most likely explanation
+for an earlier attempt producing a black screen instead of a missing cursor.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
