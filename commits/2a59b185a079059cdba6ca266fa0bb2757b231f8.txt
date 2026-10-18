@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2a59b185a079059cdba6ca266fa0bb2757b231f8
+date: 2026-10-19T01:58:55+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the failure is in the routine's entry and exit, not its body -- proven with a control
+BuildSpriteTable called with a0=0 takes its first 'move.w a2,d0; beq' and exits at once,
+doing no sprite work at all. Same command line, same build, one line different: 9389
+data writes pristine, 9389 with the call. The screen freezes exactly as hard. So nothing
+in the body is implicated -- not the pool walk, not the shadow, not the sprite data, not
+the dbf loops. Entering and leaving is what fails.
+
+fault.count is 0 here too, so it is not a privilege violation on the MOVE USP pair, and
+ORI.W #$0700,SR goes through md68k_set_sr, which swaps the stacks only when the
+supervisor bit changes and #$0700 does not change it.
+
+What is left has a specific address range. At $0014DA 'move (a7)+,sr' runs ea_read,
+which increments a7 BEFORE calling md68k_set_sr -- and if that setter ever decides the
+supervisor bit changed, it swaps a7 and usp, destroying the pointer the very next
+'movem.l (a7)+' needs. The rts then returns to whatever the corrupted stack yields, the
+guest keeps running, and the port's screen sits frozen behind a complete frame count.
+
+Whether that swap can fire depends on the CPU mode at the port's call site, and that is
+the next measurement, named in the ticket: sr's supervisor bit entering guest_call and
+again at the sentinel. Differing finishes the ticket; matching kills this theory too,
+which is the point of writing it down as a question.
+
+Probe reverted, main green. First result on the sprite in five sessions that is both
+measured and controlled.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
