@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1c243c29a368c4c5bdbfb55ff0514f981836df74
+date: 2026-10-18T23:39:11+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: a ledger of who owns which byte of the port's settings screen
+The documentation criterion asked for 'which parts are the guest's data and which are
+the port's code', and the honest answer needed a table, because the question a reader
+actually has is 'may I change this?' -- so every row carries that answer as a column.
+
+Nine rows: the backdrop, the glyphs, the palette, the priority bits, the text cells,
+the rows, a host list's content, the cursor, the way out. Each names where it comes
+from -- resource index $0E through LoadScreenResource, the font at $057DB6, 128 bytes
+from $02A82E, plane B from $C000 -- and the two 'no' rows that are not obvious each
+say what happened when someone tried: 48 palette bytes instead of 128 makes text black
+because the glyph's colour lives past 48, and clearing a priority bit means reading
+plane A, which is not in the 68000 address space, so the read returns ROM and the write
+puts ROM into the name table.
+
+Two rules come out of it and they are the design: reuse an asset's index, never another
+screen's identity -- which is why the artwork is byte-exact for free and why the test
+can compare against the game's own screen instead of a snapshot the port made of
+itself; and own the smallest region that works, because every defect this screen ever
+produced came from reaching outside it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
