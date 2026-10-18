@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 27b594a2c329cdff6c4408e93e4153281497933c
+date: 2026-10-18T20:24:32+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: play gains --vdp-dump, the instrument the flow test was blind without
+The diagnosis in the ticket named this as the prerequisite rather than the test, and
+it was right: a pad log cannot say which screen the port is on, because the machine
+is not held -- that was the whole point of tickets 98 and 100 -- so the guest's pad
+register keeps tracking buttons while a port screen is drawn over it. Every attempt
+at the end-to-end flow was inference from an instrument that cannot measure it.
+
+The two writers move to app/dump_files.c and are shared, in the harness's byte-for-byte
+format, so scripts/ does not grow a second reader and a dump from either front end
+answers to the same tool.
+
+With it, the first honest answer: at frame 2600 the window run is **not on the title
+menu at all** -- the display is on and the name table holds no START GAME, no OPTIONS,
+no PORT SETTINGS. So the walk that works under headless-fast has never reached the
+screen in play, and every earlier failure was this, misread as three different things
+(a missing latch, a save that did not fire, a capture that did not consume). The next
+session starts from a fact instead of a guess about which of those it was.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
