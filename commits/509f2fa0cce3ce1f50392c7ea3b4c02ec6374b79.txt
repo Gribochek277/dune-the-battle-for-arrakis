@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 509f2fa0cce3ce1f50392c7ea3b4c02ec6374b79
+date: 2026-10-18T23:35:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the sprite attempt gets to one step, and that step is named
+Reverted again -- but the gap is no longer 'the sprite does not work', it is
+'UploadSpriteTable's precondition', and everything before it is measured working: the
+record moves to the port's row, the node's hide bit clears, BuildSpriteTable fills
+SpriteTableShadow with six entries, and the upload routine is reached. The shadow's
+bytes appear nowhere in V-RAM, so the table is built and never sent.
+
+The three traps are the value here. md68k_read8 does not exist (it is read1). The
+addresses are 24-bit, and 0xFFFFFFD70C is silently not 0xFFFFD70C -- a cursor that
+never moves while every routine involved is provably called. And 'make -C port next'
+is not a build: it says nothing-to-be-done and exits 0, so a grep for 'error' finds
+none and an entire round of investigation runs against a stale binary.
+
+Reverted rather than left in, per the standing rule: three extra guest calls per frame
+for a cursor that is not drawn makes the screen's timing worse and its story no
+better.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
