@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7fa35324a336cd422010f58de768a683be0bccff
+date: 2026-10-18T20:14:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: the flow test's state recorded, including the three assumptions that were wrong
+Each cost a 40-second run, which is the price of testing a screen with an instrument
+that cannot see it. The one worth keeping is the first: the pad log does not show
+whether the port's screen is up, because the machine is not held -- that was the
+whole point of tickets 98 and 100 -- so the guest's pad register keeps tracking
+buttons while the screen is drawn over it. A control consumed by capture would be
+absent; a control present proves nothing.
+
+The next session should not start with another long run. play has no --vdp-dump, so
+it cannot say which screen it is on, and every attempt is blind until it can. That
+is a small change and it is the prerequisite, not the test.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
