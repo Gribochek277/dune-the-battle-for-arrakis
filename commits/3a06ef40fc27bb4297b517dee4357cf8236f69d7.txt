@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3a06ef40fc27bb4297b517dee4357cf8236f69d7
+date: 2026-10-19T02:54:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the model's VDP address register is a byte address, not the hardware's word address
+Read vram_write_word instead of probing around it:
+
+    addr &= 0xFFFFu;
+    v->vram[addr] = value >> 8;
+
+v->address indexes vram[] directly, in bytes. On the chip the VDP address register holds
+a WORD address, and every command encoding in existence -- the game's own included -- is
+written against that. A destination of $7800 is byte $F000 on hardware and byte $7800
+here.
+
+That accounts for the last hour in one line, and for why the palette copy never showed
+it: settings_copy_to_cram passes address 0, and 0*2 is 0. The only V-RAM destination this
+screen had ever used was the one where both conventions agree. The sprite entry was being
+built correctly from the game's own shadow and written correctly through a helper that
+worked -- into a place nothing reads.
+
+Two consequences, neither about a cursor. First, wide blast radius: any port code that
+computes a VDP command address the way the cartridge does is wrong by a factor of two
+above $8000 and silently right below it, and silent-right-half-the-time is the worst
+failure mode an address can have. Second, it should be settled deliberately -- either the
+model takes a word address like the hardware and the existing callers are adjusted, or it
+keeps a byte address and says so at the definition where the next author cannot miss it.
+That is a decision about the model's contract, so it gets its own ticket rather than
+riding in on a cursor.
+
+Reverted; main green. The cursor is not done, and the reason is now four lines anyone can
+read.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
