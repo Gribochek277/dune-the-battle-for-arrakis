@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 66188b53cf01d512b50969a9cc2eadc345a366f1
+date: 2026-10-19T00:14:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 103: second correction -- the 363 was measured with the sprite code reverted
+The counter comparison is real but it cannot support the inference I drew from it: the
+port's screen performed 363 dma_68k transfers because nothing on it uploads a sprite
+table -- ticket 101's attempt had been backed out before the run, and 'which build was
+this' was not part of the measurement's provenance. Fewer transfers than a plain run is
+the expected number for that build.
+
+The observation that does bear on the model is already in ticket 101 and needs the code
+compiled in to reproduce: a shadow of six built entries, and zero at reg5 << 9 in
+V-RAM. That is the thing to explain, and explaining it starts with running the counters
+against that build, which is one run.
+
+So 103 is now honestly a question with a measurement plan rather than a bug with a fix,
+and it says so in its own body. Two corrections in one session on the same finding is
+embarrassing and both are in the record; the alternative was a model change justified by
+a number from a build that had the feature switched off.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
