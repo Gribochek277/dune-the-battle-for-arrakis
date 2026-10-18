@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c450cfacf1e56eb1753c8ecd86267a64cd99870f
+date: 2026-10-18T17:45:46+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 94: six of seven criteria; the seventh is sequenced behind 95 on purpose
+The end-to-end virtual-pad test is not built yet, and the reason is the useful part.
+The hook exists (MDP_GAMEPAD_TEST_SCRIPT) and tests/test_gamepad.py already drives
+it, so the mechanism was never the problem -- the observable is. play can dump the
+guest's RAM and cannot dump the app's, and has no VDP dump at all, so the only thing
+to assert today is pixels: parsing a name table to infer that a binding changed.
+
+Ticket 95 writes the map to a file. After that this criterion is three lines and much
+stronger -- attach a pad, walk to the screen, press A, press a control, exit, read
+the binding file back -- the real artifact, in the format the loader accepts, with
+the swap visible in it. Asserting pixels to infer a map edit when the map is about to
+be written to disk would be testing the wrong thing carefully.
+
+Done and checked here: capture mode and its prompt; the control consumed before
+mda_input_apply so the machine never sees it (not undone afterwards -- afterwards
+there is a frame in which the game already read the button); the swap over the table
+itself, no duplicates and no holes; the keyboard's controls neither listed nor
+capturable, proved by making the rows follow the argument; a missing control shown as
+missing and never assignable; and a pad pulled mid-capture reported and the screen
+still usable.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
