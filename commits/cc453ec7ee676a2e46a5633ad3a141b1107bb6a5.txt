@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cc453ec7ee676a2e46a5633ad3a141b1107bb6a5
+date: 2026-10-19T02:56:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 106: file the VDP address-unit divergence as a model-contract decision, not a cursor patch
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
