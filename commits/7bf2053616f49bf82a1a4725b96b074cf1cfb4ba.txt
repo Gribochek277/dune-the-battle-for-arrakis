@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7bf2053616f49bf82a1a4725b96b074cf1cfb4ba
+date: 2026-10-18T19:03:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: the two engines of one recording run at once -- 777 s to 463 s
+Criterion 4 asked for the top checks to be cut by running the machine once and
+asserting several properties. That turned out not to be available here, and the
+investigation is worth recording because it closed a door: test_options_screen.sh
+already reuses its legacy runs (the control sections compare against the JSON and
+PNG section 1 produced), and its two 8200-frame next runs are different binaries --
+the real one and the NEXT_SWAP control build -- so they are not one run waiting to
+be merged. What was available is that each recording's legacy and next runs are
+independent processes over the same input, so they run together.
+
+1.7x, not the 2x the arithmetic promises: two machine runs compete for memory
+bandwidth, and a 68000 emulator is exactly the kind of workload that finds out.
+
+The measurement is the part to keep. My first number for this check was 300 s, taken
+from a timing harness wrapped around the gate; measured standalone it is 777 s
+serial and 463 s parallel. The gate number was not wrong so much as
+incomparable -- warm build, different load, and a wrapper that timed a run whose
+setup had already happened. So both figures above come from the same script, the
+same directory and the same machine state, which is the only comparison that can
+support a claim about speed. The parallel version was nearly not shipped because
+the first comparison said it was slower.
+
+verdict: identical -- 8200 frames, 71 680 pixels, 6 049 502 samples, 65 536 RAM
+bytes. The speedup did not change what the check proves.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
