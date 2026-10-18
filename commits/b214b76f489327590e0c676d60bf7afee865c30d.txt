@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b214b76f489327590e0c676d60bf7afee865c30d
+date: 2026-10-19T01:12:36+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the port's own upload hangs, because BuildSpriteTable never returns when the port calls it
+Implemented exactly as the ticket designed it -- guest's BuildSpriteTable, port's own
+V-RAM copy, no UploadSpriteTable, no sound CPU -- and the screen parks in
+PHASE_SPRITE_BUILD from the first cursor move on. data_writes over 2260 frames is 6113,
+byte-identical to a build with no sprite code, which is how the hang is known rather
+than guessed: the phase after the build never ran.
+
+This contradicts ticket 101 finding six built entries in the shadow, and both can hold
+-- the routine fills the shadow and then fails to return. Two candidates, and no third
+guess: the pool head's contents, since the loop terminates on a zero 16-bit node address
+and a non-terminating chain walks the whole work-RAM mirror; or the routine's
+'move.l a7,usp', which takes the user stack pointer and is a different stack to leave
+behind when called from the port's dispatch instead of the guest's own frame.
+
+Reverted rather than left in: a screen that stops reading its pad after one cursor move
+is worse than a screen with a text marker. main green.
+
+The value here is that the obstacle moved. It is no longer 'a device this port does not
+emulate' -- it is one routine's preconditions, which is a much smaller thing to find.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
