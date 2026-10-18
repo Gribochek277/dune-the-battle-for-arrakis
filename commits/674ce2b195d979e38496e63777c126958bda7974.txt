@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 674ce2b195d979e38496e63777c126958bda7974
+date: 2026-10-19T00:03:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: a control experiment kills the register and plane theories in one run
+What the game's own OPTIONS screen holds in the sprite table -- the measurement the
+last three attempts should have opened with instead of closing with. It sets reg5 to
+$78 exactly as the port's screen does, and its table at $F000 holds 21 entries. The
+port's screen reaches the same register state and holds zero, while the shadow it
+built holds six.
+
+So: the port did not move the sprite table (the game sets the same value); the model's
+DMA works (21 entries, same dump format, same code path); the pool is fine (six in the
+shadow). One sentence is left, and it is about the port's call sequence: the game
+uploads a shadow and the table arrives, the port uploads a shadow and it does not --
+which points at the VDP destination state the game's frame leaves behind and the
+port's does not, in chips/vdp.c, not at the cartridge.
+
+Every earlier framing cost a session because it was a guess about the game where the
+evidence was about this port. A control run against the game's own equivalent screen
+would have produced this in one measurement.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
