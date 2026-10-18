@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8067f719927f9ecba011e8beb8b69c5f15214154
+date: 2026-10-18T16:04:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 94: capture mode -- the seam gains operations, and the control is eaten before the pad
+The seam so far carried text one way. Capture needs the other direction -- the
+player pressed a control and something must decide what that means -- and handing
+the screen a control number is exactly the moment next/ learns what a gamepad is.
+So the front end passes three functions instead: capture, capturable, status. The
+screen supplies an index and a number; every word and every meaning is decided on
+the app side. A NULL in any slot means the front end does not offer it, which is
+what lets ticket 93's read-only screen need no special case here.
+
+app.c is where the real invariant lives. While a row is capturing, the gamepad's
+report is consumed before mda_input_apply resolves it into pad state -- not undone
+afterwards, because afterwards there is a frame in which the machine has already
+read the button, and a frame is all a 68000 game needs to act on it. Only the
+gamepad is withheld: the keyboard keeps working, which is what the criterion asks
+twice over (the screen edits the gamepad's map, D34, and a capture whose only way
+out was a gamepad button could not be left).
+
+mapping_screen.c was rewritten rather than patched, so that the rows and the
+binding a row edits come from one filter run. Two arrays that must agree and are
+written in two places is how an edit screen changes a different binding than the
+one under the cursor -- the worst failure this feature has, and one no screenshot
+shows.
+
+The third quiet truncation of the session was caught before it shipped: the status
+line was 29 characters into a 24-cell line and arrived as 'SELECT A ROW, PRESS A
+CO'. Both status strings now fit, and the test asserts the width against the field
+the screen owns rather than the buffer it happens to format into.
+
+260 checks on the content builder, 32 on the seam, full gate ALL CHECKS PASSED.
+Left on this ticket: the SDL_JoystickAttachVirtual end-to-end flow (criterion 7)
+and the unplug-during-capture case (criterion 6).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
