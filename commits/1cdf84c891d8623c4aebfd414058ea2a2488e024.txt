@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1cdf84c891d8623c4aebfd414058ea2a2488e024
+date: 2026-10-18T21:45:45+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: the whole binding flow, driven by a virtual pad and read off the guest's pad
+The one test the chain was for. Everything before it stops short of the question a
+player asks: I pressed a button, did the game change? The seam is unit-tested, the
+content builder is unit-tested, the screen is checked against the name table -- and
+between all of them sits what no unit test reaches: a virtual gamepad, the map applied
+to it, the port's screen reading the machine's pad, the file written on the way out
+and read back on the next run.
+
+It drives the real binary with SDL's dummy drivers and asserts the only evidence that
+matters -- the recording --record-input writes at the VBlank handler, in the same
+language --press speaks. Bind pad_up to left_shoulder, leave (saving), reload, and
+the guest's pad says: left_shoulder now produces up, and dpad_up -- whose function was
+taken -- produces z. Both directions, because a swap that works one way is a rebind
+with a hole. Then the game's own menu and its OPTIONS rows are checked, because this
+flow walks through the cartridge's title screen, opens a screen of the port's own,
+edits the front end's map and comes back, and a detour that leaves the game's rows
+broken is a defect with a nice UI.
+
+Four things this test had to be told, each of which looked like a broken feature:
+
+* play defaults to --engine legacy, where the port's fourth row is not on the menu at
+  all. Every press was moving the game's own cursor.
+* The game's options screen ends on START, so the third press left the screen the
+  check was about to read.
+* The mapping list is thirteen rows, not twelve; one short leaves the cursor on
+  PAD_START, START does nothing on a binding row, and the save is never asked for --
+  which looks exactly like a broken writer.
+* left_shoulder is pad_z, not pad_c. The shoulders are Z and C.
+
+The scan for the game's rows reads the whole plane rather than slicing it into rows:
+the labels start mid-row (word 0x512e for MUSIC IS), so a window aligned to a row
+boundary can end before the text begins.
+
+Registered in the slow tier; both tiers green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
