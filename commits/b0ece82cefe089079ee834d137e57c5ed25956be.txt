@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b0ece82cefe089079ee834d137e57c5ed25956be
+date: 2026-10-18T08:43:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 93: the two states the harness cannot be in, tested -- and they caught two real cuts
+app/mapping_screen.c gains a unit test (45 checks) over the one argument that
+matters: a `missing` mask. "This pad has no left trigger" needs a device whose
+report disagrees with the map and the harness has no device at all; "no gamepad
+connected" needs a run told not to read one. Both are one call here and
+unreachable on screen, which is the same trade ticket 92 made about the window.
+
+It found two defects, both of the same silent kind:
+
+* "NOT ON THIS PAD" is fifteen characters in a twelve-cell field, so the screen
+  drew "NOT ON THIS P". The sentence about the pad was cut by the space it was
+  given; it is now "NOT ON PAD", and the test compares the whole string, because a
+  prefix of a fact is not a fact.
+* `right_shoulder` is fourteen characters in the same twelve-cell field, printing
+  `right_should` -- a truncated control name still reads as a plausible word, which
+  is why no screenshot review caught it. The two field widths are now measured from
+  the vocabulary that crosses the seam (functions top out at `pad_right`, nine;
+  controls at `right_shoulder`, fourteen) instead of from round numbers, and a
+  property check asserts no name in the map is cut, so a longer name in a future
+  binding file changes a constant here rather than appearing as a typo on screen.
+
+Full gate: ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
