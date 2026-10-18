@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bcab7ac5a880992ffb741a844d18eafacc6e985d
+date: 2026-10-19T00:45:23+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the counter run with the sprite code compiled in -- 363, identical to without it
+The measurement this ticket has wanted since its first session, finally taken properly:
+UploadSpriteTable is entered and arms NO transfer at all. Not a transfer to the wrong
+address -- none. dma_68k is 363 with the code in and 363 with it reverted, against 378
+plain and 427 on the game's own OPTIONS. The shadow builds (six entries), the record
+moves, the hide bit clears, nothing is sent.
+
+A third root cause suggested itself -- the model gates the DMA on reg1 bit 4 while the
+game's VdpReg1Shadow is $8124, bit 4 clear, so the model looked wrong. Checked before
+being written down this time: a clean register table gives register 1 bit 4 = M1 / DMA
+enable, and the game's own routine sets exactly that bit with ori.w #$0010 before the
+control write. The model is right; the hypothesis is dead.
+
+Third confident root cause on this ticket, first one stopped before a commit. Same
+shape every time: half a mechanism read, the visible half fitting the story earlier
+sessions had built, and a number or a line of code offered as an explanation. Checking
+cost one search; committing cost a session, twice.
+
+The trail is now genuinely narrow and it is not the pool, the registers, or the model's
+DMA gate: between entering the routine and the command write that would arm a transfer,
+something does not happen -- and the first instruction after entry is an indirect call
+through a game data cell whose callee has never been examined under this screen's VDP
+state.
+
+Reverted; the text marker stays. Screen test and full gate green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
