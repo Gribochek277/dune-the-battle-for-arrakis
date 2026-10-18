@@ -1,0 +1,39 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 132b67000b608be72e1141da5f71f2e2ea954d54
+date: 2026-10-18T13:12:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the mapping screen drew Cyrillic because the game's font has no lowercase Latin
+The owner read the mapping screen and asked why the controller text was in Cyrillic
+when the interface is English. Both halves of the answer were right and neither was
+about language: the glyph table is $480 + the ASCII code, and the 32 tiles the ASCII
+range reserves for a..z are not small capitals -- they are Cyrillic. Measured in the
+ROM at $057DB6, the tile at 'p' draws the Cyrillic er and the one at 'd' draws the
+Cyrillic de. The mapping screen prints the binding file's own spelling, which is
+lower case and correct in the file, so it drew the file at the player.
+
+The fix is in the one function that turns a character into a tile, not in whichever
+screen remembered to shout: the port now cannot draw a lowercase letter at all, which
+is not a limitation but an accurate description of the medium -- there is no tile to
+draw it with. app/binding_file.c still reads and writes pad_up; the case is a fact
+about the name table, applied on the way to the VDP.
+
+The regression asserts the strong form: no lowercase tile anywhere in the plane, from
+any screen, including ones not written yet. With the fold removed it finds 63 of them
+and fails, which is the check that would have caught this before a human did.
+
+Also in this commit, from ticket 94's first step: mda_binding_file_capture, the
+bind-and-swap over the table, with 260 checks. It found two defects of its own -- a
+swap that moved a control instead of a function and so bound one control twice, and a
+repeated capture of the same control reported as a swap that moved nothing. Both are
+fixed and both are properties now.
+
+Full gate: ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
