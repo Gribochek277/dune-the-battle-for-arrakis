@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8a46bf7bd6cb93c3a0a57339bf1040161ffc9755
+date: 2026-10-18T19:39:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 95: leaving the mapping screen writes the map back, and a failed write keeps the edit
+The seam gains one notification -- closed -- because the front end has to know when
+the player stopped looking at its list, and that is the only signal the screen can
+give without learning that a file exists. It is a notification and not a save: the
+screen does not say how to persist anything and could be answered by a front end
+that keeps the map in memory and loses it on exit, which is what this replaces.
+
+Three rules, all the criterion's:
+
+* Nothing changed, nothing written. The default file sits beside the binary and may
+  be under version control; rewriting identical bytes still changes the mtime and
+  still makes a clean tree dirty. The test asserts the file was not touched --
+  mtime and size identical -- not that its bytes would have matched.
+* The whole map, always, so the deviceN port lines survive an edit that never
+  touched them.
+* A failed write keeps the edit and keeps the error, in the loader's own
+  'path line N: message' format, because two phrasings for one failure is how a log
+  line stops matching its own documentation.
+
+The path travels with the map, so the file written is the file loaded -- including
+under --gamepad-map, and including the no-file case, where --no-gamepad registers a
+NULL path and must not create one.
+
+The test caught a design flaw rather than a typo: dirtiness was set on the seam's
+capture path, so an edit made any other way was invisible to the save. The section
+was rewritten to drive the edit the way a player does -- begin capture, report a
+control -- which is both the real flow and the only version that could have failed
+for the right reason. 290 checks, both tiers green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
