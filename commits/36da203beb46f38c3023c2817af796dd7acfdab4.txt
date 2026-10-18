@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 36da203beb46f38c3023c2817af796dd7acfdab4
+date: 2026-10-18T14:39:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: split the gate into tiers -- measured, not felt
+The owner asked for this as a task rather than a change right now, so it is a task
+with the numbers in it: 45 checks, 1668 s, and three checks at 811 s between them --
+49% of the whole gate in 7% of its files. tests/test_port_settings_screen.sh drives
+headless-fast eleven times, up to frame 3000.
+
+The criteria carry the two constraints that make this a reorganisation rather than a
+speedup: the byte-exactness and engine-equivalence gates stay in the fast tier no
+matter what they cost, and nothing is deleted, weakened or loosened to make a tier
+go green. The timing method is written down too (wrap the suite's own run() with
+date +%s) so the next session starts from a measurement instead of an impression.
+
+Note for whoever picks it up: tests/run_all.sh already honours an ONLY filter, so
+partial runs exist; what is missing is a fast default and a named slow tier.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
