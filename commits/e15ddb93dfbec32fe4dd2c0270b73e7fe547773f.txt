@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e15ddb93dfbec32fe4dd2c0270b73e7fe547773f
+date: 2026-10-18T19:12:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: verified nothing was weakened, and the one criterion left short is named
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
