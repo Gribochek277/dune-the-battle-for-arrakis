@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 52082e531f1c551876f063a020ba5d64a48c0820
+date: 2026-10-18T20:13:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: restore the input latch -- it was not a nicety, the feature does not work without it
+The latch went out with the sprite-cursor experiment, which it had nothing to do
+with, and the end-to-end flow for ticket 96 then failed in a way that pointed
+everywhere but here: every press arrived, the pad log looked healthy, and the
+mapping screen never opened.
+
+It is required, not defensive. The title screen dispatches on a press it has
+already read, and the settings screen's setup spans several frames -- one guest
+call each -- so START held for four frames is still held when the first frame is
+drawn. Without the latch the screen opens and closes on the press that opened it.
+
+The latch is on the pad, not on a frame count: a count is a guess about how long a
+human holds a button, and it breaks the moment the setup gets cheaper or dearer.
+The game's own screens get this for free, because their dispatch consumes the press
+a frame before the new screen's loop first reads the pad.
+
+Both tiers green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
