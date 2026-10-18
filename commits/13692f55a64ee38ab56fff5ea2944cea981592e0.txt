@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 13692f55a64ee38ab56fff5ea2944cea981592e0
+date: 2026-10-18T20:37:54+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: the two new files pay the zone check's toll
+The gate went red on the commit before this one and the fix is the two things it
+asked for: the files assigned to the app zone, and a contract block naming what the
+module owns, may call and must never call. Both are the check doing its job rather
+than friction -- a shared module that both front ends depend on is exactly the file
+whose boundaries a reader needs stated, and 'must not call a front end, a renderer, a
+screen or the guest' is the rule that keeps it a writer and not an opinion about when
+to write.
+
+The header also records the two facts that make the module non-obvious: why it is one
+copy rather than two (the whole value of a dump is that one reader in scripts/ handles
+a capture from either front end), and why the format is raw (the first consumer was a
+byte-for-byte diff against a reference capture).
+
+Full gate: ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
