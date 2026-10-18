@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cc163a39fce218896a70f534f315c4568fd7b296
+date: 2026-10-18T04:32:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: --work-ram-dump, the instrument this whole problem was missing, and the full answer written down
+Every confident wrong conclusion of this session traced back to reading the wrong
+memory. The VDP dump cannot say whether AddSpriteRecord returned a node, whether the
+pool is empty, or whether the table base is wrong -- it shows the same black screen for
+all three. So headless-fast gains --work-ram-dump, and with it the cursor's mechanism
+is now fully mapped: the title screen installs the cursor and hides it (flags $C0 =
+show and hidden), so the port only clears bit 7; BuildSpriteTable wants the head's
+*contents* as a0, not its address, or it walks off the pool into an address error at
+$FFFFFF; a node address is 16 bits and work RAM mirrors on them, so the arithmetic
+that looks equivalent lands in ROM and faults; a closed screen that returns 0 reopens
+itself forever; and a screen must not take the button that opened it.
+
+All five were implemented and each was right on its own; together they segfaulted
+before the last cause was found, so the screen keeps its text marker and the criterion
+stays open with the answer in hand rather than a sixth guess in the dark.
+
+The settings screen is byte-for-byte unchanged and the full gate passes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
