@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2bcddb26db609380679bd1c4c7a2cfdd84fd17ca
+date: 2026-10-19T02:08:43+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the measurement I called small and named turned out not to be
+Took it, because that is what saying it is small commits you to. One dump of the game's
+own sprite table at $F000, decoded in the hardware's format: six entries, monotonic
+pattern indices 0x01-0x06, a diagonal chain, plausible attributes. The format read is
+sound and emitting it would be easy.
+
+It does not unblock the work, and the reason is the interesting part: the cursor's
+pattern is known to the port as a ROM address ($00D5EA) while the table holds a 9-bit
+V-RAM pattern index, and converting between them is precisely the work BuildSpriteTable
+does -- it depends on where the game loaded that pattern in V-RAM, unmeasured and not
+obvious. Entry [1] has Y=184, exactly the cursor record's Y, but X=3 where the record
+holds X=120, so it is not the cursor either.
+
+So the decision to stop was right and the reason I gave for it was wrong. A confident
+claim about the size of the next step is the same mistake as a confident claim about its
+cause, one rung down, and this session has produced six of the first kind.
+
+Writing an entry with a guessed index would have drawn the wrong tile in the right place
+-- the same class of defect as ROM written into the name table, which drew 27 pixels of
+$0E0E, a colour a Mega Drive cannot produce, and which the owner caught by looking at
+the screen.
+
+main green, text marker in place, nothing guessed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
