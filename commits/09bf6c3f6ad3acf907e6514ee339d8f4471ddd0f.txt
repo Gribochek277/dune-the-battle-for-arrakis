@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 09bf6c3f6ad3acf907e6514ee339d8f4471ddd0f
+date: 2026-10-19T01:15:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 101 and 105: the sound-CPU handshake is not the blocker -- it accepts the value this model returns
+SoundPollReady ends its poll with 'tst.b d0; beq' -- zero means ready. io_img is
+zero-initialised and write-through, so the poll reads 0x00 and the routine returns at
+once. The handshake succeeds. There is no spin, no unmodelled device in the way, and no
+gap in the model for ticket 105 to close.
+
+105 is closed as not-a-defect. Its own filed premise (unmapped I/O returns 0xFFFFFFFF)
+was wrong before any code was touched: io_byte's default case returns io_img[...], not
+the address-decode default I read it as.
+
+101 gains the correction to its 'root finding': the retry loop is real and unconditional,
+but it is never reached a second time, so it explains nothing. What survives is the
+measurement and nothing else -- dma_68k is 363 with the upload called and 363 without.
+Two candidate explanations remain and neither has evidence, including the one this
+session found last: BuildSpriteTable does not return when the port calls it, which would
+park the screen before any upload is attempted.
+
+Fourth wrong premise today, and the shape was the same all four times: reading the
+dispatcher and not the line it dispatches to. Three were caught by looking one line
+further. The fourth reached a commit, which is why this message exists.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
