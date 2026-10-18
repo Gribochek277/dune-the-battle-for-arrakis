@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2960ee5840b800cf146628a7b17f67aae51b5f70
+date: 2026-10-18T19:51:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 96: the mapping screen documented for the player, and for the next maintainer
+docs/gamepad.md gains the screen in the player's own terms: how to rebind, that a
+swap is a swap and not a theft (and is therefore recoverable by doing it again), that
+the game does not see the button while a row waits, that a control the pad lacks shows
+NOT ON PAD and cannot be bound, and what a failed write looks like -- including the
+honest limit, that the map survives a failed save but the instruction to save it does
+not, so the player may have to make the change once more.
+
+docs/next-engine.md gains the boundary, which is where all of this feature's design
+actually is: why the seam carries two strings and three function pointers and could
+not carry anything else without the arrangement becoming the thing it was built
+beside; why the field widths are measured from the vocabulary rather than round (both
+numbers were found by being wrong first); why capture consumes the control in app.c
+before the map is applied rather than undoing it afterwards, when afterwards leaves
+one frame in which the game has already read the button; and why the port folds case
+at the tile, because the game's font has no lowercase Latin and its first screen to
+find that out printed pad_up in Cyrillic.
+
+Both sections keep the failures in the prose. A document that records only the design
+that won teaches nobody why the others lost.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
