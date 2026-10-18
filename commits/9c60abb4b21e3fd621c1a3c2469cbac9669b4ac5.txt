@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9c60abb4b21e3fd621c1a3c2469cbac9669b4ac5
+date: 2026-10-19T01:48:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: it is not a hang -- 2260 of 2260 frames complete, 26.4M instructions, no fault
+A routine stuck in a loop stops the frame clock. The run reports every frame, so
+BuildSpriteTable is not spinning and the CPU is healthy. Combined with the shadow being
+rewritten and the port's copy never executing, only one shape fits: the routine returns,
+just not to the port's dispatch. That is what movea.w #$0001,a7 would cause if the
+recovery at 'move.l usp,a7' did not put the stack back where the pushed return address
+sits -- the pops take the wrong values, rts jumps somewhere else, and the guest carries
+on running its own code behind a frozen port screen.
+
+Stated as a hypothesis, and it names the one measurement that settles it: does PC ever
+equal SETTINGS_DISPATCH after the build call. The port already watches that address to
+know a guest call returned, so the instrument is a counter away, not a new mechanism.
+
+Also recorded as a caution, because it misled this session twice: --address-log is a
+curated set of routine entries, not a trace -- 474 addresses for 26.4 million
+instructions. The routine's final rts is absent from it, and so are plenty of
+instructions that certainly ran. Absence there proves nothing.
+
+Sixth premise today, first one that survives all its own measurements.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
