@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ebc653586c75ce125ce07139465635293a07251d
+date: 2026-10-18T05:08:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 93: next/ gains the host-screen seam, and it carries text and layout only
+The port has to show what the host's input layer knows -- which function each
+physical control is bound to, and which of them the plugged-in pad does not have.
+None of that vocabulary exists on the cartridge, and none of it may exist in
+next/: the moment the module spells a host button's macro or a binding file's path,
+the arrangement becomes the thing it is meant to be independent of.
+
+So the seam is two strings and a kind. The front end turns a map into words --
+including the words for "not on this pad", which is a fact about its device, not
+about this screen -- and next/ decides where they go, which is a fact about the
+game's name table and not about any device. The two field widths are the options
+screen's own columns, measured, so a port row and a game row on screen together
+read as the same kind of thing.
+
+next_host_screen_format is pure, which is the payoff: the two rules a row can
+break -- a label long enough to reach the value, a value long enough to reach the
+edge of the line -- are enumerable here, and neither is reachable by pressing
+buttons on one pad. 32 checks, no machine, no window, no gamepad. The same argument
+that moved ticket 92's window arithmetic out of eleven machine runs applies with
+more force when the inputs are strings.
+
+Zone check clean (270 modules, 8 zones); full gate ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
