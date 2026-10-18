@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 12ea7e2c55c06e396d1e80426a293b3a5861edc3
+date: 2026-10-19T00:07:00+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: root cause -- the model triggers 68K-to-VDP DMA on a data-port write, and the upload routine never writes the data port
+The VDP counters were already in --json, so this needed no instrumentation, only the
+thought to ask. Over the same 2260 frames: plain 378 dma_68k, the game's own OPTIONS
+427, the port's screen 363. The port's screen performs FEWER DMA transfers than a run
+where it is not open at all. The upload is reached and does not happen.
+
+The reason is one line in chips/vdp.c: the model performs a 68K-to-VDP DMA inside
+md68k_vdp_data_write, on a write to the data port. UploadSpriteTable never writes the
+data port -- it sets regs 15 and 21-23, writes a command to the control port, spins on
+a control-port read until the FIFO drains, and restores reg 1. On hardware the command
+write is the trigger. Here the transfer is deferred to a data write the routine does
+not perform, so it sits pending and the next data-port writer collects it with
+v->address pointing somewhere else.
+
+That is a port bug, not a cartridge mystery. Four sessions read work RAM looking at the
+game for something that lives in this repo's model. The game's own screens reach 427
+because their frame loops write the data port for other reasons right after arming a
+DMA; the port's screen does not, and the difference is 64 transfers and one invisible
+cursor.
+
+The fix moves when DMA transfers happen, which is exactly what the engine-equivalence
+checks are sensitive to, and port/tests/test_cycles.c already asserts dma_68k == 1 in a
+fixture. So it is its own ticket, not a change smuggled into a cursor.
+
+101 stays open on the cursor criterion, open on a ticket rather than on a guess.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
