@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a469d73719bcd36f0c15208a0df93a6620105ce6
+date: 2026-10-18T17:31:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 94: the rows are the argument's map and only that map
+Criterion 4 -- the keyboard's controls are not listed and cannot be captured -- is
+true by construction: the rows come from the `map` argument, and app.c's capture
+path reads `report.gamepad[port]` and never `report.keyboard`. Two files apart,
+and nothing stops the next change from reaching for the keyboard map it can see, so
+`true by construction` is what the test retires.
+
+The check is that the rows follow the argument: a different map gives different rows,
+and a function unique to the built-in map is simply absent. It caught a bad assertion
+of my own on the way -- I first looked for a stale `dpad_up`, but control 0 *is*
+`dpad_up` in whichever map mentions it, so a matching value proves nothing. A
+function can only appear if the rows came from somewhere the caller did not name.
+
+266 checks on the content builder; full gate ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
