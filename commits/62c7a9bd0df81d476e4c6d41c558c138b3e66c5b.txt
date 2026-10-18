@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 62c7a9bd0df81d476e4c6d41c558c138b3e66c5b
+date: 2026-10-18T22:16:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decision: withdraw the 'not on the title menu at all' conclusion, keeping the wrong text as a quote
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
