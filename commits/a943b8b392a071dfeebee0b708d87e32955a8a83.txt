@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a943b8b392a071dfeebee0b708d87e32955a8a83
+date: 2026-10-19T01:41:00+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: a control experiment -- the port's V-RAM copy works, the guest's build does not return
+Two builds differing in one line: with BuildSpriteTable the run does 6113 data-port
+writes and the port's copy never executes; with the build skipped it does 9709 and the
+copy runs. So the port's own transfer into V-RAM is proven good, and the guest's build
+routine -- which does run, and does rewrite the shadow's first entry -- never hands
+control back. fault.count is 0, so it is no privilege violation, no bus error, no
+unimplemented instruction.
+
+That is the first clean comparison in this whole investigation and it says the obstacle
+is one routine's return, not a device, not the pool, not the model's DMA gate, not the
+registers.
+
+The line I was about to blame is a suspect in our own listing rather than in the game.
+The reading 'it abandons the stack it just pushed 46 bytes onto' comes from
+'movea.w #$0001,a7' at $001386 -- but the bytes there are $3E7C $0001, and MOVEA with
+an immediate operand encodes source mode 001, which $3E7C is not. I am not asserting the
+correct mnemonic off bit arithmetic at the end of a long day; I am recording that the
+line is suspicious and that a measurement cycle was spent on it.
+
+Why that matters beyond the cursor: the generated listing is this repository's primary
+artifact and its review mechanism. A wrong address desyncs the build and every gate
+catches it. A wrong mnemonic that still assembles to the same bytes is invisible to all
+of them, and it quietly misdirects whoever reads it.
+
+Two ways forward are written into the ticket: confirm or fix the disassembly, or skip
+BuildSpriteTable and write the shadow in the guest's own 8-byte entry format, whose
+cursor pattern address is a measured constant.
+
+Reverted; main green; the text marker stays.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
