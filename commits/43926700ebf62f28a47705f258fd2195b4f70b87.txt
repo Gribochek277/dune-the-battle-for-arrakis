@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 43926700ebf62f28a47705f258fd2195b4f70b87
+date: 2026-10-19T00:21:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: a table of hypotheses that are measured dead, including two I resurrected this session
+Eight rows, each killed by a measurement rather than by argument: the pool is already
+installed; BuildSpriteTable builds (six entries in the shadow); the hide bit clears
+($C0 to $40); the record moves (X 44, Y 28); reg5=$78 is what the game's own OPTIONS
+sets too, and its table there holds 21 entries; the model's data-port DMA branch is
+V-RAM fill while 68K-to-VDP is started from the command write and a green fixture proves
+it; the 363-transfer measurement came from a build with the sprite code reverted; and
+$024000 holds a valid address, so the indirect call never segfaulted.
+
+Two of those were believed again in the session that wrote this, which is the reason the
+table exists. The rules it enforces: say which build a number came from, and run the
+game's equivalent screen as a control before blaming a model.
+
+What is left, once: the game's own call fills V-RAM and the port's does not, shadow
+built correctly in both. Measuring that needs the sprite code compiled in, which has
+never been done.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
