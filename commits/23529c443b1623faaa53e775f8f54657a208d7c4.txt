@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 23529c443b1623faaa53e775f8f54657a208d7c4
+date: 2026-10-19T02:04:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the one routine the port cannot call is the one that relocates its own stack
+Searched instead of reasoning: the move.l a7,usp / move.l usp,a7 pair appears exactly
+twice in the whole ROM, both inside BuildSpriteTable. No other routine in the cartridge
+does it. The port calls ten guest routines through the same guest_call and all ten return
+-- ClearBackdrop, DisableVdpDisplay, FlushDmaQueue, LoadScreenResource, QueueDmaTransfer,
+SetDisplayWidth, SetPlaneSize, SetWindow, WaitVBlank -- and none of them touches USP.
+
+Stated carefully: this is a correlation, not a proven mechanism, and six mechanisms on
+this ticket have already died. But it is the first fact that distinguishes the failing
+case from ten working ones, which is a different kind of evidence and worth naming as
+what it is. It also hints at what the routine is for -- relocating the stack, disabling
+interrupts and pushing twelve deep is what code does when it cannot trust the stack it
+was called on.
+
+The pragmatic path is now unavoidable and is written down with its cost: stop calling the
+routine, write the hardware's own eight-byte sprite entry directly (the port's V-RAM copy
+is proven, the cursor pattern address $00D5EA is measured, the format is the chip's
+manual). What that loses is the 'moved by the game's own code' half of the criterion's
+wording, and that is said out loud rather than glossed -- the sprite would be the game's
+data, in the game's format, at the game's address, placed by the port. Met in substance,
+not in letter.
+
+Second question for the owner on this ticket, alongside the attribute and column
+positions.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
