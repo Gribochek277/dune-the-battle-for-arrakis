@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 031ed15c9eec7bf1aa9c2d159d69ed7903a49958
+date: 2026-10-18T08:10:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 93: three criteria ticked, three named with the reason they are open
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
