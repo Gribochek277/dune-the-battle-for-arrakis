@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f5ac5acb51844283a021c365a921e564a10ec5c1
+date: 2026-10-18T17:34:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: marked priority -- next after the ticket in progress
+The owner asked where the ticket was, and the answer is worth recording because it
+will come up again: this repository has **no git remote at all** (`git remote -v`
+is empty), so nothing is pushed anywhere and no ticket appears in a web tracker.
+Tickets exist as files under docs/tasks/ and as rows in docs/tasks/STATUS.md --
+102 was in both, at the end of a 45-row table, which is easy to miss.
+
+The priority is therefore written where a session actually looks: in the ticket
+file above the Blocked-by line, and in the STATUS.md note column. The table
+generator only appends rows for tickets it has not seen and never rewrites an
+existing one, so the note survives regeneration -- checked before relying on it.
+
+Order after this: 94 finishes, then 102, then the 95 -> 96 chain. That is not a
+queue jump -- 95 and 96 are blocked by 94 either way, so 102 slots between them
+rather than ahead of an unmet dependency.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
