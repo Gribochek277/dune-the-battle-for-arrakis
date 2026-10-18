@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5e317c8db09bd9612fe5518e5c8a89ad01d1cb9f
+date: 2026-10-18T19:10:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: the tier table, with the seconds beside every check
+Criterion 3 asked for the assignment to be stated with the measurement that produced
+it, so the script's header now carries all 45 checks split 22/23 with a number next
+to each one that has one. A check moves tier by editing a line and the matching call,
+with a number -- not by feel, which is how a 28-minute gate got built in the first
+place.
+
+The fast tier's note names the three checks the project's own rule keeps there
+whatever they cost: byte-exactness of the header, per-line byte verification, and
+engine equivalence at 42 s. That is the criterion that matters most in this ticket --
+a tier split that lets the two properties this repository exists to protect be
+skipped by default is not a speedup.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
