@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3643cc81fe1b755446ac2b321fb69cdfca079533
+date: 2026-10-19T00:13:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 103 and 101: my committed root cause was wrong, corrected the same session it was written in
+The claim was that the model triggers 68K-to-VDP DMA on a data-port write and that
+UploadSpriteTable never writes the data port. Neither is what chips/vdp.c does:
+
+* the DMA branch in md68k_vdp_data_write performs V-RAM FILL -- the word it takes is
+  the fill pattern, which is correct hardware behaviour and unrelated to 68K-to-VDP;
+* 68K-to-VDP is started by dma_start from control_write_word on the second word of a
+  command, exactly where the hardware puts it and exactly what I said was missing;
+* port/tests/test_cycles.c arms a DMA with two control-port writes and asserts
+  dma_68k == 1. It passes. The path I declared absent is not only present, it is
+  covered by a green test 40 lines from the code I blamed.
+
+The measurement survives and is still unexplained -- 363 dma_68k transfers on the
+port's screen against 378 plain and 427 on the game's own OPTIONS -- and that is the
+whole value of ticket 103 now. The explanation was mine and it was wrong.
+
+How it happened is worth keeping: a control-port handler was seen to mention
+VDP_CODE_DMA, the file was read from the top, and the first plausible line was adopted
+because it fitted the story four earlier sessions had built. A wrong root cause
+committed with confident numbers attached is more expensive than no root cause, so the
+correction is in both tickets rather than only the one where the error was filed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
