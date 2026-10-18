@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 44b42620b7b5d7e0a3e2336d275f4e8d357966a8
+date: 2026-10-19T02:12:05+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: $00D5EA is a descriptor, not a pattern -- the direct-entry path needs two undecoded things, not one dump
+Searched V-RAM for the bytes at $00D5EA expecting the cursor's tile data to be already
+loaded. What is there is 0000 0008 0008 0000 0000 44BE 0000 2F0A -- dimensions, flags and
+two pointer-shaped words, not 8x8 tile planes -- and no 8- or 16-byte prefix of it appears
+anywhere in the 64 KiB dump, as expected of a descriptor never copied wholesale.
+
+So the pattern is behind an undecoded descriptor whose tile data has not been located in
+V-RAM. Two unknowns, not one, and the stop is now evidenced rather than merely cautious.
+
+Leaves the ticket with six measured facts: the port's V-RAM copy works (9709 vs 6113, one
+line apart); BuildSpriteTable does not return to the sentinel and does not return even
+when it does no work at all (9389 vs 9389, empty pool), so the body is exonerated; it is
+the only routine in the ROM that relocates its stack through USP and the only one of the
+eleven the port calls that fails; no fault, all frames complete, supervisor mode, correct
+disassembly; the table format decodes cleanly from V-RAM; and the pattern is behind that
+descriptor.
+
+Six mechanisms eliminated, one correlation found, one false claim of mine about the size
+of the next step caught by actually taking it. Text marker stays, criterion stays open,
+main green, nothing guessed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
