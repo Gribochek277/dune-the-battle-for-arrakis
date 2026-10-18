@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 13b74cc3f4624719d92c238f2af6c8cfe87cef4e
+date: 2026-10-19T00:48:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the sprite upload is parked behind an escape-less sound-CPU handshake over ports this model does not implement
+UploadSpriteTable's first instruction is an indirect call, and its callee -- $0D52B6 --
+is already a curated name in this repository: SoundPollReady, 'takes the bus, writes
+$01 to $A01B20, polls $A01B21, retries with a delay'. The body is worse than the note:
+after the delay it executes 'bra.s $0D52BC', unconditional, back to the bus request. No
+counter, no give-up, no exit. The only way out is for $A01B21 to answer with the value
+the routine wants.
+
+This port does not model the sound CPU's I/O ports. md68k_mem.c maps Z80_BUSREQ at
+$A11100 and answers it from mdz80_bus_acknowledged(); $A01B20 and $A01B21 are absent,
+so a read falls through to the unmapped-I/O default of 0xFFFFFFFF.
+
+So the criterion is not blocked on a sprite bug at all -- the sprite was built correctly
+in every attempt, six entries in the shadow -- it is blocked on a design that should not
+have called this routine. It is not a sprite routine: it is a sound-CPU handshake that
+eventually uploads a table, it runs with interrupts off, and its retry loop never exits.
+A screen whose frame time depends on a device the port does not emulate is the wrong
+screen.
+
+The way forward is the one this screen already uses twice: keep the guest's sprite data
+and the guest's table format, build with BuildSpriteTable, and move the shadow to V-RAM
+with the same QueueDmaTransfer/FlushDmaQueue pair used for the font.
+
+And there is a model gap that deserves its own ticket: any guest path polling the sound
+CPU spins against unmapped I/O. Nothing notices today because nothing reaches those
+ports -- this only surfaced because the port called a routine no earlier session had
+called from here.
+
+Three sessions of work-RAM dumps were looking for a sprite bug.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
