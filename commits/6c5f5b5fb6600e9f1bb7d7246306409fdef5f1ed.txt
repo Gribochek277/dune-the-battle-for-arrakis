@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6c5f5b5fb6600e9f1bb7d7246306409fdef5f1ed
+date: 2026-10-18T03:15:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decision: 93 depends on the settings screen's row list, not on the sprite cursor
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
