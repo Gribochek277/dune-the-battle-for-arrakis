@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b5f4daa213bf0d075ddd2d3576c8da7ae93b704e
+date: 2026-10-19T02:00:08+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the stack-swap theory is dead already -- killed by a measurement in hand, not a new run
+move.l a7,usp at $00136C is privileged and the model faults it outside supervisor mode;
+the probe run reports fault.count == 0. So the routine runs in supervisor mode, so the
+SR it pushed has the supervisor bit set, so restoring it cannot change that bit, so
+md68k_set_sr cannot swap the stacks. The mechanism proposed one section above cannot
+fire.
+
+Written down rather than quietly dropped, because it is the sixth theory on this sprite,
+it was consistent with every measurement, and killing it cost one paragraph of arithmetic
+against a fact already in hand. The failure mode that keeps producing them is reaching
+for a mechanism that would explain the data instead of first asking which data already
+rules mechanisms out.
+
+Seven things now stand, all measured: the port's V-RAM copy works (9709 vs 6113, one
+line apart); BuildSpriteTable does not return to the port's sentinel; it does not return
+even when it does no work at all (9389 vs 9389, empty pool), so the body is exonerated;
+no fault; all 2260 frames complete so nothing spins; supervisor mode, so the stack-swap
+path is out; and the suspicious disassembly line is correct, verified with the assembler.
+
+Six mechanisms eliminated, one behaviour confirmed. The next test is the comparison this
+ticket never made: call a different guest routine that also pushes sr and registers and
+returns through them. If it comes back, the difference is in this routine's first dozen
+instructions. If it does not, the port's guest_call is simply not valid for routines that
+manage their own stack -- which would be a far larger and more interesting finding than a
+cursor, and would explain why three implementations all froze the same way.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
