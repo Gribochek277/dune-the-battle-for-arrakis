@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3b0fd0165de355b9f7bb2d849960fd3c1bdfdcb3
+date: 2026-10-18T17:02:23+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 94: a pad pulled mid-capture is reported, and the screen stays usable
+The seam gains one optional operation -- abandoned -- because only the front end
+knows which of 'the player cancelled' and 'the pad was pulled' just happened, and
+criterion 6 asks for the second to be *reported*. Without it the screen goes back to
+inviting a press on hardware that has left the machine: the player obliges, nothing
+happens, and no line on screen says why.
+
+app.c ends the capture on the detach edge. Nothing is bound, the rows are rebuilt
+against the device that is actually there, and the status line says GAMEPAD
+DISCONNECTED.
+
+23 new checks on the seam's capture state -- begin, cancel, consume-once, abandon-
+once, and a screen with no operations cannot be captured at all. These are the cases
+a virtual joystick cannot enumerate: the ones where nothing is pressed. The
+consume-once check is the difference between a swap and a runaway -- a second control
+after the edit must not be a second edit.
+
+host-screen 55 checks, mapping-screen 260, full gate ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
