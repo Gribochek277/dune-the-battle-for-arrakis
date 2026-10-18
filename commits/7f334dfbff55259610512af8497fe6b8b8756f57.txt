@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7f334dfbff55259610512af8497fe6b8b8756f57
+date: 2026-10-19T00:58:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tickets 104 and 105: the sprite upload done the port's way, and the model gap filed separately
+104 carries the criterion 101 could not reach: move the guest's cursor record and get
+the guest's built shadow table into V-RAM using the pattern this screen already uses
+twice -- QueueDmaTransfer with d0=2, the destination command in d1 and the source in a0,
+then FlushDmaQueue. Keep the guest's data and format; own the transfer. Explicitly not
+in scope: implementing the sound CPU's ports to make the handshake terminate, which
+would couple a cursor to the sound system and make an unbounded retry loop exit on a
+value nobody checked was semantically right.
+
+105 records the model gap on its own terms. $A01B20 and \ are unmapped, so a
+read returns 0xFFFFFFFF forever, and several guest routines -- SoundPollReady among them
+-- retry that poll with an unconditional bra.s and no give-up. Nothing notices today
+because no test reaches those ports. The ticket is open about the resolution (model it,
+or fault loudly) and closed about one thing: returning 0xFFFFFFFF forever is the worst
+of the three, because it looks like the game running.
+
+The dependency was created backwards and is corrected: 104 unblocks 101's cursor
+criterion, so 101 is blocked by 104.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
