@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5b0e10b4b3f7e2d75200849975f7372d93e54d21
+date: 2026-10-18T03:14:43+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 93: the criterion that asked to hold the machine now asks not to
+Written before tickets 98 and 100 settled the question, and it would have sent
+wherever it goes next back to a design this project has measured away: a held machine
+cost ~75 audio underruns per 120 frames and executed no guest code at all. The
+measurement survives with its sign flipped -- frames on the screen must run guest
+instructions -- so the ticket keeps its teeth without keeping its mistake.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
