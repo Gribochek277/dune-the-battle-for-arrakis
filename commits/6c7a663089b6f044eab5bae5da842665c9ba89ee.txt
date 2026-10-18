@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6c7a663089b6f044eab5bae5da842665c9ba89ee
+date: 2026-10-19T01:43:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the disassembly is correct -- asked the assembler instead of reasoning about encodings
+clownassembler turns 'movea.w #$0001,a7' into exactly 3e7c 0001, byte for byte what is
+at $001386. MOVEA's word form is opcode 0011 (0010 is the long), so MOVEA.W #imm,a7 is
+$3E7C. The listing is right; the routine really does park the stack pointer at $1 and
+recover it from USP in the tail, which is a technique rather than a defect -- and not an
+explanation for a missing return.
+
+Fifth wrong premise today, and the first one I checked with a tool before writing it
+down. The four before it were all the same error: reasoning about a mechanism from a
+half-read encoding instead of asking the thing that cannot be wrong about it.
+
+What survives, unchanged and clean: the port's own V-RAM copy works (9709 data-port
+writes with the guest build skipped, 6113 with it), and BuildSpriteTable does not hand
+control back to the port's dispatch. fault.count is 0. The pool, the VDP registers, the
+model's DMA gate, the sound CPU handshake and now the disassembly have all been measured
+and cleared, which is worth more than another hypothesis.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
