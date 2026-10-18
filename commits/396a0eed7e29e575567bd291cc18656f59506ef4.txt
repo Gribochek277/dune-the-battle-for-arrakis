@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 396a0eed7e29e575567bd291cc18656f59506ef4
+date: 2026-10-18T18:22:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 102: two tiers -- the default gate is 111 s instead of 1668 s
+Measured on this tree: 45 checks, 1668 s. Three of them were 811 s between them,
+which is 49% of the evidence for 7% of the files. That is not an inconvenience, it
+is a defect in the evidence: every bug this project has caught by a human looking at
+a screenshot -- the black text, the ROM written into the name table, the Cyrillic
+font -- was caught that way because nothing cheap would have run in time.
+
+  default            111 s   the fast tier
+  --tier slow       1636 s   long machine runs, the emulator, a private X display
+  --tier all                 what CI and a pre-merge run must invoke
+
+Three checks were moved to the slow tier's list and then put back, because the
+project's own rule outranks the stopwatch: engine equivalence and byte-exactness
+stay in the tier that runs on every push no matter what they cost. 'the two
+arrangements agree byte for byte' is 42 s and stays; the three equivalence checks
+against BlastEm stay. A speedup that lets the two properties this repository exists
+to protect be skipped by default is not a speedup.
+
+Nothing is deleted and no assertion is weakened -- 23 checks changed which tier
+they run in and every one of them still runs, verified by running both tiers green
+separately. The skipped list is printed on both outcomes, including a passing fast
+run, because that is exactly when a reader would otherwise assume nothing was
+skipped; it names the checks and the command that runs them.
+
+tests/run_all.sh --only PATTERN now implies --tier all. It has to: the retry test
+selects a check by name, and a selector that matched nothing because the check lives
+in the other tier would fail in the direction of looking like it passed. Verified
+against tests/test_emulator_retry.sh and against a slow-tier check by name.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
