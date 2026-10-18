@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 654e907bb2b324a85f7d0a495b57df86cd7e86e9
+date: 2026-10-18T08:09:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 93: the port's row opens the front end's list, and the way back clears it
+app/mapping_screen.c inverts the run's map into rows -- a map is control-to-function,
+which is how a file is written, but a player holding a pad asks function-to-control,
+which is how a screen has to be laid out. The vocabulary is the binding file's own
+(mda_function_name, mdp_gamepad_control_name), not a friendlier set invented here: a
+second set of names would be a second thing to keep in step with the file format, and
+a player who has read gamepad-map.ini should find words they already know.
+
+next/settings_screen.c gains one pointer -- the list that is up -- and three questions
+asked of it, so both lists are drawn by the same code, wrapped by the same code and
+marked by the same code. Two things it found by being wired up:
+
+* The input block counted the settings rows to decide where the cursor wraps, so the
+  ten-row mapping list stopped after its second row and the rest was unreachable. The
+  same class of bug ticket 101 names from the other direction -- a clamp borrowed from
+  a list that is not the one on screen -- and it is now the list that is up.
+* Returning from ten rows to two left eight rows of the front end's words in the plane:
+  'pad_mode  back' sitting under 'BACK TO TITLE' reads as a third option that does not
+  exist. The screen owns those cells while it is up, so it clears the ones it is not
+  using, and the test says so by name.
+
+headless registers the shell from the built-in map, because a screen reachable only
+with SDL open is a screen no test can reach and no differential run can compare.
+
+Two criteria ticked; the full gate passes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
