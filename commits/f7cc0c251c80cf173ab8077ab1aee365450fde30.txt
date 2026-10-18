@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f7cc0c251c80cf173ab8077ab1aee365450fde30
+date: 2026-10-19T00:08:00+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 103: file the DMA trigger fix, with 378/427/363 as its before-and-after
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
