@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3b04ecc7491259f09299c12be96155ed6e30f2f5
+date: 2026-10-19T07:23:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 106: pin the address unit, the command field and the unmasked trap with fixtures
+port/tests/test_vdp_ports.c writes through the two ports the way port_screen.c does (the
+long to $C00004, the words to $C00000) and asserts where the bytes landed, plus that the
+address the other convention would have used is empty -- the assertion a change of units
+fails: byte $2000 and byte $F000, with $1000 and $7800 asserted untouched, and the
+register byte-counted afterwards ($2004, $F004).
+
+It also pins the encoding as literals ($F000 -> $70000003, $6000 -> $60000001,
+$8000 -> $40000002, $FFFF -> $7FFF0003), the three addresses where the mask is
+load-bearing, the unmasked form as the different command it is ($4000 | ($F000 << 16)
+becomes a C-RAM write to entry 0 -- this ticket's own first data point, pinned as the
+model's behaviour so nobody "fixes" the decoder into masking), a C-RAM write at address 0,
+and the cartridge's own $70000083 sprite command executed as a two-word DMA into byte
+$F000.
+
+The checks can fail, run and reverted: with the builder's units changed (`<<= 1`) 20
+checks fail -- the 19 here plus one in tests/test_cycles.c, whose DMA fixture reads its
+word back through the builder -- and with the mask dropped 18 fail, all here, including
+`v->cd & 0x0Fu = 0x3, expected 0x1` at $F000 and `v->vram[0x2000] = 0x60` for the $6000
+write. The cartridge fixture keeps passing in the units control because it does not call
+the builder; that is exactly what makes it the independent statement.
+
+The new test file joins the tests zone (the structure diagram gains its box).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
