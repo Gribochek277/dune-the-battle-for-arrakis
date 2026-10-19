@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 203c1263e72f40f6a2d8a6df9ebac550b82c95f4
+date: 2026-10-19T09:25:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Checkpoints: the mission entries name the facing angle, not an animation step
+mission-map and in-game-hud now name the quantity ticket 109 measured (the
+unit record's current facing angle at +A, byte $FF1276 for the unit that
+draws the icon) with both values, and say that the difference is the unit's
+facing, not a phase.  build-panel's note stops calling its bar an
+animation-step difference: the port's bar drains and its green patch blinks
+while the reference's pictures at 9497..9499 are identical, so the two runs
+hold different bar states.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
