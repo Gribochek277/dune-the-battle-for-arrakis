@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bef84ed444abf3b96c72b264f5a36d179925d8b2
+date: 2026-10-19T14:56:44+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 114: 114-114-house-selection-reconnaissance
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
