@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9fcf1f034cc4d95f0163138ee3b106b262c77775
+date: 2026-10-19T16:02:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tests: prove the house selection in C, its presses and its row list
+tests/test_house_selection.sh: the committed recording compared dimension
+by dimension with the translation required to drop exactly one instruction
+per call, and a press script over the same session that walks the cursor
+with down/right and up/left, takes the clamp at each end, presses START on
+each of the five rows, and reads CurrentSide and the strip's sprite x/y out
+of the run's own files. A control build with CORRINO out of the row list
+lands the same presses on FREMEN (CurrentSide 3) while the guest's grid
+still draws all five banners; the real binary is shown landing on CORRINO
+(4), so the control fails without the row removed.
+
+The Z80's two accounting counters are bounded (measured 4 instructions and
+34 cycles, bound 128) because of the seam's one-cycle charging; every other
+field of its state is compared exactly.
+
+tests/test_engine_equivalence.sh: the default run's audio drift is
+re-measured with the selector's row in the default -- 333 samples of
+1 997 366 in 32 clusters, longest run 19, worst 177 LSB, unchanged in kind
+-- so the sample bound moves from 256 to 400 with the measurement in the
+comment.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
