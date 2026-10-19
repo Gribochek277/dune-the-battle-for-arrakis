@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 872b65045dfa29d647e13c41a336a5048cadddd6
+date: 2026-10-19T14:52:19+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 113: 113-113-the-last-known-bad-checkpoint
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
