@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 433213e351a871fd1147cc6ad69f2e5ca82d1640
+date: 2026-10-19T12:09:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The pages that said "known-bad" now say what the catalog says
+Two places in the checkpoint dashboard's prose were still describing the
+catalog before ticket 110: the gate paragraph's "four mission checkpoints are
+known-bad at 0.2 %" (seven of nine are pixel-exact now, mission-map is 23
+pixels at 0.05 % and briefing-text's gate moved to pixel-exact) and ticket
+70's paragraph that reads the unit icon's phase in the present tense (ticket
+110 found the missing DRAM refresh; the paragraph keeps its measurement and
+now points at the section).  port/README.md's clock paragraph and its file
+table mention the refresh charge and --no-refresh.
+
+python3 scripts/build_docs.py --check: the committed site is current.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
