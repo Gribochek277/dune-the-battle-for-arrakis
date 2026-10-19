@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3d00fffaf31ee77cf7d222af629e6e3ca3132f94
+date: 2026-10-19T08:16:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 108: the record names the resource as what proves the plane-A rule
+docs/next-engine.md said the test asserts plane A against the game's own
+options screen, which is exactly the reference ticket 108 rejected: the
+game's screen fills plane A's off-screen rows with its own $2420. The
+ledger gains the plane A row. Ticket 101's restated value-line criterion
+now names what proves it and records the decision.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
