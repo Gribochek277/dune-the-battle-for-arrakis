@@ -1,0 +1,61 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a2b36cbfe08aef19a840498e3b668c5ecfcd40f3
+date: 2026-10-19T08:47:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the owner-facing pages say what the repository says today (ticket 107)
+docs/project-status.md and docs/goals.md described a project that stopped after
+frame 3. Every claim in both pages was checked against the repository and every
+number was produced by the command now named beside it, from a full
+`tests/run_all.sh --tier all` run (46 checks plus the prepare step: 47 PASS,
+0 FAIL, ALL CHECKS PASSED) plus `scripts/assess_coverage.py`,
+`scripts/scan_code_likeness.py`, `scripts/fidelity.sh --all`,
+`scripts/compare_port_state.py --frames 1000` and
+`scripts/compare_frame.py --frames 1000`.
+
+Claims that were wrong, and what the repository says instead:
+
+* "the VDP is the piece being implemented now" / "after frame 3 the run stops
+  waiting for the DMA busy bit" / "no picture has been drawn" -> the VDP model
+  (registers, V-RAM, C-RAM, V-SRAM, ports, status, DMA) and the software
+  renderer draw the game; at frame 10 V-RAM's 65 536 bytes, C-RAM's 128 and
+  V-SRAM's 80 are the reference's and 23 of 24 registers are, and the fidelity
+  gate reports nine checkpoints, six of them 0 of 71 680 pixels different.
+* "13 checks now, including the port" -> `grep -cE '^run(_slow)? ' tests/run_all.sh`
+  is 46, in the two tiers ticket 102 split them into (22 fast, 24 slow).
+* "43 151 emitting lines" -> 45 177 (`tests/run_all.sh`, per-line verification).
+* "129 code segments, 39 593 instructions, ~2 000 symbols" -> 125 code segments,
+  41 055 instruction addresses, 2 053 generated names plus 243 curated ones
+  (`python3 scripts/assess_coverage.py`, `analysis/code-map.json`).
+* "728 unit checks plus a 35 406-case translation sweep" -> `make -C port test`
+  runs 36 708 selftest checks, 728 fixture checks and the full-ROM sweep over
+  all 41 055 instruction addresses.
+* "no sound; the YM2612 is not implemented" -> the YM2612 is implemented and the
+  driver's own register stream goes through it: 500 writes in the same order as
+  the emulator's (drift 0.10 frames), and the rendered WAV passes the
+  comparator at 20 windows within 3 dB and 50 cents (envelope r +0.869).
+* goals.md's "hardware behaviour: not started", "platform layer: not started",
+  "M3 not started", "M4 not started" -> all four are running work with the
+  checks that prove it; M5 (assets with a manifest) and M6 (the two named
+  modifications) stay open, and M1/M2/M4 say what part is left.
+* goals.md's "2 013 names ... first curated names added" and "90 unclaimed
+  regions ... 31 clean, 6 790 bytes" -> 2 053 + 243 names, and 74 unclaimed
+  regions of which 10 are code-like (1 892 bytes).
+
+A second measurement the pages now carry: the port's picture at frame 1 000 of
+the input-free boot is identical to the emulator's (0 of 76 800 pixels), and at
+the same entry 4 of 65 536 work-RAM bytes and one register differ -- the frame
+boundary's own rendezvous among them. That difference, and the three checkpoint
+rows below their gate, the mono downmix, the missing SRAM and the asset
+manifest, are the honest limitations section; the limitations that were closed
+are named there with what closed them.
+
+docs/html regenerated with `python3 scripts/build_docs.py`; `--check` is green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
