@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f094d41809cd486b0ecb6fef75db83e0281c2c2d
+date: 2026-10-19T11:53:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The record: what the phase error was, how it was measured, and its decision
+docs/native-port.md gains "The console's DRAM refresh is part of the clock":
+the numbers at entry 7700 on both sides (mission clock 18 vs 10, VBlank
+counter reset 7680 vs 7688, order timer $10 vs $11, the angle triple
+00/C0/C0 vs F8/68/B0, the RandomSeed's call count 420 vs 426), the charge as
+it is implemented, and the before/after checkpoint table.  Ticket 55's open
+question now points at it.
+
+docs/reverse-engineering-notes.md gains "The unit's aim, its order script and
+the random stream": the two stores that write the facing, the script's action
+table at $00022750 and the four actions on this path (49 the idle turn at
+$01B860, 58 aim-at-record at $01AE58, 16 the order timer at $00AAFA, and the
+other callers), the mission's frame counters at $FFFFC594/$FFFFC598, and the
+measurement that the reference's target $68 is the 439th RandomByte of the
+run.
+
+docs/decisions.md gains D37: where the port's clock and the reference
+implementation disagree, the reference implementation is the definition, even
+when its model is a choice -- with the switchable control and the 0.6 % of
+residual phase named as the bounds of the change.
+
+tests/test_engine_equivalence.sh: the audio bound is re-measured (212 samples
+in 17 clusters, longest 19, worst 177 LSB, against 9 samples/10 LSB before)
+and a run-length bound is added.  The statement is unchanged -- a
+replacement's drift is a few PSG writes' worth of sample positions, not a
+different rendering; the numbers are the ticket's.
+
+The ticket file's criteria are ticked against the measurements.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
