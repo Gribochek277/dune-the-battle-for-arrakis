@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 13130018f5bf8fc313f570ea0d34ad2d2b707d49
+date: 2026-10-19T16:04:44+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 116: the selector in C, the observed values, and the finding
+Marks the ticket done and pastes the measured numbers: the replacement's
+1 008 018 calls over 2 700 frames, the picture, work RAM, chip writes, YM
+timeline, audio and clock identical, and the translation dropping exactly
+one instruction per call; the press script's five strip positions and
+CurrentSide values (1, 2, 0, 3, 4) with the clamps at both ends and
+down/up shown to be the same two steps; the control's FREMEN / 3 with the
+guest's five banners still drawn, against the real binary's CORRINO / 4;
+and the Z80 finding -- the seam's one-cycle charging leaves its two
+accounting counters 4 instructions and 34 cycles apart, bounded to 128 by
+the new --z80-counter-drift, with the whole-instruction experiment that
+pins it on the seam.
+
+It also records the two records this ticket corrected: ticket 114's 87
+instructions for the selector's region (it is 98; the counting pass
+skipped the instructions after a loc_ label, the byte spans were right)
+and the default run's audio drift bound in tests/test_engine_equivalence.sh
+(212 -> 333 samples measured, bound 256 -> 400).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
