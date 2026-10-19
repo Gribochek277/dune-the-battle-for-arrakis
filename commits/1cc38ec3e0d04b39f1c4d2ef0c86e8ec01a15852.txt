@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1cc38ec3e0d04b39f1c4d2ef0c86e8ec01a15852
+date: 2026-10-19T11:08:44+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 111: the ledger records the cursor's column as the sprite's
+The cells row says column 6 is the sprite's and not a cell the port writes, the
+cursor row says the sprite is the screen's only cursor, and the cursor paragraph
+records why the marker could be removed without the picture moving: tile $4BE is
+the font's `>` glyph, so the marker and the sprite drew the same pixels in the
+same cell.
+
+The regenerated site carries the same change.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
