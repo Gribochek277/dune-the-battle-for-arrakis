@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7b9c89262259d5a6d0a009e09e156e2e1dc958fb
+date: 2026-10-19T11:08:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 111: the row's cursor is the game's sprite, and the marker is gone
+settings_draw() wrote a `>` into the cursor's column and settings_cursor_sprite()
+drew the game's cursor sprite in the same cell. The two read one field
+(state.cursor) and, as measured, drew one glyph: the sprite's tile $4BE is the
+font's own `>` glyph, so the marker was covered wherever the sprite was written
+and was visible only on the arrival frame before the next frame wrote the sprite.
+
+The sprite is the cursor and the only one. The column is not written by the port
+at all -- it is the sprite's cell -- and SETTINGS_COL_MARKER is now
+SETTINGS_COL_CURSOR, kept because the sprite's X is column * 8 + $80.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
