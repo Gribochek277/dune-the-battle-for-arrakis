@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d912a367a7e3d635fd04fe98ceee3649eb84a5cb
+date: 2026-10-19T14:40:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Pin the credit counter's ledger with tests/test_mission_credits.sh
+The check replays the Atreides recording to entry 7898 and reads the
+counter's values out of the port's work-RAM dump: the credits at $FF76A6 must
+be the reference's $3DE, the displayed roll must be one of the two measured
+pairs -- the reference's 985 + 4/8 at mission clock 208 (the state a clock fix
+would produce) or the port's 986 + 2/8 at clock 212 (today's one-tick lead) --
+and the HUD pass $00B0FA, the "%6d" formatter $01E5DE and the glyph draw
+$005C86 must be in the address log. The control is the same run with
+--no-refresh: its pre-ticket-110 clock (216) and roll 986 + 5/8 satisfy
+neither accepted pair, so the predicate is shown to be able to fail.
+
+Registered in the slow tier next to tests/test_mission_turn.sh; the tier
+comment's counts and its missing mission-turn/binding-flow rows are corrected
+(26 slow + 22 fast = 48 checks). The check passes here, as does the fast
+suite (26 of 48 named as skipped, ALL CHECKS PASSED).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
