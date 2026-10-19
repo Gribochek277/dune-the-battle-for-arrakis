@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5303692c9ae8ff26c08c6fe71bd6dc21be3103aa
+date: 2026-10-19T11:08:40+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 111: the screen test pins one cursor, at the cell and on the arrival frame
+The rows section asserts that no drawn row writes the marker into the cursor's
+column and that the labels still start at column 8; the mapping screen's section
+asserts the same from its own dump, because it draws through the same loop. The
+arrival sweep now samples every frame 2228..2244 and fails on a white pixel in the
+cursor's cell: that is the one frame the marker was ever visible on (2233, 13
+pixels with the marker restored, none with it removed).
+
+The mapping screen's pinned digest did not move -- the sprite covered the marker
+pixel for pixel, so the running picture was and is one cursor. That is recorded in
+the pin's comment instead of re-taking the digest.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
