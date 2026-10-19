@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 35e908161bc5e53eba9b5e5bb2c96981b6a0206b
+date: 2026-10-19T14:40:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Follow the store's known-bad entry in the fidelity control
+tests/test_fidelity.sh's known-bad negative control mutated briefing-text,
+which ticket 110 moved to pixel-exact, so the control stopped exercising a
+known-bad gate and its "known-bad and worse than its threshold" assertion
+could no longer pass (the tier was red, not this ticket's doing). It now
+mutates mission-map, the store's known-bad entry, and its 120x120 block is
+far past the tightened 0.0321 % gate.
+
+The catalog's VDP-half greps also assumed no checkpoint has a reference VDP
+dump ("the rows say why"). Ticket 65's --press capture route made one
+possible, tests/test_scroll_state.sh caches mission-map's, and the row then
+names the first differing V-RAM byte instead of the first differing pixel --
+so the check now accepts either branch and requires whichever it finds to be
+complete. Both the fresh-tree branch and the cached-dump branch pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
