@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5e361f46113ffcc1b8805074937e71faa4f01a9f
+date: 2026-10-19T12:23:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mission-turn check accepts the arrived form of the same turn
+The assertion demanded the walk be mid-turn at entry 7700 (step $F8, current
+strictly between $68 and $C0), which is what the port's four-entry mission
+clock lead produces today.  A future ticket that aligns the clocks exactly
+would leave the arrived form instead -- the walk at $01D4F2 clears the step
+and snaps the current angle to the target -- so the check now accepts both
+shapes of the same turn and still rejects the pre-ticket-110 triple: the
+*target* $68 is required in both, and 00/C0/C0 has $C0.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
