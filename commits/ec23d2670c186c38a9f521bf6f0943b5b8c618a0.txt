@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ec23d2670c186c38a9f521bf6f0943b5b8c618a0
+date: 2026-10-19T11:53:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Checkpoints: the mission's two entries and the build panel are the reference's
+Measured with scripts/fidelity.sh --all after the DRAM refresh charge:
+
+  mission-map   7898  182 -> 23 pixels (the credit counter's last digit)
+  in-game-hud   8148  152 -> 0   (pixel-exact)
+  build-panel   9498  100 -> 0   (pixel-exact)
+  briefing-text 5398    0 -> 0   (gate moves to pixel-exact)
+
+The unit icons at (129..143, 43..57) were the facing angle of a unit that
+never turned; with the port's clock on the console's, record 33 turns to the
+reference's $68 and the icon is the same tile.  mission-map's threshold goes
+from 0.3 % to 0.05 % (38 pixels) so its own 23-pixel counter difference is
+inside the gate and a worse one still fails.  Seven of the nine entries are
+pixel-exact now.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
