@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8610bb588d1be4ac7ba51b6b5c6d09f1d03c61df
+date: 2026-10-19T07:29:05+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: record the layout ruling for ticket 101's last criterion
+The port keeps its own label column because the game's label position lies under
+the backdrop's priority cells; the criterion is restated rather than met literally.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
