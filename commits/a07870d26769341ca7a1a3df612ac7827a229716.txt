@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a07870d26769341ca7a1a3df612ac7827a229716
+date: 2026-10-19T09:45:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 109: 109-109-animation-step-mechanism
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
