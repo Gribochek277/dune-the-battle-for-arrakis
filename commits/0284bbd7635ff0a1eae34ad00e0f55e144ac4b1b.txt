@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0284bbd7635ff0a1eae34ad00e0f55e144ac4b1b
+date: 2026-10-19T03:14:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: correct my own correction -- the shadow's +4 is X (190, matching the record) and +2 really is tile 0
+Decoding the entry against the 68000-side format the routine's own stores produce:
++0 = 0x0120 Y, +2 = 0x0000 tile name, +4 = 0x44BE whose low 9 bits are X = 190 exactly as
+the record holds it, +6 = 0x00F8 unused. So the previous section's claim that my copy
+'puts X where the renderer reads the tile id' was only half right, and the tile name is
+genuinely zero.
+
+Which reopens what that section closed too quickly: if the cursor's tile name is 0, its
+pixels come from V-RAM $4000, and on the title screen that region is all zeros --
+transparent -- so entry 0 cannot be the arrow that is plainly visible there. The shadow
+holds six entries and the table is a linked list whose link is documented in
+render_software.c, so the arrow is another link in that chain. Reading entry 0 as 'the
+cursor' has been an assumption since the record at $FFFFD70C was first measured, and it
+is now named as one.
+
+The whole remaining question is one read: walk the shadow's link chain and find which
+entry's Y matches the arrow's screen row.
+
+Eighth premise caught before it became a conclusion -- though it did reach the section
+above as a half-truth, which is on me rather than on the reading. main green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
