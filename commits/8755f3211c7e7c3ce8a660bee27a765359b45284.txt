@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8755f3211c7e7c3ce8a660bee27a765359b45284
+date: 2026-10-19T14:40:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+names: the house selection, and the cursor that clamps instead of wrapping
+Ticket 114 measured the screen the catalog calls house-selection and it
+confirms what ticket 79's hypothesis file only guessed at:
+
+* RunSelectorScreen $002364 is the house selection's per-frame work -- the
+  pad, the cursor, the selection strip and the strip's pulsing fill -- one
+  call per frame, with the strip's DMA drain as the frame wait. The
+  HYPOTHESIS marker comes off.
+* StepSelectorEntry $002404 does not wrap: it clamps at the first and last
+  row ($00240C, $002416). Five rights land on CORRINO and a sixth changes
+  nothing; left on ATREIDES changes nothing. The comment said "wrapping".
+* GetSelectorEntry $002434 and InitSelectorScreen $002444 now say what they
+  do (the row's side/position/byte; row 0, the pool, the strip's record and
+  the VBlank handler).
+* RunMissionSetupScreen $015E66 is the house selection's driver and its
+  result is the chosen side in d0 (0 HARKONNEN .. 4 CORRINO), not "the
+  pre-mission setup screen".
+
+Comments only: src/equates.inc and disassembly/symbols.txt are unchanged.
+scripts/regenerate.sh --no-tests ran, and the site is rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
