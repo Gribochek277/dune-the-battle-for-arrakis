@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2035af47a0174b59a4499eaa35d86dd02c31c953
+date: 2026-10-19T08:49:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: ticket 107 records the claims that were wrong and the commands that measured them
+The ticket file now carries the full list of corrected claims with what the
+repository says instead (13 rows), the commands and their output (the gate's 46
+checks, coverage, the scan for code likeness, the per-line count, the checkpoint
+rows, the frame-1 000 picture and state, and the docs generator's own counts),
+and one finding outside the two pages: docs/native-port.md's differential-harness
+table still describes frame 1 000 as 691 differing RAM bytes and a different
+screen, while the measurement today is 0 of 76 800 pixels different and 4 bytes
+plus one register of state.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
