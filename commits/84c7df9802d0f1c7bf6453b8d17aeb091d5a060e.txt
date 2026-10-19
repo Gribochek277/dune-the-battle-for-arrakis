@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 84c7df9802d0f1c7bf6453b8d17aeb091d5a060e
+date: 2026-10-19T15:41:15+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the captured control stays out of the pad until it is released
+Measured with the virtual pad on the real window loop: one frame after a
+capture the guest's pad recording showed `a hold 1` -- the A the player pressed
+as an edit became a game input carrying its new function -- and the screen,
+which tracks edges, read it as a fresh press and silently armed a second capture
+with nothing pressed. That is how a player makes two swaps without seeing one.
+
+The app now remembers what a capture consumed and withholds it from the machine
+until the device reports it released (captured_held in app/app.c). The gate's
+binding-flow test walks the owner's file, captures a held control, and asserts
+the guest saw no `up`, the line stayed on `SWAPPED WITH PAD_Z`, and the next
+ordinary press was delivered; it fails when the latch is removed.
+
+Also measured while walking the owner's map: A on the BACK row did nothing when
+it arrived as the A function (their `start = pad_a`), because the capture branch
+ate the press even when the front end refused the row. It now falls through to
+the choose/leave step, and tests/test_port_settings_screen.sh asserts that A on
+BACK leaves the list.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
