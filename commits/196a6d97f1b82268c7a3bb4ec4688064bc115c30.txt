@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 196a6d97f1b82268c7a3bb4ec4688064bc115c30
+date: 2026-10-19T07:55:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: put tickets 107..109 in the status table proper
+The ticket store appended a second table with its own header, and the scanner
+reads the first one, so three ready tickets looked unreachable.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
