@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 28e29fae82b81f838595654d47e8e89b93e36efe
+date: 2026-10-19T13:23:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: tickets 113 and 114
+113 the last known-bad checkpoint (the credit digit one ahead, and the clock
+offset ticket 110 left); 114 the house-selection screen measured and planned, as
+the next feature's first step.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
