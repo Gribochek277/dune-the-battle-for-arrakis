@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 42b7a414366780034139746621a9ee749eed4087
+date: 2026-10-19T05:38:04+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: advance ticket 104's cursor criterion on ticket 101, record the session's decisions, allow three workers
+Ticket 104 landed the sprite, so ticket 101's cursor criterion is ticked in
+substance: the game's own tile and palette, on the port's own rows. The two
+workers this run starts are 101 (its last open criterion) and 106 (the VDP
+address unit).
+
+The config goes back to three parallel workers; it was pinned to zero for the
+solo-mode session that closed 104.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
