@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 478974a5efe9dbd504393473258d04cfb29b250f
+date: 2026-10-19T14:40:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 114: the measurement and the port's plan
+The ticket file now carries the report: the recording and the presses, the
+region with its exact ranges and instruction counts, the rows with their
+tables and positions, the picture and what the 2640 checkpoint actually is
+(one phase of a 32-frame pulse, not a still), the inputs (B/C/A/Start all
+choose, one step per press, no wrap), the exit, what the catalog does not
+carry, and the plan.
+
+The plan: two replacement rows -- RunSelectorScreen $002364 span $13E for
+the selector's own code, RunMissionSetupScreen $015E66 span $EC for the
+driver -- with the first slice being the selector alone, its five files
+under port/next/, its zone entries, the row list's data, and
+tests/test_house_selection.sh in the shape of tests/test_title_screen.sh.
+
+No port code: the smallest unit that can land alone is the whole selector
+(87 instructions, 318 bytes, four regions) and its rows' labels are art, so
+it is a screen-sized transcription with a new harness rather than the data-
+only slice the ticket's bar describes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
