@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 882dabcdf62c1f286a755cd52a9a74a675c9e4ac
+date: 2026-10-19T03:03:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 106: convention confirmed byte-addressed; the probe that seemed to refute it was my own field overflow
+Two marker words through a command carrying $2000 land at byte $2000, two bytes apart.
+Byte-addressed, correct spacing, so the ticket's claim stands.
+
+The apparent refutation was my bug: I wrote VDP_CMD_VRAM_WRITE | (0x6000 << 16) without
+masking to the field's 14 bits, so bit 14 of $6000 slid into the operation-code field and
+the address that went out was $2000 ($6000 & 0x3FFF). The write landed exactly where the
+damaged command said -- the model behaving correctly, the author not.
+
+Kept as the ticket's first data point because it is the same trap the ticket is about, in
+miniature: the command's address field is 14 bits in the first control word and 2 more in
+the second, so an unmasked address above $3FFF silently corrupts the OPCODE rather than
+the address. A helper that takes an address must mask; a caller that doesn't gets a write
+to the wrong place that looks like a write to the address it named.
+
+One thing still open, and it is the only thing between this ticket and ticket 104's
+cursor: a correctly-encoded $F000 ($3000 in the first word's field, 3 in the second)
+does not land at byte $F000, while $2000 and $7800 both land where asked. $F000 is
+where this screen's sprite table is.
+
+main green, nothing left in the tree.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
