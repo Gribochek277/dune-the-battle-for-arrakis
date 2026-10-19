@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1758b5a8915e83a77a8b0cfb7b2fa78b01bb2ca7
+date: 2026-10-19T05:23:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: document the two sprite-table layouts, and guard the design with a check that can fail
+docs/game-architecture.md gains 'The two layouts of a sprite table' beside its sibling on
+the glyph table, because both are facts about how the chip renders and both have already
+cost a session each. It states the confusion plainly -- the table exists twice in a
+program's life and the copies are not the same shape -- with the field-by-field table, the
+$80 bias, X = 0 meaning 'do not display' rather than 'column zero', and the fact that the
+table is a linked list so entries the chain never reaches are not drawn even while they
+still hold attributes. That last part is why a stale table shows a stale sprite rather
+than no sprite.
+
+docs/next-engine.md's ownership ledger gets the cursor row's real answer: the tile,
+palette and format are the cartridge's and may not be chosen; the position and the
+priority bit are the port's and have to be, because the game's entry carries no priority
+bit and does not need one on a title screen whose backdrop sets none either.
+
+The test gains the guard the design needs, and it was tested: with a call inserted it
+fails with exit 1, without it passes. It matches calls rather than words, because the
+source's comments name both routines on purpose to record why they are not called, and a
+check that punishes its own documentation gets edited away inside a week.
+
+The address log could not enforce this -- it is a set over the whole run, and the game
+calls both routines itself on the title screen, so they appear regardless.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
