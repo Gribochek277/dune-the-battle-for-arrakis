@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6c20aabc81895857d4b7aedcded3cde16854c96d
+date: 2026-10-19T21:57:16+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+Merge ticket 115: 115-115-close-the-clock-lead
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
