@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5c68f815442bbff75538256d223faf7799e303e8
+date: 2026-10-19T12:22:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 111: the criteria ticked against what was measured, and the marker was under the sprite
+Every criterion is closed with its measurement, and the ticket carries the
+correction the work produced: the rendered frame never showed two cursors side by
+side. The sprite's tile $4BE is the font's own `>` glyph, so the sprite drew the
+marker's exact pixels in the marker's exact cell -- the running picture is
+byte-identical before and after, and the marker's only visible frame is 2233, the
+one the display comes on in before the sprite is written. The plane cell is where
+the second cursor lived, and that is where the test asserts it is gone.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
