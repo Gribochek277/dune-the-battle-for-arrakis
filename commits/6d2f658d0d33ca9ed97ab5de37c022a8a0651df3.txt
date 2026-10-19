@@ -1,0 +1,58 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6d2f658d0d33ca9ed97ab5de37c022a8a0651df3
+date: 2026-10-19T05:08:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the game's own cursor sprite marks the port's rows
+It is the game's tile (0x4BE), the game's palette (2) and the game's table format, read
+out of the entry the game built in SpriteTableShadow, at the address the renderer reads.
+Only the position is the port's, and it comes from state.cursor -- the same field that
+draws the text marker -- so the two cannot disagree. Verified by eye: the arrow sits
+beside GAMEPAD MAPPING and moves to BACK TO TITLE with the selection.
+
+The conversion was the whole obstacle and it turned out to be small and fully specified.
+SpriteTableShadow is 68000-side -- +0 Y, +2 pattern, +4 tile/palette/priority, +6 X --
+and V-RAM is VDP-side, which render_software.c documents: +0 Y biased by $80, +2 size and
+link, +4 tile, +6 X. Words 0, 4 and 6 carry across and word 2 is replaced. The game's own
+upload does this; the port now does the same conversion, which is not imitating the
+routine, it is doing its arithmetic.
+
+Three things the measurements forced, each against an assumption I had been carrying:
+
+* The destination is a BYTE address, because the model's VDP register indexes V-RAM
+  directly and the chip's holds a word address (ticket 106).
+* The cursor's tile is at the shadow's +4, not +2. The +2 word really is zero, and
+  reading it as the tile had made entry 0 look like a sprite with no artwork -- when the
+  arrow is plainly visible on the title screen.
+* The sprite needs its priority bit set. The game's entry carries none, and does not need
+  one on the title screen where the backdrop behind the arrow sets none either. This
+  screen draws its labels into cells that DO set priority, so an unprivileged sprite
+  arriving on the same row is drawn under them and vanishes -- measured, the arrow was
+  visible one row above the text and gone when moved onto it.
+
+Y is 192 for row 0 with a 16-pixel pitch, both measured rather than derived: the rows are
+16 apart because the stride this screen writes is $100 bytes of name table, and 192 is
+where the first label actually lands, which is not what the plane geometry predicts.
+
+Written every frame, because something clears this screen's sprite table each frame -- an
+entry written once is gone by the time anything reads it. Eight bytes a frame.
+
+Neither guest routine is called, and the ticket says why with numbers: UploadSpriteTable
+performs no transfer (363 with the call, 363 without, against 427 on the game's own
+screen), and BuildSpriteTable does not return to the port's sentinel even when handed an
+empty pool and doing no work.
+
+The mapping screen's picture is re-pinned -- the arrow is new there too, and the pin
+exists to notice exactly that. Reviewed by eye: list, vocabulary, white text and the
+game's artwork unchanged, one sprite added. New regression asserts tile, palette,
+priority, row and that no stale entries remain behind it, for two rows.
+
+Full tier: all checks pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
