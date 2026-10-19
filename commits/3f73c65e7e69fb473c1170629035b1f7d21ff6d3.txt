@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3f73c65e7e69fb473c1170629035b1f7d21ff6d3
+date: 2026-10-19T17:55:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The clock charges the Z80's bus and the VBlank entry: 8 a window access, 34 a frame
+BlastEm charges the 68000 for four things this port did not: a Z80 access
+through its banked window (z80_read_bank()/z80_write_bank(): 8 * MCLKS_PER_68K,
+and the VDP window too), the one-cycle wait state an access to the Z80 area
+costs (io_read()/io_write(): MCLKS_PER_68K), the VBlank entry (the core's 24
+cycles of exception frame plus int_ack()'s 5 + cycles mod 10, charged as its
+mean 10) and the wait a data-port write takes when the VDP's four-word FIFO is
+full (FIFO_SIZE/FIFO_LATENCY: one word per 32 master clocks).
+
+Each is a #define in BlastEm's sources with the file named in timing.h, each has
+its own fixture in port/tests/test_cycles.c with a control that fails without
+it, and md68k_cycles_statistics() now reports the run's clock as the buckets --
+instruction, refresh, the Z80's window, the Z80 area, the VDP FIFO, the VBlank
+entry and any raw time a caller added -- so the itemisation is a measurement.
+The harness prints them and writes them as port.clock in the state dump;
+--no-contention is the kill switch for all four (the control the checks use).
+
+Measured on the Atreides recording to entry 7898: the mission clock $FFFFC594
+moves 212 -> 210 against the reference's 208, the credit roll
+$FFFFD6C0/$FFFFD6BC 986 + 2/8 -> 986 + 0/8, and since that fraction is zero the
+drawn digit is the reference's 986: analysis/checkpoints.json's mission-map
+entry reads 0 of 71 680 pixels, the catalog's ninth. The Z80's window accesses
+are 481 934 over the run against the reference's 484 584, measured by rebuilding
+BlastEm 1.0.0 with the same counters (0.5 % apart, so the constant and not a
+number is what was missing); the remaining two entries of clock lead are the
+reference's own VDP FIFO service under its slot scheduling, measured and named
+in docs/native-port.md.
+
+The port's DMA model is left as it was: BlastEm stops the 68000 for a 68k -> VDP
+transfer and charges the whole transfer at the command word, this sets the busy
+bit and lets the guest's poll pay for the same time (11 063 483 cycles against
+the reference's 11 556 114). Charging it as a stall changes the guest's
+instruction stream without changing the clock, so it is recorded rather than
+done.
+
+The boot stub's pinned total moves by its 38 Z80-area accesses (0x5A344 ->
+0x5A36A), which is what the new wait state is worth there.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
