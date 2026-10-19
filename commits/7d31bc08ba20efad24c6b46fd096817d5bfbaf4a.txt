@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7d31bc08ba20efad24c6b46fd096817d5bfbaf4a
+date: 2026-10-19T17:56:55+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The catalog's last known-bad checkpoint is pixel-exact: the mission map at 0 of 71 680
+Ticket 113 left mission-map known-bad on 23 pixels of the credit counter's last
+digit and measured them as the port's four-entry clock lead. Ticket 115 charged
+the rest of that clock -- the Z80's accesses through the 68000's bus, the Z80
+area's wait state, the VDP's data-port FIFO and the VBlank entry -- and the lead
+is two entries: at entry 7898 the credits are $3DE on both sides, the port's roll
+986 + 0/8 at mission clock 210 against the reference's 985 + 4/8 at 208, and both
+draw 986, so the glyph in tile $7BB is the reference's '6' and
+scripts/fidelity.sh --checkpoint mission-map reports 0 of 71 680 pixels. The
+entry's gate is the 0 threshold a pixel-exact entry carries and its note is the
+measurement, including what is left (the reference's own VDP FIFO scheduling,
+389 397 cycles over the load, measured with an instrumented BlastEm).
+
+docs/native-port.md gains "The last of the clock lead (ticket 115)": the
+itemised budget with BlastEm's file and line for each charge, the reference's own
+budget read out by rebuilding it with those counters, what moved on the mission,
+and the reason the last two entries are a scheduler the port does not copy.
+docs/decisions.md records D38 (the boundary of the copying: a charge is a
+constant, a switch and a fixture; a charge is measured on both sides before it is
+believed; a scheduler is not copied). port/README.md, docs/build-and-test.md and
+docs/project-status.md carry the same numbers, and docs/html is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
