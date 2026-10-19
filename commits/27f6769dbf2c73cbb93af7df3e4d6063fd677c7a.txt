@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 27f6769dbf2c73cbb93af7df3e4d6063fd677c7a
+date: 2026-10-19T16:03:02+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the house selection in C, and the instruction count it corrected
+docs/next-engine.md gains "The third screen: the house selection in C
+(116)": the span, the row list as the port's data (and the label that is
+not data yet), the measured numbers, the press script's observed
+positions and CurrentSide values, the control build, the Z80 accounting
+counters' bounded drift with the experiment that pins it on the seam, and
+the checkpoint. "Where the next screens come from" says the first slice
+is done and the driver is the second.
+
+docs/game-architecture.md "8d" corrects the region's instruction counts:
+ticket 114's 87 (48 + 17 + 22) came from a pass that skipped the
+instructions after a loc_ label; recounted from the translation's case
+labels the region is 98 (54 + 21 + 23). The byte spans were right, and the
+note says how the two counts differ so the next reader is not surprised.
+
+docs/goals.md and docs/project-status.md list the house selection beside
+the other screens that run as the port's C. docs/html rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
