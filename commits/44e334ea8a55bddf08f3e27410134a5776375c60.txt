@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 44e334ea8a55bddf08f3e27410134a5776375c60
+date: 2026-10-19T07:17:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the plane-A assertion the value-line criterion stands on compares the wrong range
+Found while re-restating the position criterion, measured off the same dumps, and
+written down rather than fixed here -- the fix is a decision about what the reference
+is, not a range edit.
+
+tests/test_port_settings_screen.sh's "plane A name table" check compares V-RAM
+$2000..$2E00. Plane A's base is $6000 (register 2 = $18, (reg2 & 0x38) << 10), and
+$2000 is the dead SETTINGS_ART_BASE 0x00002000u constant in settings_screen.c. The
+compared range is inside the tile region the "backdrop tiles" check already compares,
+so that assertion passes for a reason unrelated to plane A.
+
+Measured: the port's screen holds $6000..$6FFF equal to the resource's own tilemap,
+byte for byte (the tilemap is at ROM $053234) -- and the game's own options screen
+adds $2420 across rows 28..31, so comparing the port against the game's screen would
+not hold either without saying which of the two is the reference.
+
+The criterion itself is untouched: this records that its evidence is weaker than its
+note claims, so the next reader does not have to find that out from scratch.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
