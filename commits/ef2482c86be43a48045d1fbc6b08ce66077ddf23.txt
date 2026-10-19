@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ef2482c86be43a48045d1fbc6b08ce66077ddf23
+date: 2026-10-19T11:29:40+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mission's unit turn is a check, and --no-refresh is its control
+tests/test_mission_turn.sh replays the Atreides recording to VBlank entry
+7700 and reads record 33's angle triple out of the port's work-RAM dump --
+the step, target and current angle at $FF1274/$FF1275/$FF1276 -- where
+ticket 109 measured the two runs parting.  It requires step $F8, target $68
+and a current angle inside the turn, and it requires the idle-turn action
+$01B860 and AimUnitTurret $01D47C in the port's own --address-log, so a
+triple that turned for another reason cannot pass.
+
+The control is the same command with --no-refresh: the instruction path
+without the console's DRAM refresh charge, i.e. the clock the port had before
+this ticket.  It reproduces the old triple exactly (00/C0/C0), which is what
+makes the check measure the fix.  The harness option is a diagnostic, like
+--perturb and --frame-cycles.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
