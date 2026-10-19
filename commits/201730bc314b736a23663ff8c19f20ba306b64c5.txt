@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 201730bc314b736a23663ff8c19f20ba306b64c5
+date: 2026-10-19T14:59:27+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: tickets 115 and 116
+115 the residual clock lead that makes mission-map's digit one ahead; 116 the
+house selection's first slice, scoped from ticket 114's plan.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
