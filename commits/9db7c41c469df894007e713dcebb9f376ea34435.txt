@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9db7c41c469df894007e713dcebb9f376ea34435
+date: 2026-10-19T03:13:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 104: the sprite lands and tracks the rows but draws nothing -- the shadow is 68000-side, the renderer wants VDP-side
+With a byte destination ($F000, per 106) the entry reaches the table the renderer reads
+and follows state.cursor exactly: row 0 -> Y 32, row 1 -> Y 40. A render with the sprite
+against one without differs in zero pixels.
+
+render_software.c's own entry description explains it: +0 Y biased by $80, +2 size/link,
++4 tile id and attributes, +6 X biased by $80. That is the VDP-side layout.
+SpriteTableShadow is the 68000-side one -- +0 Y, +2 pattern/attr, +4 X, +6 unused --
+which is what BuildSpriteTable fills and what the game's upload converts on the way to
+V-RAM. Copying it straight across puts X where the renderer reads the tile id, and an
+unbiased Y where it subtracts $80: the game's Y=288 renders at row 160, exactly where the
+title-screen arrow appears, while my Y=32 rendered at -96.
+
+Three things settled: the port's V-RAM write is correct and verified; the conversion is
+the missing step and it is small and fully specified by the renderer's own comment; and
+writing the entry directly is clearly the right shape -- the port would be doing the same
+conversion, not imitating the routine.
+
+One thing still open, and it is the last one: the cursor's tile id. The shadow's pattern
+word is 0x0000, so it does not come from there -- the upload takes it from the 12-byte
+pattern descriptor at node+8, whose decoding this ticket already declined to guess at.
+One small structure, named rather than assumed.
+
+Reverted; main green. Closest the cursor has ever been, and every remaining gap is named.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
