@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ded9d8545aaf5801ddaa6d8599519ca8e7e1b2fa
+date: 2026-10-19T08:29:13+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 108: the options screen's tile list is 3584 bytes, not words
+The loader's own length unit is bytes (it halves the word before the DMA), the
+same document says bytes where the entry is broken down, and the check this
+ticket writes compares 3584 bytes of it. One word, corrected where it is.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
