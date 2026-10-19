@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e64b8da5658bee7946264eaf992c9af6552935e6
+date: 2026-10-19T08:22:58+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 108: the finding, the reference decision and both controls are in the ticket
+The checklist is ticked with what proves each item, and the report records the
+measurements (registers 2/16 in both dumps, the resource byte for byte, the
+game's $2420 band), why the reference is the resource and not the game's own
+options screen, the control build's failing output and the mutated-reference
+control, what SETTINGS_ART_BASE was for, and the checks that were run.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
