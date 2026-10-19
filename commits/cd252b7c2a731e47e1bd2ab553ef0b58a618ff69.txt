@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cd252b7c2a731e47e1bd2ab553ef0b58a618ff69
+date: 2026-10-19T09:35:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 109: the criteria ticked against what was measured, the sprite tool says facing
+Seven criteria, each carrying its own measurement: the quantity is the unit
+record's facing angle, the two runs hold different facings rather than one
+animation's phases, the remaining cause is ticket 110, and the other three
+known-bad entries are three different mechanisms rather than one.
+
+The sprite tool's own output and header called the mission entries' difference
+'an animation step' -- the phrase this ticket measured and refuted -- so it now
+says 'the unit's facing (ticket 109)'. Assertions unchanged.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
