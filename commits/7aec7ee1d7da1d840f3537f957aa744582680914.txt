@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7aec7ee1d7da1d840f3537f957aa744582680914
+date: 2026-10-19T07:23:33+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 106: the chip's register is a byte address too -- correct the record everywhere
+docs/native-port.md's VDP section gains the paragraph with the evidence (the cartridge's
+own command arithmetic, BlastEm's register, the model's own probe) and the trap that is
+real: the field is 14 bits in the first control word and A15/A14 in the second, so an
+address above $3FFF put in unmasked sets a command-code bit. docs/next-engine.md's ledger
+bullet that said the chip held a word address now says what was measured. port/README.md
+names the builder.
+
+The ticket file gains the correction at the top, the audit table of every place that
+builds a command address, the decision, the fixture and its controls, and the ticked
+criteria with their evidence; the previous session's "still open" claim that a correctly
+encoded $F000 does not land at byte $F000 is marked as not reproducing, because the
+tree's own measurement is that it does -- and a fixture now holds it there.
+
+docs/build-and-test.md and docs/native-port.md's selftest count move from 36 657 to the
+measured 36 708 (+42: the six fixtures), and the VDP port fixtures join both fixture
+lists. The generated site is rebuilt.
+
+Gate: scripts/build.sh OK; tests/run_all.sh --tier all -> ALL CHECKS PASSED (47 of 47),
+including engine equivalence, VDP state equals the reference byte for byte, the
+port-settings screen's sprite still at byte $F000 and its mapping-screen digest unchanged.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
