@@ -1,0 +1,40 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7413d1dc9b9d2ed678dc7ec142e354deb9eccd44
+date: 2026-10-19T07:14:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the rows criterion is restated and ticked, the position half as the design's answer
+The last open criterion asked for the rows "at the positions the game uses for its
+labels". That half is not delivered and will not be: ticket 100's ruling is that this
+screen borrows the game's assets and owns its own layout, so the criterion is ticked
+with the position half recorded as answered by the design rather than delivered.
+
+Measured off --vdp-dump, so the note carries numbers instead of the earlier story:
+
+* the port's rows are $C400, $C500, $C600, $C700, $C800 of plane B at $C000 -- rows
+  4..8 at the $100 stride, which are plane rows 8, 10, 12, 14, 16 at the plane's
+  $80-byte row width -- first column 8, marker column 6;
+* the game's own options screen, the screen whose backdrop this one borrows, writes
+  its labels into plane B at $A280 and below, column 4, attribute $E000 (MUSIC IS =
+  E4CD E4D5 E4D3 E4C9 E4C3 E4A0);
+* the game's title-menu labels are at word $6a50 (byte $D4A0): plane A, plane column
+  80, which is screen column 16 under that screen's hscroll of 512 -- and the port's
+  own row on that menu does sit in the game's cells at that column with the game's
+  $6000 attribute ($D7A0 = 64D0 64CF 64D2), which is the criterion's letter met
+  where the position is the game's to give;
+* the mechanism the earlier note used is not what the dumps show. A plane B cell
+  without the priority bit loses to any opaque plane A pixel, so the rows must carry
+  $E000 and they do -- but the artwork's tilemap sets no priority bit anywhere (all
+  2 048 words clear in the ROM's copy of the resource, in the port's dump and in the
+  game's own options dump), and the port's rows sit over the artwork and read because
+  of the attribute, not because of where they are.
+
+No code or layout change: this is the documentation half.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
