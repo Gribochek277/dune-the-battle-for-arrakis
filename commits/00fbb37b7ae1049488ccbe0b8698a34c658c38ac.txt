@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 00fbb37b7ae1049488ccbe0b8698a34c658c38ac
+date: 2026-10-19T15:41:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: a mapping row keeps its name when a capture swaps two controls
+Measured on the real window with the owner's gamepad-map.ini: pressing A on
+`PAD_A | A` and then START left the row under the cursor reading
+`PAD_START | A` -- the row's value had not changed at all, so the capture read
+as "nothing happened". The cause was the row order: rows came from the binding
+file, and a swap exchanges two functions between their controls, so the labels
+moved between rows while the cursor stayed on its index.
+
+Rows are now the vocabulary's own order (mda_function_at), so a row keeps its
+name and its value changes in place on the next frame. The same measurement
+showed the line under the list only ever said "PRESS A TO REBIND": it now names
+the control that carries A (`PRESS START TO REBIND` for the owner's file) and
+then reports what the capture did -- BOUND TO, SWAPPED WITH <function>, or
+ALREADY BOUND. The checks for both are in port/tests/test_mapping_screen.c
+(343 passed) and fail when either change is reverted.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
