@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3b20f488efed0b36986322061626b207046ee40f
+date: 2026-10-19T14:40:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Measure the credit counter: same credits, the roll four clock entries ahead
+The catalog's last known-bad entry read "the credit counter's last digit,
+the port reads one ahead" from ticket 66 to ticket 110 without the quantity
+being measured. Ticket 113 measured it at entry 7898: the side record's +$12
+long at $FF76A6 is $3DE (990) on both sides, so no credit event differs. The
+HUD draws a *roll* (sub_00B0FA keeps $FFFFD6C0/$FFFFD6BC, ticks it once per
+mission-clock advance, rounds up and formats it "%6d" through sub_01E5DE into
+the glyphs sub_005C86 DMAs to tile slots $7B6-$7BB), and at the entry the port
+holds 986 + 2/8 (drawn 987) at mission clock 212 against the reference's
+985 + 4/8 (drawn 986) at clock 208 -- the four-entry lead ticket 110 left.
+The reference holds the port's exact roll at entry 7906 (clock 216), so the
+lead is the whole difference; the 23 pixels are the '7' vs '6' glyph in tile
+$7BB at x 296..301, y 25..31.
+
+The entry stays known-bad with the measurement in its note, and its threshold
+is now the measured share (0.0321 %, 23 of 71 680) instead of the 0.05 % that
+carried 15 pixels of unexplained headroom. The residual clock lead (the Z80
+bus contention ticket 110 bounded at ~0.6 %) is described as the follow-up
+ticket it needs rather than patched here; the store file is left to the
+orchestrator because docs/tasks/STATUS.md is orchestrator-owned.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
