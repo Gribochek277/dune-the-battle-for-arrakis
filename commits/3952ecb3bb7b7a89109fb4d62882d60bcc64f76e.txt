@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3952ecb3bb7b7a89109fb4d62882d60bcc64f76e
+date: 2026-10-19T20:44:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+timing.h records the measurement behind each charge: the Z80's access count against the reference's, and that the FIFO is zero on this route because its service rate is faster than a word per instruction
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
