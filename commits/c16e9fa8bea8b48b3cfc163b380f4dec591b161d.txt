@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c16e9fa8bea8b48b3cfc163b380f4dec591b161d
+date: 2026-10-19T18:13:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The title screen's assertion keeps its statement and runs it with the clock charge off
+The pair this check compares (legacy against `next --replace RunTitleScreen` over
+2 700 frames) is the one ticket 115's VBlank entry charge moved: the guest is a
+cycle or two from where it was at the handoff, so its instruction count, the
+clock at the entry, the Z80's state at the end and the YM timeline follow --
+measured 4 instructions, 2 cycles and the sound's writes at another sample
+phase. The comparator is no longer identical, so what is asserted is: the
+default pair differs only in dimensions named here (the VDP writes the port's
+row costs, which `--expect-difference chip-writes` requires, and the clock's
+phase -- instructions, translated, cycles, audio, z80, ym writes), and the
+translation still drops one instruction per RunTitleScreen call to within those
+four. The statement itself -- everything identical except the declared VDP
+writes, one instruction per call -- is checked on the same pair with
+`--no-contention` on both sides, which is where it was measured.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
