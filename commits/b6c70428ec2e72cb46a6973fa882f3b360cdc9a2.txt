@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b6c70428ec2e72cb46a6973fa882f3b360cdc9a2
+date: 2026-10-19T16:02:56+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+comparator: bound the Z80's accounting counters for a wide replacement
+The replacement seam charges the guest's cost one cycle at a time; around
+the Z80's bus request/acknowledge handshake that makes the Z80's catch-up
+land an instruction apart, and its two cumulative counters differ. The
+state itself -- 8 KiB of RAM, registers, PC/SP, write counters, bus flags
+-- is still compared field for field. --z80-counter-drift N bounds the two
+counters and prints them; with no option the whole dict is compared as
+before. Needed by the house selection's check (ticket 116): a million
+replacement calls in 2700 frames, measured 4 instructions and 34 cycles.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
