@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9e752a419eb7a466f2f73deb038ebc386319a01a
+date: 2026-10-19T15:41:22+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: what a player sees when they bind a control (ticket 112)
+The measurement the ticket asked for, in its own words: every control of the
+owner's file pressed one at a time (control table with the guest title cursor
+and the port screen's cursor row), the capture frames before/during/after, the
+two captures on the built-in map that reproduce the owner's file line for line,
+and the two defects that made a capture invisible (the row list moved its
+labels, and the held control leaked into the machine and re-armed the screen).
+
+docs/gamepad.md now says a row's left column is a function and its right column
+a control, that the list does not move under an edit, the three status reports,
+who cancels, and why the captured control stays withheld until released.
+docs/next-engine.md records the row order and the latch as the two places the
+feature lives. The site was regenerated with scripts/build_docs.py.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
