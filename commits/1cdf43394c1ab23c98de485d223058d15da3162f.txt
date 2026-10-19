@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1cdf43394c1ab23c98de485d223058d15da3162f
+date: 2026-10-19T07:54:39+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: tickets 107..109, and the mechanism behind ticket 101's layout ruling is corrected
+107 the owner-facing pages say what is true today; 108 the plane-A assertion
+proves plane A (the vacuous check ticket 101 found); 109 the animated unit icon is
+one step off at two checkpoints -- name what decides the step.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
