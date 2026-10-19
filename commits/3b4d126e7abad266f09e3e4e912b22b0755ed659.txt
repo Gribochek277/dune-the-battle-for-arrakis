@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3b4d126e7abad266f09e3e4e912b22b0755ed659
+date: 2026-10-19T11:29:34+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The console's DRAM refresh is part of the clock: 2 cycles every 128
+BlastEm charges the 68000 2 cycles per 128 for the VDP's DRAM refresh
+(genesis.c, REFRESH_INTERVAL/REFRESH_DELAY, gen_update_refresh()), which is
+1.5625 % of the guest's time.  The port's cycle model documented it as a
+deliberate omission, so the port's guest got that much more work done per
+VBlank than the emulator's, and the frame boundary landed at a different
+point inside the guest's frame.
+
+md68k_cycles_charge() is now the instruction path: the instruction's cycles
+plus the refresh charge, with the remainder carried the way BlastEm's
+refresh_counter carries it.  md68k_cycles_add() stays the raw advance for a
+caller that owns the clock.  md68k_cycles_set_refresh(0), and the harness's
+--no-refresh, reproduce the old clock exactly: the control the mission-turn
+check runs.
+
+Measured at VBlank entry 7700 of the Atreides recording, the mission's own
+counters ($FFFFC594/$FFFFC598) move from 8 entries ahead of the reference to
+4, the order timer at record 33's +$14 from $10 to the reference's $11, and
+the RandomSeed from 99B7E5 (420 RandomByte calls) to 53E63B, which is the
+reference's state at the same 426 calls.  The checkpoint catalog: mission-map
+182 -> 23 pixels (the credit counter's last digit), in-game-hud 152 -> 0,
+build-panel 100 -> 0, briefing-text 0 with its gate moved to pixel-exact.
+
+The fixture: 32 NOPs cost 130 cycles, 320 cost 1300, and without the charge
+128; the boot stub's total moves with it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
