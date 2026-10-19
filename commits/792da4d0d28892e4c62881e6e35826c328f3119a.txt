@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 792da4d0d28892e4c62881e6e35826c328f3119a
+date: 2026-10-19T10:21:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: tickets 111 and 112, from the owner's running session
+111 the port's screens draw two cursors -- the game's sprite and the white text
+marker, reproduced in a rendered frame; 112 the owner's pad does not move the
+menu and a capture is not visibly a capture, with their own binding file as the
+reproduction.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
