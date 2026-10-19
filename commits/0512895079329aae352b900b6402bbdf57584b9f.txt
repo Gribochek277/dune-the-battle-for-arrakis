@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0512895079329aae352b900b6402bbdf57584b9f
+date: 2026-10-19T17:57:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The cycle clock's header says what ticket 115 charges, and what it does not: the VBlank entry is part of it and a VDP DMA is not
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
