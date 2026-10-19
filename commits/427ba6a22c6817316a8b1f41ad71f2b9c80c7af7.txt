@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 427ba6a22c6817316a8b1f41ad71f2b9c80c7af7
+date: 2026-10-19T20:52:07+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the cursor marks a line of the window, not a row of the list
+The owner walked the front end's mapping screen with the keyboard and the arrow
+left the menu, then the screen. One line: the sprite's row was
+`state.top + state.cursor`, and `cursor` already indexes the whole list, so the
+window's offset was counted twice -- every row the window scrolled added another
+row to the arrow's Y. The port's own two-row settings screen never scrolls, so
+the arithmetic looked right for four tickets.
+
+Measured before: twelve DOWN presses put the sprite's Y at raw $0200, screen line
+384, below a 224-line screen, while the selected row sat on the window's last
+line. After: $0100, the window's last line. cursor_line() now answers the question
+for the arrow and for the rows, so they cannot disagree.
+
+tests/test_port_settings_screen.sh pins both ends of the window: twelve DOWNs put
+the arrow on the last line, twelve back up return it to the first, with the game's
+tile, palette and column and a link that ends the chain. The control is the
+pre-fix dump, whose raw Y $0200 is not one of the window's five lines.
+
+Ticket 117, and docs/next-engine.md's cursor ledger now carries the window's rule.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
