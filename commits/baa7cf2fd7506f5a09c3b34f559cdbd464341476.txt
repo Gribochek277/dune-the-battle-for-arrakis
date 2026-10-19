@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: baa7cf2fd7506f5a09c3b34f559cdbd464341476
+date: 2026-10-19T07:14:06+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 101: the priority-bit mechanism written next to the rows is corrected
+The comment over the settings screen's layout, and the ledger in docs/next-engine.md
+that repeated it, said the backdrop's plane A tilemap carries the priority bit in every
+cell, that a cell drawn at the game's own rows is hidden by the artwork, and that the
+layout is where the tilemap sets no priority. Measured off --vdp-dump, the machine
+holds the opposite:
+
+* all 2 048 words of the artwork's own name table ($6000-$6FFF) are clear of the
+  priority bit, in the ROM's copy of the resource, in the port's dump and in the game's
+  own options dump;
+* the port's rows sit over the artwork -- plane A rows 8..16 hold 35-40 non-zero cells
+  each -- and read because the rows themselves carry $E000, the same attribute the
+  game's own options rows carry;
+* the rule that is real runs the other way: plane B loses to plane A wherever plane A
+  has a pixel and the priority bits are equal, which render_software.c states as
+  (a & VDP_LAYER_PRIORITY) >= (pixel & VDP_LAYER_PRIORITY).
+
+So there was nothing to clear, and the earlier comment's second half described code
+that no longer exists. The 27 pixels of $0E0E that code produced were real and stay in
+the record as the lesson. Comment-only in the port: no constant, no behaviour and no
+picture changed; the site is rebuilt for the markdown.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
