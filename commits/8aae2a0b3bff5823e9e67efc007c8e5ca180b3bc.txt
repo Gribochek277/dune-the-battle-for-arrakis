@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8aae2a0b3bff5823e9e67efc007c8e5ca180b3bc
+date: 2026-10-19T08:15:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 108: the plane-A check compares plane A, against the resource
+The check named for the screen's plane A name table compared V-RAM
+$2000..$2E00, which is inside the tile region the check above it already
+compared and is not plane A at all: register 2 = $18 puts plane A at $6000.
+It now reads the base from register 2 and the length from register 16 and
+compares the whole plane against the resource's own tilemap at ROM $053234,
+not against the game's own options screen -- that screen fills plane A's
+off-screen rows 28..31 with its own $2420 and the resource does not contain
+them, so the resource is the reference this screen can keep.
+
+settings_screen.c loses SETTINGS_ART_BASE, which named $2000 as plane A's
+base, and the two other defines and comments that had no reader or named the
+wrong base.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
