@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0ed701d381b14078a9defe54a03de13d2254879d
+date: 2026-10-19T07:23:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 106: the VDP address register counts bytes, and one builder says so
+The ticket's premise was that the chip's VDP address register holds a word address while
+this model's holds a byte. The chip's holds bytes too, and the evidence is in the ticket:
+this cartridge's own sprite upload puts the byte base $F000 straight into the command's
+14 + 2-bit field and gets $70000083, BlastEm's address register is the same 16 bits
+incremented by register $0F, and `$78 << 9` is a byte base. The word addresses in the VDP
+are the DMA source registers $15-$17, `byte >> 1` -- a pair `UploadSpriteTable` shows side
+by side, `lsr.l #1` on the source and the byte base in the destination command.
+
+So the model keeps bytes, and the definition of `v->address` now says so in the words a
+reader would misuse it by ("a BYTE address ... It is NOT a word address"), with the
+command field's split and the DMA source exception beside it.
+
+The enforcement is `md68k_vdp_command(opcode, byte_address)`: the operation code in the
+long's top two bits, the address masked to the 14 bits of the first control word and the
+2 of the second. An unmasked address above $3FFF reaches the operation code instead --
+$F000 turns a V-RAM write into a C-RAM write, $6000 loses A14 and lands at $2000 -- which
+is what cost ticket 106's first probe its result. The three places the port wrote the
+command by hand (`next/port_screen.c`'s text plane, `settings_copy_to_cram` and
+`settings_copy_to_vram` in the settings screen) now call it; the commands they emit are
+byte-identical, which the engine-equivalence and VDP-state checks confirm.
+
+`tests/test_cycles.c`'s `vram_word` reads through the same builder instead of hand-masking
+the read command.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
