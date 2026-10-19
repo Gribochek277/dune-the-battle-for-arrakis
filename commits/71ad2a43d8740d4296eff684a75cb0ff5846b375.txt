@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 71ad2a43d8740d4296eff684a75cb0ff5846b375
+date: 2026-10-19T16:02:51+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the house selection's selector is the port's C, the rows are its data
+RunSelectorScreen $002364 and the three contiguous regions around it --
+the cursor's stops ($002404), the row a stop names ($002434/$002438) and
+the setup ($002444) -- are one span in the replacement table, answered one
+guest instruction at a time and charged at the guest's own address. The
+five rows are next_selector_rows(): side, strip x, strip y, presence. The
+three guest tables and the clamp's two constants read the list instead,
+and on this image's five rows the two clamp values are the guest's own
+($0008/$000A), so the default run executes the guest's own instruction
+paths. The driver (RunMissionSetupScreen) stays the guest's: it is the
+second slice.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
