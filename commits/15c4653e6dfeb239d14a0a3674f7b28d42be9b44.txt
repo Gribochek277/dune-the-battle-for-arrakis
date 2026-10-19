@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 15c4653e6dfeb239d14a0a3674f7b28d42be9b44
+date: 2026-10-19T17:55:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The clock's itemisation is a check, and the credit roll's ledger moves with it
+tests/test_clock_budget.sh pins what the charges are worth at the run level: the
+machine's counter is exactly the sum of the buckets the state dump reports, the
+Z80's window is 8 cycles an access and the Z80 area 1, the VBlank entry is 34 a
+frame on every entry, and the mission recording's VDP busy windows are printed
+so the DMA the port charges through the guest's poll loop stays visible. The
+control is --no-contention: every one of ticket 115's charges goes to zero, the
+bucket arithmetic still holds, and the access counts are still reported, which is
+what makes the itemisation a measurement rather than an arithmetic exercise.
+
+tests/test_mission_credits.sh accepts the measured state instead of ticket 113's
+one-tick-ahead roll: the port holds 986 + 0/8 at mission clock 210 (two entries
+over the reference's 208) and draws 986, the reference's digit, so the check now
+requires the drawn value to be the reference's in both accepted pairs -- the
+reference's own 985 + 4/8 at 208, which a future ticket that closes the lead
+would produce, and this one. The --no-refresh control (216, 986 + 5/8) is joined
+by --no-contention (214, 986 + 4/8, drawn 987); neither satisfies the predicate.
+
+tests/run_all.sh registers the new check and its comment blocks carry the new
+measurement.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
