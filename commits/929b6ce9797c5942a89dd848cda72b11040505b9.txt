@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 929b6ce9797c5942a89dd848cda72b11040505b9
+date: 2026-10-19T17:55:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Two assertions edited for the new clock, each keeping its statement and gaining a control
+tests/test_engine_equivalence.sh: the VBlank entry charge moves where inside a
+frame the guest is by 34 cycles, so the two arrangements' clocks at a handler
+entry are no longer the same instruction boundary (measured -2 cycles of
+overshoot), the guest's loops run a few iterations differently (the instruction
+delta is 4 more than ReadController's 46 a call) and -- because the Z80's window
+accesses now move the 68000's clock, as they do on the reference -- the two
+arrangements' audio and YM timelines are the same writes at a different sample
+and frame phase (the same music: the loudest 735-sample window is 7.2 % from
+legacy's in RMS, bound 10 %). The statements are kept where they were measured:
+the same check now runs both arrangements with --no-contention, and there the
+cycles are identical, work RAM is identical, the instruction delta is exactly 46
+per ReadController call, the audio is ticket 110's pair exactly (212 samples in
+19-sample runs at 177 LSB) and the YM register timeline is identical line for
+line. The default run has to stay inside the bounds the block now states.
+
+tests/test_fidelity.sh: the store has no known-bad checkpoint any more -- ticket
+115 brought the last one in -- so the check asserts that (every row pixel-exact
+at the 0 threshold, every row with its note) and exercises the known-bad branch
+of the gate against a synthetic store (--store, mission-map's gate rewritten
+with its measured 23 pixels as the threshold): an unmutated picture inside it
+passes and one mutated past it fails, which is the statement the old control
+made.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
