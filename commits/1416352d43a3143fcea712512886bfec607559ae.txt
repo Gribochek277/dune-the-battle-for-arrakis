@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1416352d43a3143fcea712512886bfec607559ae
+date: 2026-10-19T09:36:57+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 109: the sprite-list section stops calling the two mission entries an animation
+Four places in docs/native-port.md's sprite comparison still said the mission
+entries differ by an animation step, which is the reading ticket 109 measured and
+refuted. They now name the facing and the ticket.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
