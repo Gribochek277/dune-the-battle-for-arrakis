@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 18eae774197cb91965414c5d6467a8386b1a7478
+date: 2026-10-19T09:24:54+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Unit icon: the tile is the unit's facing angle, measured on both sides (ticket 109)
+The mission's sprite-frame selector sub_00B3B2 reads the current-angle byte
+of a unit's angle triple at +8 and writes the descriptor it selects from
+data_08424A into the sprite node, so the icon's tile word is a function of
+one byte of unit state.  At entry 7898 the unit that draws sprite entry 10
+(record 33, $FF120C, byte $FF1276) holds $C0 on the port (descriptor 247,
+$0E7BDC, tile $3E6, H flip) and $68 on the reference (descriptor 244,
+$0E7BB2, tile $3DA, V flip), and neither side advances it over entries
+7890..7910 -- so the port is neither one step ahead nor one step behind.
+
+The two runs part between entries 7680 and 7700: the reference's unit is
+mid-turn (step $F8, target $68, current $B0) while the port's is not
+($00/$C0/$C0), with the order pointer, the order id and the position still
+equal.  The port's unit never turns; that missed turn is the open finding.
+
+The other three known-bad entries do not share this cause: the briefing
+portrait does not advance over its window either (in step today), and the
+build panel's bar is time-driven on the port while the reference's pictures
+at 9497..9499 are identical.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
