@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 67dad5aa44041ec410699f25b02673160f4e0fc3
+date: 2026-10-19T10:29:58+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the owner's two reports from a running window lead the "what is next" list
+Tickets 111 and 112 landed in the store while this branch was open: the port's
+settings and gamepad screens draw the game's cursor sprite *and* the older text
+marker, so the selected row carries two cursors (in the code and in a rendered
+frame), and a report that a pad whose bindings the player edited on disk does
+not move the port's menu where the keyboard does, with the owner's own
+`gamepad-map.ini` as the reproduction.
+
+They are the first item of "what is being built next" now, ahead of the unit
+that never turns, the assets and the two named modifications; the rest of the
+list is renumbered. docs/html regenerated, `python3 scripts/build_docs.py
+--check` green. `bash tests/run_all.sh` (the fast tier): 23 PASS, 0 FAIL, ALL
+CHECKS PASSED; 24 slow-tier checks not run.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
