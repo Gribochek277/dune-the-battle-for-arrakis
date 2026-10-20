@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a0bab5f8183bff865ac1834b2ec823857a1017ce
+date: 2026-10-20T08:19:12+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+Merge ticket 118: 118-118-renderer-v2-scene
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
