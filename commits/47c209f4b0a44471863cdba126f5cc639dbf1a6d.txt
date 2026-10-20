@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 47c209f4b0a44471863cdba126f5cc639dbf1a6d
+date: 2026-10-20T08:18:04+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+The renderer, widescreen, input and menu campaign: tickets 118-140 with their dependency tables
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
