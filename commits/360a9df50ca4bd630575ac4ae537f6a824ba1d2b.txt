@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 360a9df50ca4bd630575ac4ae537f6a824ba1d2b
+date: 2026-10-20T17:41:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 121: 121-121-opengl-backend
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
