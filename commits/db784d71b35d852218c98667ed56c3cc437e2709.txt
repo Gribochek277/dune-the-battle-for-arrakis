@@ -1,0 +1,49 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: db784d71b35d852218c98667ed56c3cc437e2709
+date: 2026-10-20T15:30:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The widescreen shell: the window is the target, and the 4:3 picture keeps its shape
+Ticket 120. The v2 renderer no longer draws into the VDP's 320x240: the playable
+window's drawable pixels are the target, a layout says where the guest's picture
+goes in it, and the 4:3 picture is integer-scaled, centred and pillarboxed or
+letterboxed -- never stretched.
+
+The layout (output/layout.{c,h}) is integer arithmetic: a target, regions (a
+source rectangle in guest pixels, a scale, an anchor and margins), the
+fit-height and wide-world modes, the integer scale policy, the separate
+interface and world scales, and the view transform the mouse and the wide view
+will share. The shell (output/shell.{c,h}) owns the layout, the target-sized
+surface and the scene renderer's target, and reflows all three on a resize; it
+refuses a renderer that is not the v2 one, so the shell is v2-only by
+construction. md_scene gained guest_scale and the CPU backend expands each guest
+pixel into a scale x scale block, caching the rendered guest row across the
+target rows that show it. The window gained a target-sized texture path, a
+resize and fullscreen (F11 and --fullscreen); the app loop takes the caller's
+surface when there is a shell and its own 320x240 frame otherwise, so the
+harness, the reference window and the fidelity path are untouched.
+
+--aspect W:H (4:3, 16:9, 21:9), --window WxH, --fullscreen, --interface-scale N
+and --world-scale N are the front end's; on any other renderer they are refused
+with the sentence naming --renderer scene. A 4:3 scene run is the old 640x480
+window at scale 2 with no bars.
+
+Checks: port/build/layout-test (933 checks: the scale policy, anchors, both
+modes, the transform round trip over nine targets and scales 1..3, a stale
+destination that must fail, and the shell's target drawn through
+--renderer scene), port/build/window-test (12, SDL's dummy driver), the scene
+fixtures' integer-scale and scaled-blend cases, tests/test_layout.sh (fast) and
+tests/test_shell.sh (slow: each target's report line, the v2-only refusal, and
+the VDP dump identical across the reference, 4:3 and 16:9 runs). Fidelity's
+nine checkpoints stay pixel-exact and the scene checkpoints stay identical.
+
+Decision: docs/decisions.md D43. Prose: docs/widescreen.md,
+docs/port-architecture.md and docs/native-port.md ("The widescreen shell").
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
