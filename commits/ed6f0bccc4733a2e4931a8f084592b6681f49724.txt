@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ed6f0bccc4733a2e4931a8f084592b6681f49724
+date: 2026-10-20T13:16:44+03:00
+author: RE Workspace <re@localhost>
+branches: ticket/119-119-presentation-time-display-rate
+
+message:
+Presentation time: the picture runs at the display's rate, the guest keeps its 59.92
+The loop tied one picture to one guest frame. Now a renderer that keeps
+snapshots is captured at each VBlank entry and drawn between the entries: with
+vsync at the display's own rate, without it at `--present-rate HZ`, and with
+`--no-interpolate` the one-picture-per-guest-frame path every existing run knew.
+A 120 Hz target shows 120 pictures while the guest runs at 59.92, and the
+guest's work RAM, cycles, audio and input are the same to the byte.
+
+The seam grew an optional half rather than a second registry: `capture`,
+`draw_at(alpha)` and `cut` on `md_renderer`, with `md_renderer_draw()` untouched
+for software, stub and every fidelity comparison, so ticket 121's GPU backend
+is three more fields and no loop change. The schedule is the pacing's second
+deadline (guest frames and picture slots counted apart), and the alpha is how
+far the wall clock is through the guest frame's slot: 0 at the previous
+deadline, 256 at the one the loop waits for, and 256 at any cut.
+
+A cut is structural, not motion: the palette, the frame's bits, the plane bases
+and size, the hscroll table and its mode, the window and the sprite table snap;
+the per-line scroll, V-SRAM, the sprite list and the pattern data blend. A
+scene transition is not a signal the VDP has -- it is a change of both plane
+bases and the palette, and the same rule covers it.
+
+The fixtures (`port/tests/test_present.c`, `port/tests/test_scene.c`) pin the
+schedule and the picture: a midpoint that moves a plane scroll and a sprite by
+exactly half a step, endpoints byte-identical to the reference, and each cut
+snapping. The window's check (`tests/test_presentation.sh`) measures 300 frames
+at 120 pictures a second with byte-identical RAM, VDP state, WAV and pad
+timeline against the interpolation-off run, and `--scale 8` dropping pictures
+without moving the guest. The report now names guest frames, instructions,
+cycles, presented and dropped apart. D42 records the decision.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
