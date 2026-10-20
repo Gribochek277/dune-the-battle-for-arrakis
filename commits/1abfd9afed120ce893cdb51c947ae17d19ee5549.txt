@@ -1,0 +1,60 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1abfd9afed120ce893cdb51c947ae17d19ee5549
+date: 2026-10-21T02:39:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The port's own font: a Ukrainian atlas in a reserved block, and text fields that wrap
+The cartridge's font has no lower-case Latin -- the 32 tiles its ASCII range
+reserves for `a`..`z` are Cyrillic -- so a locale could only ever say capitals.
+This branch gives the port a font of its own for the glyphs the cartridge cannot
+draw, keeps the game's font exactly where the game put it, and makes the port's
+text fields measure, wrap and refuse in characters.
+
+* `port/font/port-font.txt` is the atlas a human reviews: 92 glyphs of eight
+  lines of eight pixels with the provenance line under the format tag. It is the
+  glyphs the game's font lacks -- lower-case Latin, the Cyrillic lower-case
+  alphabet, `Ё Є І Ї Ґ є і ї ґ`, Polish's diacritics in both cases, German's
+  umlauts and `ß` -- drawn for this repository in the cartridge font's style.
+  `scripts/make_port_font.py` generates `port/next/font_atlas.c` from it and
+  `--check` fails the gate when the two disagree.
+* `next/font.{c,h}` owns the rule: the game's own tile for a character its font
+  has, the atlas's for one it does not, `?` -- reported once -- for one neither
+  has. The atlas uploads to V-RAM `$7000-$7FFF` (tiles `$380-$3FF`), the block
+  the ticket measured as free on all four text screens by writing a pattern into
+  every candidate page and rendering it; the game's font at `$9000` is never
+  written and is compared with the ROM byte for byte.
+* `next/utf8.{c,h}` is the decoder: lengths, malformed bytes, and a cut at a
+  character that never splits a sequence. `next/text.{c,h}` is the field: cells,
+  lines, centring and the binding vocabulary's fold, a greedy wrap at spaces, a
+  word cut at a one-line field with one report, and never a cell outside the
+  field.
+* `next/guest_text.c` keeps ticket 124's one-instruction-per-step shape; a
+  translated UTF-8 word differs only where a character becomes a tile (the glyph
+  lookup and the masks that OR the game's `$480` base in), and the atlas is
+  uploaded at the routine's entry, never between two cells. A word wider than the
+  rest of its line is refused with a report and the guest's bytes drawn.
+* The port's screens draw through the text layer (`port_screen.c`), the settings
+  title wraps onto the line under it, and the mapping screen raises only the
+  binding names it inserts into a sentence -- the vocabulary is not translated.
+* `port/locale.ini` gains the `[uk]` section: every key, the words a Ukrainian
+  player reads, `mapping.title`'s nineteen cells wrapping onto the second line.
+* The English screens are byte-identical: the title, options, settings and
+  mapping VDP dumps are unchanged, and no atlas tile appears on an English screen
+  (the no-lower-case-Cyrillic property extended to the new font).
+
+Checks: `port/tests/test_utf8.c` and `port/tests/test_font.c` in
+`make -C port test`; `tests/test_port_font.sh` (slow tier) compares `[uk]` cells
+against `port/locale.ini` through the ROM's `$059DB6` glyph table and the atlas
+source, checks `$7000`/`$9000`, the English property, a missing glyph, a wrap, a
+cut and a refused guest label, and writes the screenshots under
+`analysis/screenshots/`. Docs: decisions D47, `next-engine.md`, `locale.md`,
+`game-architecture.md`, `port-architecture.md`, `CONTEXT.md`, the
+reverse-engineering notes' measurements, and the rebuilt `docs/html`.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
