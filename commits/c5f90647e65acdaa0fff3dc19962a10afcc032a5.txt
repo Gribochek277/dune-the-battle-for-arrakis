@@ -1,0 +1,72 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c5f90647e65acdaa0fff3dc19962a10afcc032a5
+date: 2026-10-20T08:48:06+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+next: the mission's cursor is the port's C
+The mission map's per-frame cursor is two handlers of the same shape and the
+movement between them, and this takes over all of it plus the cell they end in:
+`UpdateMissionCursor` $0030FA (the handler `EnterMission` installs), its
+movement `StepMissionCursor` $003174 and the sixteen direction case bodies,
+`UpdatePlacementCursor` $003AA6 (the handler `EnterPlacementMode` installs, the
+same cursor with the overlay's clamps) and `UpdateCursorPosition` $002B9C.
+
+Two findings made the slice possible. The splitter had the routine in pieces
+with sixteen gaps of 38-144 bytes between them as opaque data -- the routine's
+fall-throughs, which no playthrough ever branched into and which the likeness
+scan's 64-byte floor skipped -- so the gaps were decoded whole, measured the
+scanner's way (0.94-1.00 instruction share) and reviewed into
+disassembly/code-candidates.txt; the rebuild stays byte-exact. And the mission
+recording runs only the *second* handler: the rule at $01798C picks
+`EnterMission` for a hovered record of type 8 with bit 13 of +$6 set, and the
+Atreides force has no type 8 (its units are types 0, 2, 4, 13, 14, 16). That is
+measured and printed by the check rather than assumed, and the first handler's
+row is proved by a unit fixture: the guest's own generated code and the port's C
+run it from the same constructed map-view state, and every register, the flags,
+the 64 KiB, the VDP's write counters and the cycle total agree for eight pad
+states.
+
+The rows are one implementation, `MissionCursor` (three spans: $0030FA + $338 up
+to the direction table, $003456 + $1D6 for the edge scroll, $003AA6 + $3BE) and
+`UpdateCursorPosition` ($002B9C + $6E); the four `ADDA.W` words the assembler
+canonicalises have no case and are handed back to the interpreter, which is what
+the comparator's `interpreted` count proves. The transcriptions are one file per
+region, 708 cases in all, generated from the committed translation and split to
+stay under the 64 KiB file bound.
+
+Proved by tests/test_mission_cursor.sh (slow tier, ~11 min): the Atreides
+recording, 9 000 frames, `--replace MissionCursor` and `--replace
+UpdateCursorPosition` each against legacy in the transcribed mode -- picture
+(71 680 pixels), 64 KiB of work RAM (sha256 97bc854b), VDP counters, the Z80's
+whole state (no accounting drift at all), the YM2612 timeline, the audio
+(compare_audio PASS, 6 bytes of 13 276 568 on sample boundaries), the clock
+(1 154 614 160) and the block-address log (3 296 entries) identical, the
+translation down by exactly one instruction per call. Then the pad path: a
+direction held from entry 7 690 walks the view to each of the overlay's four
+edges (x $18/$128, y $18/$C8) with the cursor's cell and map position moving,
+the slow counter non-zero while held, the view settling after the release, the
+five action buttons leaving the guest's own dispatcher $00364A and
+SetCursorMode $00FF7C in both logs and the same hovered record; the control
+build with the rows deleted is the guest's own trace byte for byte, and
+--no-replace is legacy.
+
+En route: the table's rows outgrew HEADLESS_REPLACEMENT_MAX (8) and the harness
+report that walks them read past its array -- `mda_machine_replacements()`
+returned the arrangement's total instead of the rows it filled. The array is 16
+now and the function returns what it filled.
+
+Rebased onto main after tickets 118 (the scene) and 122 (the locale file): the
+merge keeps their modules, rows and checks beside this ticket's. D41 records
+the rule this ticket had to establish (a replacement's row is translated code,
+so the split follows the routine) after D40, port/README.md's module map names
+the cursor's files, and docs/native-port.md's selftest line carries the new
+count and the mission-cursor fixture. docs/html is rebuilt from the merged
+tree, never edited by hand.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
