@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4a18571dbd6fbb5f16640f46fc228c9e1740076b
+date: 2026-10-20T19:08:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The guest's text is the port's C: a string catalog and the two draw routines
+DrawTextLine ($01069E) and DrawTextOnTextPlane ($00FC82) are now the port's C
+(port/next/guest_text.c), answered one guest instruction per machine step over
+the replacement table's spans, and drawing through a catalog of the ROM's
+static strings keyed by the address the guest passes
+(port/next/guest_text_catalog.c).
+
+With no locale, with --locale en, for a key the language lacks or for a string
+with no key, the C draws the guest's own bytes: the two routines' instruction
+streams are transcribed and charged at their own addresses, so the picture, the
+VDP's FIFO, the clock, the instruction count and the audio are the guest's (the
+comparator reports 1 169 / 2 415 / 1 172 answered instructions identical on the
+options, password and title runs). A translated word is drawn at the same cells,
+character by character through $059DB6; DrawTextLine's a0 still walks the
+guest's string to its NUL, so a screen's run of strings lands where it did. The
+options screen's nine labels are the demonstration (a [test] locale changes 104
+bytes, all inside their bands) and the title menu's rows follow the same
+catalog, while the difficulty value (the dynamic pointer from $0257B4), the
+values and the password letters stay the guest's. The ending credits' line
+writer ($00AFC2) and the boot failure message ($001DB8) are named as the third
+string paths and left to the guest's translation.
+
+The extraction is documented in docs/next-engine.md, "The guest's text is C",
+the reverse-engineering notes (M2-6), docs/locale.md, the architecture page,
+CONTEXT.md and D44. Tests: port/tests/test_guest_text.c (the catalog's shape;
+guest against C register for register, flag for flag, cycle for cycle and VDP
+word for VDP word; a work-RAM string with a newline and a skipped control;
+translated words in both routines) and tests/test_guest_text.sh (legacy against
+both --replace names with --replacement-transcribed, a [test] locale,
+--locale en byte-identical, and the guest's own code as the control).
+
+The committed generated translation is regenerated from the curated names,
+which also refreshes two names earlier tickets left un-transpiled
+(RunStructurePanel, StructurePanelSpritePool; comments only).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
