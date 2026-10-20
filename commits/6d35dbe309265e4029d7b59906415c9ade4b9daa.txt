@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6d35dbe309265e4029d7b59906415c9ade4b9daa
+date: 2026-10-20T07:49:14+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+The glossary and the port's README name the scene, the scene backend and the alpha
+CONTEXT.md is the project's vocabulary, and ticket 118 added three words the next
+tickets (119's blend, 120's layout, 121's GPU backend) will use: the **scene**
+(the VDP's picture as data -- a view, not a state store, and not a surface), the
+**scene backend** (a module that draws one, resolving no registers), and **alpha**
+(how a backend mixes the scene's two states). It also names the **renderer seam**
+and the **software renderer** as the oracle, because the scene sits *beside* them
+and the distinction is the decision D39 records.
+
+port/README.md's zone and module tables gain the three modules and `--renderer
+scene`, the tests table gains `scene-test`, the fixture list gains the scene's,
+and vdp-render's row and example gain `--renderer NAME` and `--alpha N`.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
