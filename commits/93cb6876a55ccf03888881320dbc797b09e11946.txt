@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 93cb6876a55ccf03888881320dbc797b09e11946
+date: 2026-10-20T11:12:40+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+The mission's layers, measured: world and interface, and the rule the wide view uses
+Ticket 134 measures what the VDP draws at the three mission checkpoints (7 898,
+8 148, 9 498), assigns every layer and every sprite class to the world or the
+interface, and records the layout rule ticket 132 implements.
+
+The measurement composes the four picture layers with the reference renderer's
+rules and reproduces each checkpoint's picture exactly (0 of 71 680 pixels); the
+fixture is analysis/mission-layers.json, written and checked by the new
+scripts/mission_layers.py from the reference's VDP dump and 68000 state at the
+same VBlank entry.
+
+What it found: plane B ($C000) is the map's terrain and plane A ($E000) its void
+and edge dither -- both world, both scrolled by the same hscroll entry; the
+window is the interface's own plane and is disabled on the map and the whole
+screen on the build panel ($B000, 66 923 of 71 680 pixels); the credits, the
+radar square and marker, the structure-icon column, the cursor, the selection
+box and the units are sprites, and the build panel's widgets are a second sprite
+pool.
+
+The role is not in the VDP state: the sprite attribute table has position, size,
+tile, palette and priority and no owner. The sprite record pool resolves it --
+the node's dest is a unit record, the mission's view block, a constant ROM
+position or the panel's record -- and the node's +8 descriptor names the class.
+The check's controls prove it: without the state every entry is reported
+unclassified and the pool is named; repointing the cursor's node at a unit
+record turns the same two entries into the world; clearing the panel's window
+registers empties the window layer; a changed sprite tile stops the pool from
+reproducing the table.
+
+The decision (D42): the scene stays a pure VDP view. The layer map is the
+mission's data, read by the mission's C for the wide view, not a scene field --
+the VDP state cannot carry it, and the scene's record-free contract is what
+keeps every backend off the guest's layouts. The renderer seam is untouched and
+legacy stays 4:3.
+
+Names added with evidence: RunStructurePanel $017BAC, InitStructurePanel
+$00432A, StructurePanelFrame $004264, StructurePanelSpritePool $FFFFF5B0.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
