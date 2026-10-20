@@ -1,7 +1,7 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-20T11:00:57Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-20T18:02:26Z
 
 ---
 
@@ -55,6 +55,10 @@ HOME=$PWD/work/emu/home tools/blastem/blastem -b 900 -l build/dune.bin
   port's zones as generated pages and diagrams. Committed, so it reads from a
   `file://` URL; `python3 scripts/build_docs.py` rebuilds it and
   `tests/test_docs.sh` is the gate that keeps it current.
+* [`docs/widescreen.md`](docs/widescreen.md) — the widescreen shell: a target
+  that is the window's pixels, regions and anchors, the fit-height and
+  wide-world modes, and the integer-scale policy that keeps the 4:3 picture's
+  shape (`--renderer scene --aspect 16:9`).
 * [`docs/goals.md`](docs/goals.md) — the two goals (playable PC binary; ROM to source + assets), their definitions of done and the roadmap
 * [`docs/collecting-coverage.md`](docs/collecting-coverage.md) — how to play the game so the analysis grows
 

@@ -1,0 +1,73 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cc28329e0583d9fb136156226a9aa1fb1a42e0fc
+date: 2026-10-20T11:54:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The menu's arrow slides, and the slide is a module
+The game's OPTIONS screen does not jump its cursor between rows: it slides it
+four pixels a frame across a sixteen-pixel pitch, and it says so with sound 25
+when the row the screen acts on changes and 40 when a press chooses one. The
+port's own settings screen computed its sprite's Y straight from the selected
+row and moved instantly and silently, because nothing had measured the game.
+
+Ticket 137 makes the measurement a module: port/next/menu_cursor.c owns a list
+(its length and its first row's Y), the row the screen acts on, the pixel
+position the sprite is drawn at, the pixels still to travel, a settled flag, the
+line of the window the cursor's row sits on, and the sounds one frame owes. It
+has no VDP and no guest CPU in it -- a screen hands it the pad's meaning and
+takes back a Y and a sound mask -- so the OPTIONS rewrite (138) adopts it and
+PORT SETTINGS and GAMEPAD MAPPING (139, 140) follow without touching it.
+
+What the measuring found, and what is written next to the code:
+
+* $FFFFBECC is the sprite's Y, not a private copy: $0013EA reads the record at
+  that address as the sprite's position.
+* $FFFFBED2 is the signed distance still to travel; $0115BE takes four off it and
+  gives four to the Y each frame, so a move is four frames and the press frame
+  is the first of them.
+* $FFFFBED6 is the row, and the list's *length* is the screen's datum: the same
+  routine walks seven rows from the front end's OPTIONS row and nine from the
+  mission (which draws RESTART MISSION and GAME TIME), wrapping at $84 and $A4
+  respectively. The module takes the length from the list.
+* The ends do not slide: a press past an end puts the cursor on the other end's
+  position in place, on the press frame.
+* A press during a slide is dropped -- the opposite direction and the choice
+  button alike ($0114F8) -- and the slide finishes where it was going.
+* The move sound is one frame behind the cursor: the settle frame's selector
+  still sees a non-zero counter, so 25 arrives on the frame after the last step.
+* Not every row plays 40: NEW CONTROL's handler toggles its scheme silently. The
+  module reports the *choice*; the 40 belongs to the row.
+
+The acceptance is the trajectory, so the trajectory is the fixture.
+scripts/capture_cursor_trace.py runs the guest's own code on the port's machine
+(--engine legacy, whose byte-for-byte agreement with next is the engine
+equivalence check) and reads the OPTIONS screen's four words and both sound
+pushes out of the work-RAM access log, one line per frame of the screen's loop.
+Two routes, because the screen has two lists: 286 frames from the front end and
+496 from the mission, committed under analysis/cursor-traces/. The capture
+refuses a trace that is not one loop iteration per line or whose position,
+counter and row disagree, and re-capturing either file reproduces it byte for
+byte.
+
+port/tests/test_menu_cursor.c replays both through the module frame for frame --
+position, counter, row and sounds -- and covers what the traces cannot carry: the
+clamp of a list that does not wrap, and the window line at every scroll position
+of a thirteen-row list (ticket 117's difference, never the sum).
+tests/test_menu_cursor.sh re-captures both fixtures from the cartridge, runs the
+replay and holds the control: a copy of the module that steps eight pixels a
+frame must fail the trajectory. The module's contract, the measurements and the
+two routes are in docs/next-engine.md ("The menu cursor"); the site is rebuilt.
+
+make -C port test: 41 140 checks, 0 failures. tests/run_all.sh --tier all: ALL
+CHECKS PASSED (58 checks); the new check is 101 s in the slow tier. The
+fixtures reproduce byte for byte from their runs, and again after the rebase
+onto main's mission cursor (ticket 126), which is the trajectory's own
+determinism.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
