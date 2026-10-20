@@ -1,0 +1,110 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3c99f09f30928411f9f08f7777120bb5d7bd75ff
+date: 2026-10-20T06:31:54+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+The scene is the VDP's picture as data: palette, planes and their scroll, the window, the sprite list, the rectangles, and a CPU backend that draws it
+Ticket 118 put a second renderer contract beside the seam ticket 76 opened. The
+seam hands a renderer the live VDP and that is the verified picture --
+`software`
+is what scripts/fidelity.sh compares with BlastEm, and this does not touch it.
+What the seam cannot offer is a description, and three tickets need one: the
+display-rate blend (119) draws between two guest frames, the widescreen shell
+(120) draws into a target that is not 320x240, and the GPU backend (121)
+uploads
+planes, patterns and a sprite list. Without a scene each would write its own
+reading of the VDP's registers.
+
+output/scene.{c,h} is that description. It captures, read-only, what every
+backend must decide identically: C-RAM's 64 entries decoded to RGB8 on the
+reference's ladder (so an index is the same bytes everywhere), both plane bases
+and the size register, the per-line horizontal scroll the table and the mode
+mask
+produce, V-SRAM and the column-scroll switch, the window's rectangle in the
+chip's units, the sprite attribute table's chain walked into a list with the
+$80
+bias applied and the per-line limit's number, the frame's backdrop/display/
+blanking bits, a copy of the 64 KiB of V-RAM, and the guest, active and target
+rectangles. What it deliberately leaves to the backend -- the tile fetch and
+its
+flips, the window's cell addresses, the per-line limit's outcome and the
+priority
+comparison -- is what a second backend exists to implement (121 draws them on a
+GPU), and it is what makes the CPU backend's agreement a real check rather than
+a
+tautology. It carries `previous` and `current` from the start, with alpha 0 =
+previous and MD_SCENE_ALPHA_ONE = current, so 119's blend needs a schedule and
+not a contract change; the first capture leaves the two equal, which is why
+both
+ends are the reference picture on a fresh scene.
+
+output/render_scene_cpu.{c,h} draws a scene: a pure function of the scene, a
+surface and an alpha, writing every byte of the surface (the picture at
+`guest`,
+black outside it -- the bar a layout will replace) or refusing a surface that
+is
+not the target. It includes scene.h and surface.h only: scene.h forward-
+declares
+`struct md68k_vdp`, so a backend that draws a scene cannot name the chip, which
+turns "a renderer never writes the machine" from a discipline into a compile-
+time
+fact. output/render_scene.{c,h} is the object `--renderer scene` creates -- one
+scene, a capture per draw, the backend -- and is the only module that sees both
+the seam and the scene. The registry gained one line; `software` stays the
+default and the orchestrator of the fidelity gate.
+
+tests/test_scene.c is the frame matrix that makes the agreement measurable: 20
+hand-built states -- both planes, the three hscroll modes, the 64x64 plane size
+with a scroll that crosses a nametable row (ticket 59's rule), the window on
+each
+side and from a line down, sprites with all four sizes and both flips, the
+per-line limit with an off-line entry in the middle of the list (it costs no
+slot), plane/sprite priority both ways, all 64 palette entries, blanked column
+0,
+the display off, per-column V-SRAM, the backdrop -- each rendered through the
+reference and through the CPU backend at alpha 0 and alpha 1, every case a
+whole
+frame compared byte for byte. The same file pins the blend's two ends and its
+midpoint formula, the capture's field-by-field vocabulary, the whole md68k_vdp
+unchanged across a capture, a draw and a full md_renderer_draw(), the guest
+rectangle in a wider target (bars, and the target's picture pixel for pixel)
+and
+a narrower one (clipped, not written past), and 28 corrupted scene fields each
+of
+which must change the picture: a comparison that cannot fail is not a proof,
+and
+a field nothing reads shows up as a failing check. port/build/scene-test runs
+it
+with no guest and no generated translation (tests/scene_main.c stubs the
+translation entry point), and md68k-selftest runs the same 186 checks with the
+rest of the suite (36 929 checks, 0 failures).
+
+tests/test_scene.sh is the built-binary half: the fixtures, then the boot's 120
+frames through `--renderer software` and `--renderer scene` with the state
+documents identical and the two PNGs the same picture, `--renderer` listing the
+third name, an unknown name refused, and the recording stub's picture required
+to
+differ so the comparison can fail. tests/test_scene_checkpoints.py is the
+committed screens: one harness run per checkpoint writes the picture and the
+VDP
+state of the entry, vdp-render renders that state through the reference,
+through the scene
+backend at alpha 1 and through it at alpha 0, and all three must be byte-
+identical, with
+the dump required to reproduce the harness's own picture and the stub required
+to
+differ on it.
+
+`port/build/vdp-render` gained `--renderer NAME` and `--alpha N` (the scene
+backend's blend, refused by any other renderer) so a saved VDP state can be
+explained through any backend at any alpha -- which is how the checkpoint check
+compares two backends for the price of one machine run, and how 119's blend
+fixtures will render a state at an arbitrary alpha.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
