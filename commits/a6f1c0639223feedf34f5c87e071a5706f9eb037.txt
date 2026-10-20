@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a6f1c0639223feedf34f5c87e071a5706f9eb037
+date: 2026-10-20T06:33:29+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+D39: a scene is a second renderer contract, the reference stays the oracle -- and the measurements that back it
+docs/decisions.md records the decision ticket 118 leaves for the tickets that
+build on it: the scene sits beside the seam and does not replace it; it resolves
+what every backend must decide identically and leaves the drawing rules to the
+backend (a shared function would make "two backends draw the same picture" a
+tautology); it owns copies, 64 KiB of V-RAM included, because the previous state a
+blend fades from has to survive the next frame; the first capture leaves previous
+and current equal, so alpha 0 and alpha 1 are both the reference picture on a
+fresh scene; and `software` stays the default and the oracle, because a second
+backend cannot be its own reference. Three rules for 119-121 follow: a new backend
+implements the rules over the scene and resolves no registers; a scene field
+arrives with the drawing that reads it (the 28 corruptions); the layout of 120
+changes the rectangles' numbers, not the contract.
+
+docs/port-architecture.md gains "The scene and the v2 backends (ticket 118)": what
+a scene is field by field and why each decision is where it is, the two states and
+alpha's meaning, the three modules and the forward declaration that makes the CPU
+backend unable to name the chip, the recipe for a backend that wants a description
+(121), and the proof's two halves. The zones table's output row now names the
+scene, and the structure diagram is regenerated from docs/port-zones.json.
+
+docs/native-port.md gains "The scene and its CPU backend (ticket 118)", which is
+the measurement: the fixture matrix's 12 cases and its 186 checks in 0.30 s; the
+catalog's nine checkpoints, each replayed once and rendered three ways (the dump
+against the harness's own picture, the scene backend at alpha 1 and at alpha 0),
+all identical, 169 s of machine runs, with the recording stub differing on every
+one; 200 consecutive mission frames through --png-stretch identical between the
+two renderers with the scene path costing +0.08 ms a frame (the 64 KiB copy, 0.5 %
+of the 16.69 ms budget); and the window's 600 frames under SDL's dummy driver at
+the same 7 007 780 guest instructions and the same 59.92 guest frames/s through
+both renderers.
+
+docs/build-and-test.md lists the two new checks, the scene-test binary and the
+selftest's new count (36 929 checks), and docs/html is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
