@@ -1,0 +1,100 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7bf1e7cb23f7a1fe2ba245a12624ecfbe116a4e8
+date: 2026-10-20T08:08:24+03:00
+author: RE Workspace <re@localhost>
+branches: main,ticket/119-119-presentation-time-display-rate,ticket/120-120-widescreen-shell-target-guest-rect,ticket/137-137-menu-cursor-in-c
+
+message:
+The port's screens say keys, and a locale file says the words
+Ticket 122. Every string the port's own screens show is a key now -- the
+title menu's rows, the settings screen's title, rows and capture prompt, the
+options screen's row list, the house selection's rows and the front end's
+mapping sentences -- and `--locale LANG` reads the [LANG] section of
+`locale.ini` beside the binary. English is the table the code ships
+(next/words.c), so a run without the flag reads no file and says exactly what
+it said before; the shipped `port/locale.ini` is that same English written out,
+and port/tests/test_locale.c compares the two key for key, so the file and the
+code cannot drift into two Englishes.
+
+The format is the binding file's (D40, docs/locale.md is its page): one section
+per language, one `key = value` line per word, values verbatim after trimming,
+and every bad line a load error naming its number -- an unknown key, a key set
+twice in one language, a malformed line, a second section with the same tag, a
+line before the first section, a too-long line or value, a `%s` count that does
+not match its key, a language the file does not have, and a file that is not
+there (the binding file's absence falls back to the built-in map; a language's
+does not exist until the file names it). A *missing word* is not an error: it
+reads in the port's English and is reported once at load, because a translation
+in progress has to render.
+
+The row lists became the shape the mouse and the wide layout are waiting for:
+every row carries an **id** its translation does not change, a **text key**, a
+**band** (its rectangle in the screen's text plane, in cells) and its **action**.
+The bands are measured, not invented -- the title menu's at $D4A0 + $100 (plane
+row 41, column 16), the settings rows at $C400 + $100 (column 8), the options
+screen's labels at plane B $A000 column 4 on rows 5, 7, 9 ... (read out of the
+port's own VDP dump of that screen), the houses' where the strip stands over
+each banner (data_02529A, 10 x 2 cells) -- and nothing draws from them, which is
+why the picture did not move. port/tests/test_row_lists.c holds the properties:
+unique dotted ids, keys that read as words, bands inside the plane, no two rows
+of one list overlapping, every action set.
+
+The evidence is the picture, not the code:
+
+* `--locale en` with the shipped file reproduces the port's settings screen's
+  VDP dump **byte for byte** (tests/test_locale.sh);
+* a `[test]` section changes "PORT SETTINGS" to "TEST LANGUAGE", "GAMEPAD
+  MAPPING" to "PAD MAP" and "BACK TO TITLE" to "BACK TO THE START", and the two
+  dumps differ in 30 bytes, all of them inside the three bands the words occupy;
+* the title screen's own row follows the same file ($D7A0 reads "PAD SETTINGS"),
+  and so does the front end's mapping list on the settings screen ("PAD MAPPING",
+  "HIT A %s TO REBIND"), while the binding file's own names still read `PAD_UP`
+  and `DPAD_UP` -- those are spellings a file has to parse back, not prose;
+* the same file, run through the playable window, draws "WINDOW WORDS" and "PAD
+  WORDS" on the same screen;
+* every bad file is refused with its line, and a word a language lacks is named
+  once and reads in English.
+
+Two of the three screen checks needed their control build's patch text edited,
+not deleted, because ticket 122 changed the shape of the row it edits:
+tests/test_options_screen.sh matches the options row's one line to swap its
+action, tests/test_title_screen.sh matches the port's title entry by its id
+instead of its label (the label is a key now), and tests/test_house_selection.sh
+matches the CORRINO entry by its id. Each still builds a control binary with one
+entry changed, re-runs the same walk, and fails without its change; only the
+text they search for moved, and each now also refuses to build silently if the
+entry is not found.
+
+Environment note: this worktree's extracted asset blobs had 16 files missing
+(they are git-ignored, shared with the main checkout, and tests/prepare.sh could
+not assemble), so they were restored from the original dump -- verified: every
+blob already present is its own ROM slice, and scripts/build.sh is byte-exact
+again apart from the 42 header bytes M1 changes.
+
+make -C port test (37 260 selftest checks incl. the new row lists, 1 588 locale
+checks, the full-ROM sweep), tests/run_all.sh (fast tier, ALL CHECKS PASSED),
+tests/test_locale.sh, tests/test_options_screen.sh, tests/test_title_screen.sh
+and tests/test_house_selection.sh all pass; the rest of the slow tier was run
+too and is green. docs: rebuilt with scripts/build_docs.py, and tests/test_docs.sh
+passes.
+
+Rebased onto main after ticket 118: the scene (D39) and this decision are two
+entries now, and the locale's is D40 everywhere it is referenced. The conflicts
+were `port/Makefile`, `port/README.md`, `tests/run_all.sh`,
+`docs/build-and-test.md`, `docs/decisions.md` and the generated site: each
+source file keeps both sides' entries (the scene's test binary and the locale's,
+scene-test and locale-test in one `test:` target, both gate checks, both module
+tables), the selftest's check count is the merged tree's measured 37 451, and
+`docs/html/` is rebuilt with scripts/build_docs.py, never edited.
+
+After the rebase: python3 scripts/sync-ticket-tables.py --check (102 tickets,
+both tables complete), python3 scripts/build_docs.py --check (current, 19 386
+links resolve), tests/run_all.sh --tier fast (ALL CHECKS PASSED, 23 checks plus
+prepare) and tests/test_locale.sh (its slow-tier check) are green, and make -C
+port test is 37 451 + 728 + 140 + 3 081 + 127 + 1 588 checks with 0 failures.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
