@@ -1,0 +1,112 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7a764bda3b5933c9330d621eefe1f97abd3d9131
+date: 2026-10-21T00:53:35+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the mission map view's frame path is the port's C
+The map view is a 64x64 grid of MapCells shown through one record at
+$FFFFBF12, and this takes the half of it that runs every frame over:
+InitMissionView $0024CC, SetMapScrollDelta $00251A, SetMapScrollPosition
+$002522 (with UpdateMapViewEntry $00256E and its off-map case), SetMapScrollLimits
+$002706, RedrawMapPlane $002882, UploadMapRow $0028EE, PackMapRow $002B3E and
+UpdateMapViewport $00297C (with the draw script's tail at $0029AE). One
+implementation, next_mission_map_view(), is eight rows because each routine is
+its own entry in the guest's image and its own call site; the files are one
+region each (the scroll records, the plane's rows, the per-frame step), one case
+per guest instruction charged at its own address.
+
+The record, measured. $FFFFBF12 is MapScrollPosition: word +$0 is the view's x
+and +$2 its y -- the pass-3 evidence's "row in the high word, column in the low"
+is wrong (UpdateCursorPosition $002BD2 adds the high word to the screen x and
+$002BE4 the low one to the y), and the curated line is corrected with this
+ticket. +$4/+$6 are the sprite attributes and index LoadViewportDescriptor
+writes; +$8/+$C are the two clamp longs SetMapScrollLimits stores. The
+arguments of SetMapScrollPosition are chunk indices: each changed word selects
+an entry of data_08424A and stores its first long -- the chunk's tilemap source
+-- in $FFFFBF04/$FFFFBF08, where the cursor's edge scroll reads and clears it.
+A negative index is the off state ($002590): fixed descriptor data_083F72,
+priority bits cleared, delta not applied. The map's limits have two writers and
+the placement mode wins: $00C20C passes $00180018/$012E00CE, $0180DC overwrites
+it with $00180018/$012800C8, which is what the recording carries.
+
+The measurements. tests/test_mission_map_view.sh, the Atreides recording,
+8 000 frames, the eight rows against legacy in the comparator's transcribed
+mode: 68 417 answered instructions (InitMissionView 18, SetMapScrollPosition
+3 399, SetMapScrollLimits 1 830, RedrawMapPlane 2 295, UploadMapRow 16 413,
+UpdateMapViewport 3 022, PackMapRow 41 440, SetMapScrollDelta 0), picture
+71 680 pixels, 64 KiB of work RAM (sha256 8b2c74cb), the VDP's 83 318 control +
+66 895 data writes and 6 786 DMAs, the Z80's whole state, the 18 634 441-byte
+YM timeline, 93 572 895 instructions, 804 341 interpreted, 1 026 608 156 cycles
+and the 3 021-entry block-address log all identical, and the translation down by
+exactly one instruction per call. The view record at that entry: x 121 / y 89,
+limits $00180018/$012800C8 (the placement mode's), indices 0/5, MapViewSide 1 --
+the H32 layout, so PackMapRow's H32 branch is what the route runs.
+
+The scrolling stretch that ticket 65 gates still scrolls: Right held from entry
+7 690 takes the view to x 296 (the placement clamp) and the plane's hscroll from
+$0179 to $0341; the two --vdp-log files (registers, VSRAM and every hscroll
+entry, one line per VBlank entry) are identical over all 7 980 entries with 204
+of the stretch's 291 moving, and the raw VDP dump at the end is identical too.
+
+Three paths the recording cannot reach are fixtures in test_replacement.c, run
+from constructed states by the guest's own code and the C: SetMapScrollDelta
+(no call on the route), SetMapScrollPosition's off state (the route only passes
+a negative column, which skips it) and PackMapRow's H40 branch (the mission is
+H32). The packing fixture found that the branches are not one operation: H32
+shifts each cell over 32 bytes, H40 packs pairs over 128 in place, and the check
+requires the two rows to differ so a fixture that ran one branch twice cannot
+pass.
+
+Two defects the larger table exposed, both fixed here. The play front end's
+PLAY_REPLACEMENT_MAX (8) refused its own default --engine next once the table
+had 16 names, which the engine equivalence check's window half caught; it is 32
+now, the same bound the harness uses. And next_replacement_names()' 256-byte
+buffer cut the usage message mid-name ("UpdateMapViewpor,"); it is 1024 and
+sized from the mechanism's own row bound. The harness's arrays and
+NEXT_REPLACEMENT_MAX move to 32 for the 20 rows.
+
+Curated names with the code that writes and reads them: MapScrollDelta
+$FFFFBF0E, MapViewLimitMin $FFFFBF1A, MapViewLimitMax $FFFFBF1E,
+MapViewRowIndex $FFFFBF62, MapViewColumnIndex $FFFFBF64,
+MapViewRepaintRow $FFFFBF6A, MapViewReveal $FFFFBF6C and
+MapViewScriptDelay $FFFFBF72, plus the MapScrollPosition correction.
+scripts/regenerate.sh --no-tests kept the rebuild byte-exact (42 bytes, all in
+the header), make -C port translation regenerated the comments, and
+docs/next-engine.md, docs/reverse-engineering-notes.md ("The map view's frame
+path, measured"), docs/port-architecture.md, port/README.md and the site carry
+the findings; docs/html is rebuilt from the tree.
+
+Rebased onto main after ticket 125 (the port's own font, the text layer and the
+Ukrainian locale): port/Makefile's NEXT_SRC and docs/port-zones.json keep both
+tickets' modules (the map view's four files and utf8/font/font_atlas/text), and
+the union is what the diagram and the zone check measure. Nothing of ticket
+125's font, text or locale changed.
+
+Rebased onto main again after ticket 123 (the mouse/pointer front end). The only
+conflicts were generated docs/html -- docs/html/index.html,
+docs/html/diagrams/index.html and docs/html/diagrams/app-structure.svg -- and
+they were resolved by taking a side to clear the markers and then rebuilding the
+site from the merged sources with python3 scripts/build_docs.py (docs/html is
+never hand-merged; the rebuilt index now counts 260 curated names and 1289
+pages, where ticket 123's branch-side page still said 252/1281). The source
+merges kept both: port/Makefile links app/pointer.c, platform/mouse.c,
+next/pointer_state.c and the map view's four files, docs/port-zones.json lists
+both, and port/README.md has the mouse rows and the map view row. tests/
+run_all.sh's slow-tier count is corrected to the merged tree's 41 checks (it was
+stale at 37 on main and 39 before ticket 123's test_mouse.sh).
+
+Gates on the merged tree: make -C port test (50 432 checks, 0 failures; ticket
+125's font/utf8/text suites and this ticket's fixtures), bash tests/run_all.sh
+(ALL CHECKS PASSED), bash tests/test_mission_map_view.sh (OK, 3m42),
+tests/test_port_font.sh and tests/test_mouse.sh (both OK),
+python3 scripts/sync-ticket-tables.py --check, python3 scripts/build_docs.py
+--check, tests/test_docs.sh and tests/test_port_zones.py green. No new decision:
+both merges are mechanical, and D41/D47/D48 already cover the three halves.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
