@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9f163c87622652acccfc4bbfc9d0f9b42e853044
+date: 2026-10-20T17:17:20+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The scene on the GPU: a GL 3.3 backend whose readback is the CPU frame
+Ticket 121 adds the scene's second backend. `--renderer gl` draws the VDP's
+picture on the GPU -- V-RAM as an integer texture, the palette as it was
+decoded, both planes as one quad per active line at that line's scroll, the
+window's cells over plane A, the sprites as instanced quads in reverse chain
+order through the per-line limit, a composite that does the priority
+comparison and the guest's integer scale and placement, and the blend with the
+CPU backend's own integer formula -- and reads the frame back into the seam's
+surface.
+
+The split follows the zones. The drawing is output/render_scene_gl.c, beside
+the CPU backend and able to name neither a chip nor a host: it includes no GL
+header and no SDL, and the context arrives from platform/gl_context.c through
+md_renderer_gl_attach() (a symbol lookup and a make-current). The registry
+gained md_renderer_register(), because a backend that needs a host cannot be
+named by output/; app/run_play.c registers `gl` and installs the context only
+when the run asks for it, so the harness, vdp-render and the selftest keep
+refusing the name and the fast tier needs no GPU. A context that cannot be
+created prints the driver's own words and the run continues with the CPU
+backend drawing the same scene.
+
+Both v2 backends take a target: ticket 120's layout is applied by
+md_scene_use_layout() in output/scene.h, which the scene renderer and the GPU
+one both call, so `--renderer gl --aspect 16:9` is the widescreen shell on the
+GPU and a layout cannot mean one thing on the CPU and another on the GPU.
+
+The proof is a readback equality, and it is exact, not bounded: the frame
+matrix and the 32 corrupted-field controls the CPU backend is held to (now
+port/tests/scene_matrix.c, shared by both checks), a blend at seven alphas, a
+400x240, a 640x480 and a 160x120 target, the integer scales 2 and 3, and all
+nine committed checkpoints, where the GPU's readback equals the reference
+picture byte for byte. The window is in the check too, at the frame's size and
+into an 854x480 shell: that half found the defect worth recording -- the
+window's own SDL renderer has a GL context of its own on the same thread, and
+framebuffer objects are per-context, so a backend that made its context current
+only on the first draw read back from the wrong context (invisible at 320x240,
+INCOMPLETE_MISSING_ATTACHMENT at 854x480). It now makes it current per draw.
+
+The measured driver is in docs/native-port.md with the honest cost: on this
+machine the readback plus the window's upload makes a GL draw slower than the
+CPU one (4.65 ms against 4.03 ms), so `software` stays the default and `gl` is
+the proof that the drawing rules can be another program and still be the same
+pixels. tests/test_scene_gl.py is the slow tier's own check (SKIP with the
+driver's reason when there is no context, and a changed register required to
+draw something else, so the comparison can fail); docs/decisions.md D44 records
+the zone split, the registry extension and why the CPU path stays the reference.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
