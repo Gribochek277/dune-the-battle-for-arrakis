@@ -1,0 +1,82 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 549001c6671e8faa785277cdaa54a6a6cb9628f8
+date: 2026-10-21T17:05:18+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The house selection's click chooses the house under the pointer
+A click on the strip used to set only a face button's bit in the pad code. The
+choice path is `d3`, which only `StepSelectorEntry`'s `GetSelectorEntry` writes
+(`$002434`), so the click reached the driver's `sub_002438`/`$015F48` with `d3`
+naming the last row the *pad* had stopped on -- the setup's row 0 on a screen
+nobody had walked. Measured before the fix: clicking ORDOS left the strip's
+record at ORDOS' (120, 104) and `CurrentSide` = 1 (ATREIDES).
+
+The ticket's premise was checked and corrected. `RunSelectorScreen` is not a
+VBlank frame handler: `InitSelectorScreen` installs `UploadSpriteTable` `$00216A`
+(`move.l #$0000216A,(FrameHandler).w` at `$002494`) and `$002364` is called only
+by `RunMissionSetupScreen`'s loop at `$015EE6`, so `d3`/`d4` do survive the call
+in this arrangement -- the bug was the missing write, not a `movem`. The fix
+still puts the state where a frame boundary cannot lose it, because that is the
+one place the strip's row and the choice's row can drift apart.
+
+* `next/selector_state.{c,h}` (new): the pointer's cursor in work RAM at
+  `$FFFFBF02` -- a word `InitSelectorScreen` clears at `$00244C` and no
+  instruction in the image reads -- as the cursor's offset `d4` plus one, so
+  zero (what the setup leaves) means "the pointer has not touched this cursor"
+  and ATREIDES (offset 0) is distinguishable from no pointer. It writes the
+  strip's record and `d4`, the guest's own step's writes, from one row list
+  entry.
+* `$00238C`, the `rts` that ends the choice path, writes `d3` from that word, at
+  the instruction where the guest's own choice leaves the side. A pad step
+  follows the word from `d4` at `$00242E` once it is set, so one cursor serves
+  both devices: a hover then a pad START chooses the hovered house, and a hover
+  then a pad walk chooses the row the pad walked to.
+* Nothing runs without a pointer: the word stays zero, the `rts` and the step
+  write nothing, and `tests/test_house_selection.sh`'s differential is unchanged
+  (picture, 64 KiB of work RAM and the clock byte for byte, the translation
+  still dropping exactly one instruction per call).
+
+Same-class check of the other pointer sites, all sound: the mission's handlers
+`$0030FA`/`$003AA6` *are* frame handlers and keep their pointer state in work RAM
+(`$FFFFBF12`/`$FFFFBF14` and a command byte, ticket 127); the title menu's hover
+writes the sprite record's Y at `$FFFFD70E` and the options screen's writes
+`$FFFFBED6`/`$FFFFBECC`; and every click those screens take is consumed in the
+pass that reads the pad code it stands in for. The house selection was the one
+site where a pointer's decision crossed a frame in a guest register.
+
+`tests/test_mouse.sh`: a click on each of the five banners, with `CurrentSide`
+read out of work RAM at entry 2900 and compared against a `--no-mouse` pad run of
+the same recording and frames (1, 2, 0, 3, 4), and the cursor word beside it
+(1, 3, 5, 7, 9); a standing pointer and a click over no row choose nothing (the
+selector's `$FFFFBF00` still counting at 651 passes); a click over no row does
+not become a click on the row the pointer reaches next; and a hover then START
+chooses ORDOS (2) while a hover, a `right` press and START choose HARKONNEN (0).
+
+A row the list marks absent (`present` 0, the byte the cursor steps over) is not
+a row the pointer can be over: the band lookup skips it, so a click there is a
+click on empty screen. The test's control build clears ATREIDES' presence byte
+and clicks its band -- nothing happens -- while the same build still chooses
+ORDOS from ORDOS' band.
+
+The ticket asked for the guest's handler at `$002364`-`$002443` to be *retired*
+from the replacement table if the injected code cannot make the choice. It was
+not retired, and the reason is mechanical: the span calls the guest's own
+routines (`BuildSpriteTable` `$001360`, `InitSpritePool` `$001502`,
+`LoadViewportDescriptor` `$00525C`, `QueueDmaTransfer`, `FlushDmaQueue`), which a
+whole-routine replacement cannot call, and the one-case-per-instruction
+transcription is what proves the port runs the cartridge. The choice is made in
+C inside that span instead, at the instruction where the guest's own choice
+leaves the side.
+
+The carefully-chosen divergence is recorded as D54 (`docs/decisions.md`); the
+prose is in `docs/mouse.md` ("The house selection's click") and
+`docs/next-engine.md` (the house-selection section), the module is in
+`port/README.md`, and `docs/html/` is rebuilt. `legacy` is untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
