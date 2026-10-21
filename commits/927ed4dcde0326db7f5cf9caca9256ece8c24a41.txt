@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 927ed4dcde0326db7f5cf9caca9256ece8c24a41
+date: 2026-10-21T09:22:13+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mouse moves the mission's cursor: one frame's position, the pad's action
+Ticket 127 joins ticket 126's cursor in C to ticket 123's pointer without
+making the mouse a second input path into the guest. next/mission_pointer.{c,h}
+carries one frame of the pointer (the active-area pixel, a move, a click) and
+next/mission_cursor.c writes the position into $FFFFBF12/$FFFFBF14 at either
+handler's entry on the frame the pointer moved. Where each handler reads the
+pad it clears the direction nibble and rebuilds d5, so the speed accumulator,
+the slow timer and the sixteen-case table take the idle path: the position is
+written, not accelerated, while the pad's action buttons still read. A click
+sets the A bit the guest's own $00364A turns into $18(a3) = $41 and
+$FFFFC02C = 1; it never becomes a pad button. A click without a move does not
+rewrite the position, so it acts where the edge scroll settled the cursor.
+
+The pointer's picture y loses the frame's nine-line top border once; a pointer
+on the border is on no cell and drives nothing. Nothing runs when the pointer
+does not move, which keeps the pad path byte-identical: the mission cursor's
+own differential still passes on the unchanged numbers.
+
+Tests: tests/test_mission_mouse.sh runs four window runs on the Atreides
+recording -- the pointer reaches unit 38 (cell $8DB) and the click selects
+$FF14C8, reaches the base's structure (cell $8D8) and posts $FF748A, an idle
+mouse and --no-mouse write the same 64 KiB with the cursor at 121/89, and both
+recordings are the replay's button lines. Two fixtures in test_replacement.c
+run $0030FA from the pointer's position and compare the C against the guest's
+own code (every register, flag, work-RAM byte, VDP counter and cycle), and
+check a click posts the pad A's cell and command while the pad bytes stay zero.
+docs/mouse.md, docs/next-engine.md and D49 explain the hand-off; the docs site
+is rebuilt and the zone declaration carries the new module.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
