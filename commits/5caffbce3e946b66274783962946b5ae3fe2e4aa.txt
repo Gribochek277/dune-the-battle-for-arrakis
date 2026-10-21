@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5caffbce3e946b66274783962946b5ae3fe2e4aa
+date: 2026-10-21T15:13:27+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Vulkan draws the same scene, and the CPU stays the reference
+Ticket 133: a Vulkan backend behind the scene contract, selected with
+--renderer vk. The scene is uploaded as storage buffers and drawn by a compute
+shader (one thread per target pixel) with the same rules as the CPU backend;
+a second dispatch blends the two states. The readback is byte-exact against the
+CPU v2 frame on the frame matrix (142 checks) and on all nine committed
+checkpoints, with the same corruptions and controls the GL backend is held to.
+
+The loader is platform/vk_context.c (dlopen + vkGetInstanceProcAddr); the
+instance and device are the backend's, because they need no drawable. The
+backend uses VK_NO_PROTOTYPES and function pointers, links no libvulkan, and is
+linked only into make play and make scene-vk-test -- the fast tier builds and
+runs no Vulkan object. A missing loader/device falls back to the CPU backend
+with the reason; the check says SKIP.
+
+The shell names no third backend: the renderer registry grew a layout hook
+(md_renderer_register_layout / md_renderer_take_layout) and the vk backend
+registers it with its name, so the seam still owns no target.
+
+D50 records the decisions. The shader is output/render_scene_vk.glsl, compiled
+by scripts/build_vk_shaders.py into build/vk_shaders.h. The window draw is
+0.84 ms a frame on this machine's driver (RADV, Vulkan 1.4.354); the guest's
+7 007 780 instructions over 600 frames are unchanged.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
