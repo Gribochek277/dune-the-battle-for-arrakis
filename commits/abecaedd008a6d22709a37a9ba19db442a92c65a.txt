@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: abecaedd008a6d22709a37a9ba19db442a92c65a
+date: 2026-10-21T16:38:31+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 128: 128-128-rts-selection-box
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
