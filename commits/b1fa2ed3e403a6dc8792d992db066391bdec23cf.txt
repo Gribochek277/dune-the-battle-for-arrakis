@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b1fa2ed3e403a6dc8792d992db066391bdec23cf
+date: 2026-10-21T15:56:48+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mission's selection: a box selects units, and the primary stays the guest's
+The port keeps its own set of unit handles beside the guest's single
+`SelectedRecord`. A drag on the map selects the current side's live units
+whose cell centres the rectangle covers, a click selects the one under the
+cursor, an empty box or an empty click clears, and the first selected record
+is written into `$FFFFC25C` so the mission's own orders keep working.
+
+The hit test is the game's own: cells come from the map's scroll, each cell's
+unit from GetUnitByCell's rule (bit 12, index + 1, the ROM
+UnitByCellPointerTable), and the set is the game's handle vocabulary,
+`$4000 | index`, resolved by GetUnitByHandle's rule. A structure's class bit,
+a dead record's flags and another side's byte keep them out. The unit fixture
+compares both lookups with the guest's own code at $00062A and $000680.
+
+A click is a press and a release: the press is held back, a release within
+four pixels is the guest's own cursor click, and anything further is a box
+whose click is never delivered (pressing on a unit and drawing a rectangle
+must not order it). A drag does not move the cursor, so the map's edge scroll
+cannot change the world under the rectangle. A click on a hand that had
+hovered acts on the cursor's settled cell, the cell the placement handler
+computes, not on the raw pointer point.
+
+The rectangle, the markers and the count are a port overlay drawn once per
+picture in the presentation-time callback -- magenta, with a black outline --
+and the VDP's sprite table in the box run is the idle run's entry for entry.
+`tests/test_selection_box.sh` runs the controlled mission six times and
+`scripts/selection_check.py` recomputes the set from the dump's own map cells
+and records; the idle mouse and --no-mouse controls are byte-identical.
+
+Deliberate divergence recorded as D52: legacy is untouched, and the mission
+cursor's differential still compares the same bytes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
