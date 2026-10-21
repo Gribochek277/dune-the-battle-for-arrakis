@@ -1,0 +1,72 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 259d94da45b4552aedddf6f8e8fc5a3104126397
+date: 2026-10-22T00:52:38+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the mission is wider than 320, the HUD on its edges, the band's units appended
+Ticket 132 makes the mission's picture wider than the guest's 320 pixels
+without stretching the interface, on ticket 120's layout and ticket 134's
+measured layer map. The decision is D61; the numbers are in
+docs/native-port.md, "The wide mission world", and docs/widescreen.md.
+
+The picture is the guest's, shifted: the wide layout's world region has the
+source {-extra, 0, 320+extra, 240} at the interface's integer scale, its right
+edge on the target's right edge. So the guest's screen is the picture's right
+part and every interface anchor ticket 134 measured keeps its pixels -- the
+credits' 16 from the right, the icon column's 16, the radar's 16 from the right
+and the bottom -- with no region of its own; the cursor and the selection box
+are placed by the world region's transform, which is what "screen coordinates"
+means. The scene gained one number, source_x, which the CPU, GL and Vulkan
+backends all read; the fit-height draws pass 0, so the frame matrix and every
+fidelity picture are byte-identical.
+
+The extra is target_width / interface_scale - 320: 0 at 4:3 (the mission keeps
+the fit-height layout, exactly the cartridge's view), 107 at 16:9 and 480 high
+(427x240, filling the target), and capped at 127 by the VDP's sprite X field (a
+sprite's screen x is -128..383 and the raw value 0 is the hardware's "do not
+display"), so 21:9 is capped at 447 guest columns with a 226-pixel bar on the
+left, where the world would have grown. scripts/mission_wide.py generates
+port/next/mission_wide_table.c from analysis/mission-layers.json -- each
+class's role, anchor, measured rectangle, palettes, priority and tile range --
+and --check fails when the two disagree, so the layer map is the
+implementation's source.
+
+The guest's data moves deliberately and only two bounds: the map view's left
+limit becomes its base plus the extra (the map's left edge is the picture's,
+not the screen's) and the cursor's becomes 24 minus the extra (it reaches the
+band), with the guest's bases remembered, relearned when the guest rewrites
+them, and restored at 0 extra. The placement handler's hardcoded 24/296 in the
+mission's C read the same accessors, with the reason written next to the cases;
+at 0 extra they are the guest's own values.
+
+The band's units are appended, not a builder takeover: BuildSpriteTable culls a
+part left of its 320-pixel screen, so next_mission_wide_append_sprites() writes
+those parts after the guest's build (at $003E60 and in the first handler's tail
+row $003644, both the port's C) with the guest's own encoding, for the nodes
+whose position record is a unit's (the layer map's rule), without stepping the
+animation and without charging the guest's clock. It is idempotent within a
+frame because the handler can run more than once while only one path builds.
+
+The shell adopts the mission's layout for the same target
+(md_shell_use_layout), app/wide_mission.c composes it from the layer map, and
+the front end switches on next_mission_wide_live() -- the pool's unit record
+and the window plane's registers -- so the full-screen panels stay fit-height.
+vdp-render gained --target and --wide so a checkpoint's state renders at the
+three layouts deterministically; tests/test_mission_wide.sh compares those
+pictures (4:3 has no wide layout; 16:9 is the 4:3 picture shifted by 214 with
+the world's band on its left and the credit counter's region at the picture's
+right edge; 21:9 caps with a black bar; the build panel returns to fit-height),
+the guest's clock and work RAM (the 4:3 run's apart from where the wide view
+writes), and a held right scroll that puts a unit in the band, appended. The
+fast fixtures (port/build/mission-wide-test, 184 checks) prove the table, the
+layout and the guest data, and port/tests/test_scene.c's wide fixture proves
+the scene's source offset: the band is the plane's columns left of the screen
+and a sprite at screen x -20 is drawn in it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
