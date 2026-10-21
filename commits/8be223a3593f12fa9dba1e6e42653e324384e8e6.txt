@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8be223a3593f12fa9dba1e6e42653e324384e8e6
+date: 2026-10-21T17:11:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 131: 131-131-mission-map-view-objects
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
