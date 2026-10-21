@@ -1,0 +1,64 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 671b5cd06d37b77a154136581251a6b8e74a01a1
+date: 2026-10-21T20:00:32+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the selected units obey one command, in the guest's own order fields
+Ticket 129 adds the mission's group orders on top of ticket 128's selection:
+a click with a set orders every selected unit, and the mission's own AI
+executes each one. It is new behaviour under D31/D36, so legacy is untouched
+and the group path is experimental; every guest field written is one
+SetUnitOrder/SetUnitStructureLink/SetUnitTarget would have written.
+
+The click already is an order in the cartridge. The command handler reads
+SelectedRecord and tests the record's +$6 bit 15, so a click with a selection
+orders the primary. Ticket 128's click re-scanned the cell and wrote 0 over
+SelectedRecord before the guest could see it, silently dropping the order; with
+a set, the click now re-posts the primary and its marker, keeps the set, and
+lets the guest decide. A single selected unit is therefore the guest's own path
+and the port follows it when the guest clears SelectedRecord. A box does not
+mark its primary: the marker is set at the order click, so ticket 128's "the
+box adds no sprite" still holds.
+
+next/mission_orders.c snapshots the primary's order fields after the click,
+waits for the guest's writers to change them, classifies the result (order 1 =
+move with the target in +$5C; order 0 with a $4000 unit handle = attack with
+the target in +$5A) and copies it into the rest of the set. The two writers are
+transcribed field for field -- there is no call seam into the guest, and a
+guest call at presentation time would be a guest step -- and
+port/tests/test_orders.c runs the guest's own routines through the generated
+translation and requires all 140 bytes of the record to be equal, idle and
+busy. A docked harvester's unlink and the structure link of an enter-that-
+building order are refused and reported instead of half-reproduced.
+
+A group move spreads the followers on a deterministic ring of walkable cells
+around the primary's target (empty of units and structures); the primary keeps
+the guest's own cell. The ring is a pure function of the target and the set's
+order, so the same mission writes the same cells twice.
+
+Tests and docs. tests/test_group_orders.sh is the controlled mission run: a box
+selects units 40, 42 and 43 and a click on empty map reports
+kind=move order=1 selected=3 count=3 cells=2140,2075,2139; the records carry
+order 1 and their cell words 20 frames later, and every unit is within half a
+cell of the cell the line named 840 frames later. The D36 control build swaps
+mission_orders.c for a no-op stub: the same click orders only the primary, the
+primary's order bytes are the full build's, the followers do not move, and a
+single selected unit's record from +$8 is byte-for-byte the full build's.
+scripts/group_order_check.py recomputes the report against the ROM's unit
+table and the dump. docs/next-engine.md, docs/mouse.md, docs/port-architecture,
+CONTEXT.md and D55 carry the long form; the docs site is rebuilt.
+
+The selection-box check (ticket 128) is edited, not weakened: its idle-mouse vs
+--no-mouse picture comparison now compares the frame's VDP state through the
+port's renderer instead of the two runs' last presented screenshots. A present
+can be dropped in its slot when the host is busy, so the final screenshots can
+be one frame apart (the mission's rolling credit digit); the picture the same
+guest frame makes is the VDP state, and it is equal byte for byte.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
