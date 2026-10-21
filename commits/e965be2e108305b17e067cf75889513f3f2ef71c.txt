@@ -1,0 +1,81 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e965be2e108305b17e067cf75889513f3f2ef71c
+date: 2026-10-21T14:15:31+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the rest of the mission map view is the port's C
+Ticket 130 took the half of the map view that runs every frame. This takes the
+rest: the repaint (`RedrawMapAfterSideChange` `$00295E`, `RedrawMapObjects`
+`$002A96`, `RedrawMapEdge` `$002B0C`), the cursor and the overlay
+(`InitMissionMapCursor` `$0025DC`, `InitMissionMapCursor2` `$0025F2`,
+`CenterMapOnCell` `$00271C`, `UpdateCursorVisibility` `$00273C`,
+`InitMissionOverlay` `$00278E`). The map view is sixteen rows of the
+replacement table now, one implementation, five files under
+`port/next/mission_map_view_*`, each a region of the guest's image with one case
+per guest instruction charged at its own address.
+
+The map's objects are read from the cells, not a record list. `RedrawMapObjects`
+walks one row of `MapCells`, starts every cell at `$0C` and colours a structure
+cell (object word bit 13) with `data_025322[side]` when the record's side is
+`CurrentSide`; units are sprites and are not painted by this pass. The map holds
+18 structure cells at 7 898/8 148/9 498 (4 of the current side 1, 14 of side 2)
+and 37/33/33 unit cells, so both branches of the side comparison are in the
+route's data. A unit's death is `ClearUnitFromMapCells` clearing the cell's unit
+bit and index (`andi.w #$EF00,$2(a0)`) and calling `InitMissionMapCursor`; the C
+has no second copy to leave the dead unit on the map. The Atreides route's units
+move but none dies, so the fixture clears a cell exactly that way and compares
+the repaint.
+
+The cursor's visibility bit is measured and the M2-4 hypothesis is corrected.
+`BuildSpriteTable` `$001360` skips a sprite node whose byte `+7` has bit 7 set
+(`$001394`), so bit 7 is hidden. `InitMissionMapCursor` hides the node at
+`$FFFFBF60` (which is `$FFFFBF5A + 6`, the node the selection path positions with
+`move.l $A(a3),$FFFFBF5A`) and cancels its pending show; `InitMissionMapCursor2`
+does the same for the map's node at `$FFFFBF18` (`MapScrollPosition + 6`).
+`UpdateCursorVisibility` shows the cursor now, or arms bit 1 of `$FFFFBF0D` for
+the edge scroll to consume at the end of a chunk crossing (`$00374C` clears the
+bit and then the node's bit 7). Bit 1 is a *pending show*, not "hide the cursor";
+the curated lines are corrected. The node flags move with the route: the cursor's
+`+7` is `$A8` (hidden) at 7 898 and `$28` (drawn) at 8 148, the map's is `$40`
+(drawn with the priority bit) throughout.
+
+The two helpers share the single `rts` at `$002606`: both spans stop before it
+and it stays the guest's own code, which is D41's third span shape.
+
+The measurements. `tests/test_mission_map_view.sh`: the Atreides recording,
+8 000 frames, the sixteen rows against legacy in the comparator's transcribed
+mode: 137 138 answered instructions (InitMissionView 18, SetMapScrollPosition
+3 399, SetMapScrollLimits 1 830, RedrawMapPlane 2 295, UploadMapRow 16 413,
+UpdateMapViewport 3 022, PackMapRow 41 440, InitMissionMapCursor 3 648,
+CenterMapOnCell 10, InitMissionOverlay 32, RedrawMapAfterSideChange 7,
+RedrawMapObjects 64 772, RedrawMapEdge 252; SetMapScrollDelta,
+InitMissionMapCursor2 and UpdateCursorVisibility 0), picture 71 680 pixels,
+64 KiB of work RAM (sha256 8b2c74cb), 93 572 895 instructions, 804 341
+interpreted, 1 026 608 156 cycles, the VDP's 83 318 control + 66 895 data writes
+and 6 786 DMAs, the Z80's state (its cumulative cycle counter 7 apart, bounded
+by --z80-counter-drift 16), the 18 634 441-byte YM timeline and the 3 021-entry
+block-address log all identical. The three mission checkpoints (7 898 the map,
+8 148 the HUD, 9 498 the build panel) add the picture, work RAM, clock, block
+addresses and raw VDP dump, all identical; the held-right stretch still reaches
+the x 296 clamp with the same VDP scroll log and dump.
+
+The fixtures in `port/tests/test_replacement.c` cover the rows and branches the
+route cannot reach: the two helpers and `UpdateCursorVisibility` (both
+branches), the H40 object row, the object pass's side comparison, the edges' two
+colours, the side change, the centre and a dead unit's cleared cell. The control
+build deletes all sixteen rows and is the guest's own map; `--no-replace` is
+legacy byte for byte.
+
+Docs: `docs/next-engine.md` has the rows and the numbers, the reverse-
+engineering notes have the measured reading (and move the four names out of the
+M2-4 hypotheses), `docs/decisions.md` D41 records the shared-tail shape,
+`analysis/symbol-names.txt` carries the corrected evidence, and the docs site is
+rebuilt. `tests/run_all.sh` names the check for the whole view.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
