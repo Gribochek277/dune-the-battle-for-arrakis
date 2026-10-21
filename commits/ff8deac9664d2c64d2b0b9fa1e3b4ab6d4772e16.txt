@@ -1,0 +1,89 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ff8deac9664d2c64d2b0b9fa1e3b4ab6d4772e16
+date: 2026-10-21T09:02:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The menu screens are a template, and OPTIONS is its first screen as data
+Ticket 138 extracts the shape every menu in the port has -- a title, a window
+of rows, a sliding cursor, a value line per row, an action per row and an exit
+-- into next/menu_screen.{c,h}, and rebuilds the original OPTIONS screen on it.
+The six per-instruction transcription files are gone.
+
+What the template is
+  * next_menu_screen: the rows (id, locale word, band, value, input mask and
+    action), the window, the pixel the first row's cursor stands at and the two
+    sounds. A value is read and written through the screen's own callbacks, so
+    the cartridge's work-RAM byte and a port screen's int are one thing.
+  * next_menu_engine: the press decode (ReadPadDirection's $55/$44/$4C/$52/
+    $41/$42/$43/$53), the cursor through next/menu_cursor.h (ticket 137), the
+    window line as the difference, the 25/40 sound decisions and the leave.
+  * It plans a frame instead of running one: begin_frame lays out the move
+    sound, the confirm and the value (a cycle's confirm before its value, a
+    list walk's after it), the action, the frame work and the leave in the
+    cartridge's order, and the host executes the steps.
+
+OPTIONS on it
+  * port/next/options_screen.c is the descriptor: the nine rows with their
+    bands at plane B column 4, rows 5, 7, 9 ..., the game's own value bytes
+    ($FFFFC8B7, SoundEnabled, $FFFFBF7C, d7/a3 for the two lists), the two
+    input masks the cartridge uses, the action codes, the entry argument
+    (seven rows from the front end, nine from the mission) and the leave
+    results (0, 3, 1, 2). $0109D2 stays as the rows' evidence, not dispatch.
+  * The setup and the teardown are the guest's own instructions, delegated one
+    at a time through the routine's span: the resource load, the palette fade,
+    the first frame, the music start and the restore keep the guest's cycles,
+    stack, DMA-queue timing and sound calls. The loop from $01097C to the
+    teardown is the port's; the helpers inside the span that the host does not
+    answer (the two value uploads, $010A04, the two list counters) are handed
+    back with next_replacement_delegate().
+
+The proof
+  * tests/test_options_screen.sh: menu-options (8200), menu-rows (8500) and
+    menu-handoff (8500), legacy against next --replace RunOptionsScreen. The
+    picture, the VDP's write counters and DMAs, the YM2612 register timeline
+    and the work RAM are identical; the clock is within 8 cycles (the VBlank
+    exception lands one WaitVBlank instruction either side), the VDP's
+    status-poll reads and the Z80's snapshot are one poll apart, and menu-rows'
+    64 KiB differs by one stack byte (a saved register in that exception
+    frame). The comparator names each allowance --cycles-tolerance,
+    --vdp-read-drift, --z80-phase-drift, --work-ram-drift, --ym-frame-drift,
+    --no-z80 -- and the test says which recording needs which and why.
+    menu-rows starts a music track with MUSIC TEST: its length is a frame count,
+    so a start one frame late is 34 more writes near its end; that recording's
+    sound is not compared (the idle screen and the exits own the timeline) and
+    its dispatch is (picture, VDP writes, clock and RAM).
+  * analysis/recordings/menu-template.pad: the full value walk (every value row,
+    every left/right state, the control-scheme toggles, ENTER PASSWORD). It is a
+    manual fixture: its picture, VDP writes and YM timeline are identical, its
+    final snapshot is the password handoff and its stack carries the same
+    one-byte phase.
+  * A five-row fixture in port/tests/test_menu_screen.c (a three-row window, a
+    cycle, a list, a switch and an exit) runs the same engine with no machine,
+    so the template is not OPTIONS with its numbers in it.
+
+A finding corrected on the way: NEW CONTROL's handler ($010A34) does call the
+confirm-sound helper $010A04 (at $010A3A), so every option row submits 40; an
+earlier comment in menu_cursor.h and next-engine.md said it was silent. Fixed
+there and in the test's contract.
+
+Docs: next-engine.md's OPTIONS section is the new shape, the comparison table
+and the allowances; the site is rebuilt (1280 pages, 815 routines, 252 curated
+names) and tests/test_docs.sh passes. port-zones.json lists the new module and
+test and drops the six deleted files.
+
+Rebased onto main with ticket 130's mission map view in C: both sides kept.
+D49 records the template decision (the descriptor and the one engine, the
+guest's setup and teardown delegated, and the comparison's named phase
+allowances). The structure diagram and the site are regenerated from the merged
+tree; port/README.md and tests/run_all.sh describe the new shape. Ticket 123's
+pointer behaviour is inside the new OPTIONS engine (a hover moves the cursor in
+place, a click stands in for A), and ticket 130's mission map view sources,
+tests and document section are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
