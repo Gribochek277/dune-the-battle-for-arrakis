@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 754ac02e24ed77333d0fc104f0f80218113e9cea
+date: 2026-10-21T23:15:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the site after the rebase onto main (tickets 141, 129, 132)
+The generated pages conflicted in the rebase and were taken from main; this is
+the rebuild from the merged markdown, with ticket 139's sections and the deleted
+port_window in the structure diagram.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
