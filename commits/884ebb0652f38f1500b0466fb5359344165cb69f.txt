@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 884ebb0652f38f1500b0466fb5359344165cb69f
+date: 2026-10-21T19:34:36+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+PORT SETTINGS is a descriptor on the menu template, and its content only
+Ticket 138 extracted the shape every menu in the port has into next_menu_screen
+(a descriptor) and next_menu_engine (the walk), and proved it on the cartridge's
+OPTIONS. This moves the port's own settings screen onto it, which is the ticket's
+point: a port screen can be content and nothing else.
+
+The rows are one descriptor: GAMEPAD MAPPING (the screen's own code, opening the
+front end's list), the POINTER row (ticket 142: a two-state value, PORT ARROW or
+SYSTEM, read and written through next_settings_ops and app/settings.c) and BACK
+TO TITLE (an EXIT with the screen's result). Their words, bands, values, masks
+and actions are the entries; the navigation, the cursor and its slide, the
+window, the wrap and the two sound decisions are the engine's, unchanged from
+the OPTIONS proof. GAMEPAD MAPPING's list, still the front end's until ticket
+140, is projected onto the same engine when the row opens it, so the cursor, the
+window and the ticket 117 line are the code the screen's own rows use, not a
+second loop.
+
+The template gained one thing: a value can name its states' words. A port
+screen's values are locale keys and a translated screen has to say them, so
+next_menu_value carries `words` and next_menu_value_text() answers the word of
+the state the engine would cycle, through the row's own read. The guest's
+OPTIONS leaves it NULL (its values are the cartridge's strings, uploaded by the
+guest's own call). That keeps ticket 142's pointer row one entry.
+
+Kept: the capture entry (decided before the engine sees the press, so a capture
+is never also a choose, and a refused one still falls through, ticket 112), the
+leave, the wrap at both ends, the ticket 117 line and every existing check --
+tests/test_port_settings_screen.sh (picture, rows, cursor sprite at both ends of
+a scrolled window), tests/test_mouse.sh (the pointer, the POINTER row's two
+values, and the pinned settings and mapping pictures byte-identical to the
+reviewed ones) and tests/test_binding_flow.py. Changed on purpose: the cursor
+now slides four pixels a frame (ticket 137), a press during a slide is dropped,
+and the way out runs one more frame because the exit row's action, the frame and
+the leave are the engine's order.
+
+next/port_window.{c,h} and its test are deleted: the menu engine answers the
+window now (next_menu_window_top) and two computations of one window is the
+duplication the template exists to end. D56 records the decision; the docs site,
+the zone model and the module table are rebuilt.
+
+Evidence: port/tests/test_settings_screen.c (the new unit half -- the
+descriptor, the engine's walk, the rows' actions, the pointer row's values
+through a stubbed seam, and a fourth row added as one entry),
+port/tests/test_row_lists.c (the rows as data, including the value's two words)
+and port/tests/test_menu_screen.c (next_menu_value_text on the template's
+fixture). make -C port test and tests/run_all.sh are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
