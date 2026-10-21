@@ -1,0 +1,87 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4ca03f8bf3e87560067fc14f996177f08cea14c1
+date: 2026-10-22T00:14:45+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the edge scroll's band is the device's, and the pointer's is the picture's edge
+The mission's edge scroll starts when the view's position leaves a dead zone, and
+the guest's dead zone is a d-pad's: 80 by 60 pixels around the picture's centre.
+The pad never moves the cursor directly -- it moves the view, and the cursor rides
+on it -- so that band is what keeps a held direction from fighting the view's own
+step. A mouse moves the cursor directly (ticket 127 writes the pixel into
+$FFFFBF12/$FFFFBF14), so the same band made a hand that only meant to point at
+the right third of the picture scroll the view by itself.
+
+Ticket 143 gives the band to the device that drove the frame. A pointer's band is
+one twentieth of the picture at its own edge -- 16 of 320 pixels across, 11 of 224
+down -- because the picture, not the window, is what the pointer has already been
+converted to: a scaled window needs no second rule and a wider frame (tickets
+130-132) keeps the band at its edge in the same proportion. The pad's and the
+keyboard's band is the guest's, instruction for instruction. The device is a
+latch read once where the handler reads the pad ($003118/$003AD0): the pointer
+wins the frame it moved or clicked, a held direction wins a frame the pointer left
+alone, and a frame neither touched keeps the last device -- one rule in one place,
+so a mixed frame does not depend on which check runs first, and a click that
+arrives without motion does not jump the band back to the guest's. A corner is
+both bands at once: the two axes are tested independently, as the guest tests
+them, so the view moves diagonally.
+
+The ticket's premise was checked and corrected. It names the two constants in
+UpdateMissionCursor's test ($00345E's 120, $003468's 80), but the Atreides route
+never runs that handler: the map is in placement mode (ticket 126), and
+UpdatePlacementCursor hardcodes the same rectangle ($003CE2/$003CE8,
+$003D92/$003D98). Covering only the first handler would have changed nothing a
+player sees; both are covered.
+
+next/mission_edge_band.{c,h} owns the latch and the sixteen instructions in which
+the guest's own number *is* the band: the four comparisons and the four
+subtractions of each handler's two tests. The rest of those tests -- the table
+reads, the negations that turn an entry into an edge, the idle pair -- is the
+guest's arithmetic and does not depend on the device, so it stays in the
+transcribed files. One instruction per call is deliberate: it keeps
+tests/test_mission_cursor.sh's transcribed comparison exactly what it was (50 244
+calls, the step count identical, the translation down by 50 244, the interpreted
+count and the clock identical), so the pad's path keeps the strongest evidence in
+the tree rather than trading it for a weaker one. Nothing in the generated
+listing or in assembly changed.
+
+A bug fell out of the switch fixture: a click with no motion did not clear
+$FFFFBF48, the pad the handler's idle case coasts in the direction of, so a click
+after a held d-pad re-dispatched the idle case through the guest's coast loop at
+$003210 and the pointer's direction-clearing there dropped the direction the loop
+had just fed itself -- the frame spun for ever. next/mission_cursor.c now forgets
+the pad's direction on a pointer frame, a move or a click alike. legacy has no
+pointer, so nothing there changes.
+
+Tests. port/tests/test_replacement.c runs the handlers frame by frame on a
+machine that is still standing: the pad's band against the guest's own code from
+100/109, 230/109, 160/109, 160/60, 160/200 and 300/210 (every branch of both
+tests) with every register, flag, byte and cycle equal; the pointer's band at
+230/109 leaving the view at 230 where the guest's band takes it to 227; a pointer
+resting at 315 settling the view at exactly 304; a pointer frame inside both
+bands equal to the guest's run byte for byte; and the switch -- pointer, pointer,
+pad, release, click -- moving the view on the pad's frame and keeping it after
+the click. tests/test_mission_edge_band.sh is the Atreides recording through the
+playable window: the pointer at 230 leaves the view at 230, at 310 it takes it to
+304, a d-pad held from 7 760 moves it off 230 (233) and its release settles it on
+the guest's 200 (7 850), the hand's next move leaves it at its own 240 (7 960),
+and a control build with the rule removed puts the same pointer back on 200.
+
+tests/test_mission_mouse.sh is edited, not deleted: its click run pinned the
+guest's settle at x 200 as "the edge scroll's", which is exactly the behaviour
+this ticket removes for a pointer. It now pins the hand's own 230; the click still
+reaches unit 38's cell ($8DB) and record ($FF14C8), because the cell is computed
+before the band's test. The pad's own check (tests/test_mission_cursor.sh) and the
+selection box and group order checks are unedited and pass.
+
+Docs: D58, docs/mouse.md ("The edge band is the device's"), docs/next-engine.md
+("The mission cursor's edge band"), a CONTEXT.md term, the port's module table and
+the zones declaration, and the regenerated site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
