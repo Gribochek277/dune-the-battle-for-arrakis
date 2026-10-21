@@ -1,0 +1,60 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2c1dc7bf6e827f138ca02d0bd48e8f320ad5b2e1
+date: 2026-10-22T02:11:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+keyboard: WASD moves beside the arrows, Z/X/C are the face buttons
+Ticket 144: the shipped keyboard map is the port's own now, not BlastEm's
+default bindings. WASD and the arrows both move, Z/X/C are pad A/B/C, the
+6-button pad's own X/Y/Z move to V/B/N (kept, because the game reads the
+extras: ReadController $0011C2 stores them in PadExtraHeld $FFFFE41D and
+$008A8A/$008A92/$008B3A read them), F is Mode, Return/Space are Start,
+F1/F2/Escape unchanged. Q and E are deliberately left unbound.
+
+A key is its own control, so a direction has two controls (MDP_KEY_UP and
+MDP_KEY_MOVE_UP) that both name MD68K_PAD_UP: two keys for one pad button is
+what the ticket asks for, while a key still has exactly one meaning and one
+row, which is what keeps a binding unambiguous. Start's Return/Space is the
+one pre-existing exception (one control, two keys, a level).
+
+The binding file did not move: its left side is a gamepad's controls and its
+right a function, so a file written before the change loads and means what it
+meant -- port/tests/test_binding_file.c keeps one and requires the same
+buttons. A file that names a key is refused with the line number and the
+controls it can use (app/binding_file.c), and the docs say the keyboard has
+no file at all. The mapping screen needed no change (it lists the gamepad's
+controls and the function vocabulary, neither of which moved); its comment
+and docs/gamepad.md now name x, the key that cancels, not s.
+
+scripts/pad_keys.py gains PORT_TO_KEY beside PORT_TO_REFERENCE, and
+scripts/record_session.py presses the port's keys: a tool that pressed
+BlastEm's names at the port's window would press the wrong buttons (s is
+down now, w is up, q and e do nothing). tests/test_input_map.py checks the
+two tables against its own list.
+
+The proof is in the built window. tests/test_input_map.py now presses each of
+the 17 bound keys in its own run on a private X display and requires the
+guest's pad timeline (--record-input, md68k_pad_buttons() at each VBlank
+entry) to show exactly the mapped button, with the two unbound letters as the
+negative control; two 2250-frame runs hold the keys up to the guest's own
+read and require PadHeld $FFFFE41B = 7F and PadExtraHeld $FFFFE41D = 07. The
+extras byte is its own run because the guest's second poll of a frame reads
+the d-pad phase where it expects the extras while a direction is held -- the
+port models BlastEm's counter, so that is the cartridge's reader, not the
+map. The old F1/F2/Escape half and its no-key control are unchanged.
+
+port/build/input-map-test pins the map control by control (195 checks), and
+tests/test_gamepad.py's keyboard union case now holds z (pad A) instead of a,
+which is pad left.
+
+docs/keyboard.md is the new page: the map, the three decisions, why there is
+no keyboard binding file, and the machinery. D57 records the same. The docs
+site is rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
