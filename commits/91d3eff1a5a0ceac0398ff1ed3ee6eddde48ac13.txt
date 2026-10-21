@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 91d3eff1a5a0ceac0398ff1ed3ee6eddde48ac13
+date: 2026-10-21T23:02:16+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+options screen: the control build finds the row by its action, not its layout
+The ticket 139 change added the template's value-words field to every row
+initializer, and tests/test_options_screen.sh's control build matched the first
+row's source text exactly. It now replaces the one field the control changes --
+ACT_MUSIC_IS's action -- and asserts that the string is unique, so a field added
+to a row does not move the control.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
