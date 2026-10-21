@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9fc527b9120fdbedd573e5476aa464b20f736a90
+date: 2026-10-21T16:38:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decisions: one pointer on screen, and the house selection's click is the bug
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
