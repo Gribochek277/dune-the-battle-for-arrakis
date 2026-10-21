@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ddcb4ec320f95e3e0ae604e8c8c3a6fc000b9ac4
+date: 2026-10-21T07:14:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mouse: a backend, a map of two actions, and a pointer at the display's rate
+Ticket 123. The mouse joins the keyboard and the gamepad as a third device in
+the same shape -- a backend that reports its own controls, a map that says what
+each one means -- plus the one thing a pad never needed: a pointer.
+
+- platform/mouse.{c,h}: the position in window points and the five buttons, held
+  and pressed, with MDP_MOUSE_TEST_SCRIPT for a scripted pointer (a line's state
+  holds from its poll, so a test can wait for a screen).
+- app/input_map.c: mda_input_mouse_map() binds the left button to a pointer
+  click and the right to back. The shipped map binds no pad button, so a click
+  cannot reach the guest as a pad button by accident; a map that binds one is
+  the explicit choice and unions with the keyboard at the first port.
+- app/pointer.{c,h} + md_layout_point_to_pixel(): the chain from a window point
+  through the target's point grid (the --scale/HiDPI rule) and the shell's
+  picture region to a guest pixel and back, and the arrow drawn into the
+  finished surface. A bar belongs to no region, so a click there does nothing.
+- The overlay is drawn after the renderer and before the present, once per
+  picture, and reads the live position: the pointer moves at the display's rate
+  while the guest keeps 59.92 frames a second (ticket 119's rule).
+- next/pointer_state.{c,h} and one hook in each of the four screens: the title
+  menu (the sprite record's Y), the port settings screen (state.cursor), the
+  options screen ($FFFFBED6/$FFFFBECC) and the house selection (d4 and the
+  strip's record). A move selects; an edge is latched until a screen takes it;
+  each screen's setup forgets a click made on the screen before it.
+- The row bands are now in the active area's cells (title rows 20..23, settings
+  8, 10, ..., options 5, 7, ..., house 13/25), measured by patching each label
+  and reading where the pixel moved; next_pointer_cell() is the one conversion.
+- --mouse / --no-mouse, and --screenshot writes the last presented picture.
+- tests: the pointer fixtures in layout-test (every scale/bar/fullscreen and HiDPI
+  grid, the arrow, the cell), the mouse map's rows in input-map-test, and
+  tests/test_mouse.sh -- five scripted runs under SDL's dummy driver that open
+  PORT SETTINGS from the title, open ENTER PASSWORD from the options screen,
+  move the house selection's strip to ORDOS, and prove the --no-mouse and bar
+  controls unmoved and the pad recording empty. The picture's digest is pinned
+  and the PNG cached in analysis/reference.
+- Docs: docs/mouse.md, the input-device recipe, the band table, the glossary and
+  D48.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
