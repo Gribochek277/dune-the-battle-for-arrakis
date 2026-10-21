@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 728ee5229ea4fb8df8dc5bdfbbb7262311964924
+date: 2026-10-21T21:18:33+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 129: 129-129-rts-group-orders
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
