@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6e5ef865ce220f00898f1ca362c01af01faa1d3f
+date: 2026-10-21T17:37:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+One pointer on screen: the port's arrow, and PORT SETTINGS' POINTER row
+The window hides the host's system cursor for its lifetime and restores it on
+close, so the pointer the player sees is the port's arrow on the guest's pixel
+grid. PORT SETTINGS gains one POINTER row (PORT ARROW, the default, or SYSTEM)
+whose value lives for the run in app/settings.c and is applied at once to the
+window and the overlay. No flag, no preference file; --mouse and --no-mouse keep
+their meaning (ticket 142, D53).
+
+Evidence: tests/test_window.c holds SDL's half as data; tests/test_pointer.c the
+default and the one-change rule; tests/test_mouse.sh the row's two values, the
+arrow disappearing and returning, and the toggled-back picture byte for byte
+equal to the default. The docs site is rebuilt and the full gate is green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
