@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fd97621d8c948f38bdec59d24a2e86f5ae6387d5
+date: 2026-10-22T22:44:28+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 148: 148-148-click-collapses-box
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
