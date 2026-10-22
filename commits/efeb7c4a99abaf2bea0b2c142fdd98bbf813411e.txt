@@ -1,0 +1,65 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: efeb7c4a99abaf2bea0b2c142fdd98bbf813411e
+date: 2026-10-22T04:19:30+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mission's panels take the pointer where they read their pad
+The build menu a structure opens and the starport's unit-order menu are the
+guest's own modal frame loops. The port answers the instruction where each one
+reads its pad, and the movement it delivers is the pad's own step.
+
+* `next/mission_panel.{c,h}` (new): one descriptor per panel and one decision.
+  The replacement table's two new rows (`RunStructurePanel` `$017BAC-$017D86`,
+  `UnitOrderPanel` `$017D88-$018080`) own their routines' whole ranges but
+  answer exactly two addresses, handing every other instruction back with
+  `next_replacement_delegate()`: the entry, where a new panel forgets the
+  pointer's edges and disarms the mission's hand-off, and the instruction after
+  `jsr (ReadPadDirection)` (`$017C36`, `$017E16`).
+* A hover is the pad's own step: the cursor is written to the cell *next to*
+  the pointer's and the direction bit goes into `PadPressed`, so the guest's
+  `sub_0046DE` / `$00506C` steps onto the pointer's cell and produces the
+  cursor words, the item word, the highlight, the icon and the tick itself. A
+  click writes the cell, the item and the highlight and presses `$41`, the A
+  the panel's loop tests, so the item goes through the handler a pad A goes
+  through. The right button is the panel's first cell -- EXIT on the build
+  menu, the starport's no-op item -- pressed the same way: leave without
+  choosing. Nothing runs without a pointer and a standing pointer takes no edge.
+* The ticket's premise was measured and corrected: both panels are opened by
+  *structures* (`$01832E`/`$01847A`/`$018592`/`$0185F0` and `$0185E2`, structure
+  type 11); no panel opens from a unit -- the unit path `$018A00` reads the
+  selection and posts an order with no loop of its own. These are also the only
+  two guest loops that read `PadPressed`.
+* `tests/test_mission_panels.sh` (new): the build menu's route from the
+  `build-panel` checkpoint, driven twice -- the pad's d-pad and A at 8 500,
+  8 600 and 8 700, and a pointer scripted to the same cells on the same polls.
+  The two runs' work RAM is identical outside the guest's stack (9 bytes of
+  scratch), their VDP state -- registers, 64 KiB of V-RAM with the sprite table,
+  C-RAM and V-S-RAM -- is byte-identical and renders to one PNG, and both queue
+  item 9 for the same credits. The presented picture adds only the pointer's
+  arrow; two runs of the pad's own route measure the panel's animation noise
+  beside it. The hover run moves the highlight and queues nothing; the right
+  button closes the panel's window, queues nothing, spends nothing and leaves
+  the mission's cursor at 121/89 (not the pointer's 80/84); an idle pointer and
+  `--no-mouse` write the same 64 KiB; the recordings hold no button line.
+* `port/tests/test_mission_panel.c` (new): the starport's panel is behind a
+  structure this map does not have, so its decision is held from constructed
+  states -- both grids and cells, the two empty markers, the click, both leave
+  cells, the entry's forget and the inert cases.
+* Docs: docs/mouse.md ("The mission's panels"), docs/next-engine.md (the rows
+  and the measurement), D58 (the decision and the corrected premise), and the
+  docs site rebuilt. Legacy untouched; the pad path is the guest's (the two
+  rows are inert without a pointer, measured: `--engine next` with and without
+  them is byte-identical over the route).
+
+Measured and left as found: the panel's choice itself takes ~200 frames of its
+own work (`sub_009E10` and the name/icon draw wait for VBlanks); the pointer's
+click reproduces that timing too, which is why the pad and pointer runs' panel
+bar counters and queue frames agree.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
