@@ -1,0 +1,57 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 70e52f0239267333e1d79189b610b9130d39ba40
+date: 2026-10-22T21:57:41+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 140: GAMEPAD MAPPING is the template's second port screen
+Ticket 139 projected the front end's binding list onto the settings screen's
+engine from `settings_screen.c` and called it a placeholder. This is the screen
+it becomes: `next/gamepad_mapping.c` is a `next_menu_screen` of its own, built
+from the front end's registered rows, with its title, its window (the screen it
+was opened from), the cartridge's move sound, its status line, the capture entry
+on A, the cancel on B and its own way out. The picture, the setup's guest calls,
+the drawing, the pad's edge, the pointer, the frame's plan and the sound layer
+stay in `settings_screen.c`; the settings screen's first row pushes the mapping
+screen over itself and its way out pops back. The two screens now differ by their
+content, not their machinery.
+
+The template gained two capabilities, each one field: `next_menu_row.literal` /
+`value_literal`, so a row can carry the binding file's own words by pointer (an
+edit's in-place rebuild reaches the screen on the next frame with no second
+projection), and `next_menu_screen.status`, the line under the window, asked on
+every frame the screen is up. PORT SETTINGS leaves both empty, so its descriptor
+needed no change beyond the two NULLs.
+
+The move sound is the descriptor's and the guest's layer's: `settings_screen.c`
+submits it through `SubmitSoundIfEnabled` ($018B90) from the cycle, exactly as the
+guest's options loop does, and the frame's plan resumes when the driver returns.
+The mapping descriptor names 25; the settings descriptor keeps naming 0, which is
+the silent control the new sound test uses.
+
+Kept, not re-litigated: the capture is an edit and not a move (A on a capturable
+row is consumed before the engine sees it; a refusal falls through to the row's
+choose, ticket 112), B cancels a waiting capture, the control is withheld until it
+is released (app/app.c, unchanged), and the way out still tells the front end the
+list was put away before it pops.
+
+Tests: `port/tests/test_gamepad_mapping.c` is the unit half (the rows by pointer,
+the engine's walk, the move sound, the capture and its cancel, the fall-through,
+the way out) -- 301 checks; `tests/test_port_settings_screen.sh` adds the cursor's
+slide ($C0 -> $C4 -> $C8 -> $CC -> $D0 frame by frame), the move sound's YM2612
+trace with the silent settings screen as its control, and the cleared status line
+on the way back, and its reviewed picture is unchanged (7271f68d...). Verified:
+scripts/build.sh, make -C port test, tests/test_port_settings_screen.sh,
+python3 tests/test_binding_flow.py, tests/run_all.sh --tier fast, and
+python3 scripts/build_docs.py --check.
+
+Docs: D65, "GAMEPAD MAPPING on the template" in docs/next-engine.md, the module
+table in port/README-next.md, docs/gamepad.md, docs/locale.md, CONTEXT.md and the
+rebuilt site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
