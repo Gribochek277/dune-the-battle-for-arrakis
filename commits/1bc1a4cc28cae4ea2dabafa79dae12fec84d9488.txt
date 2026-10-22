@@ -1,0 +1,67 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1bc1a4cc28cae4ea2dabafa79dae12fec84d9488
+date: 2026-10-22T16:11:46+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: the edge band is a position, and a resting hand keeps the camera moving
+Ticket 143 gave the pointer its own band at the picture's edge but still
+decided a pointer frame by the pointer's *motion*. A hand pushed to the edge got
+one small scroll step, the cursor's record was pulled to the band's inner edge
+(304 of 320), and every later frame found the record inside the band: nothing
+moved until the mouse moved again. A PC RTS scrolls for as long as the hand
+rests at the edge, so the band's membership is a **position** now (D63).
+
+* `next/mission_pointer.{c,h}`: the position is kept for every poll, moved or
+  not, and `next_mission_pointer_valid()` says whether this frame's poll was a
+  point on the picture at all. `moved`/`clicked` stay what they were -- the
+  edges the device latch reads -- so a resting hand is not an edge and cannot
+  take a frame away from a held d-pad.
+* `next/mission_edge_band.{c,h}`: the per-frame call takes the position, keeps
+  the D58 latch, answers `next_mission_edge_band_holds_position()` (the frame is
+  the pointer's, the hand is on the picture, inside the band, and the frame is
+  not one of its edges'), and on a pointer frame with no position gives the
+  sixteen band instructions a band that contains every value: a hand nobody has
+  seen is in no band, never a default of (0,0) that would put it in the left
+  one. The sixteen instructions, their operands and their per-address charges
+  are unchanged.
+* `next/mission_cursor.{c,h}`: `next_mission_cursor_hold_pointer()` writes the
+  hand's pixel into `$FFFFBF12`/`$FFFFBF14` and forgets the coast
+  `$FFFFBF48` on the frames the band holds, called from `$003118`/`$003AD0`
+  where the device has just been decided. The guest's own distance-outside-the-
+  band arithmetic then sees the same distance every frame and takes the same
+  step -- floor one pixel, remainder `$FFFFBF3C`/`$FFFFBF3E` zero, the map's
+  edge clamp holding with nothing carried -- instead of a distance that decays
+  as the record converges. The move's entry write, the click's "no write", and
+  the middle drag's "the view moves under the cursor" are untouched.
+* `port/tests/test_replacement.c`: the pointer-band fixture's resting run (24
+  frames, the camera one pixel a frame), and a new one comparing the same
+  distance outside the pointer's band and the pad's (the same one-pixel step),
+  the pad's route of the same length (a step on every frame), the hand leaving
+  the band (stopped on that frame), a pointer frame with no position (nothing),
+  and the map's edge (held, remainder zero).
+* `tests/test_mission_edge_band.sh`: nine window runs on the Atreides recording.
+  A hand resting at 310 holds the record on its pixel and takes the camera from
+  657 at entry 7 700 to 757 at 7 800; a hand moved out at 7 860 leaves it on 817
+  at both 7 880 and 7 960; the middle and switch runs are ticket 143's numbers
+  (the camera added as the number the picture moves by); the control build with
+  `next/mission_edge_band.c` stubbed puts the same pointer back on the guest's
+  200 with the camera 30 pixels along.
+* `docs/{mouse,next-engine,port-architecture}.md`, `docs/decisions.md` (D63) and
+  the rebuilt site say the band is a position, with the measurements.
+
+`legacy` never sets a pointer and is untouched: `tests/test_mission_cursor.sh`
+(the pad's transcribed differential) and `tests/test_mission_mouse.sh` (idle and
+`--no-mouse` write the same 64 KiB) are unedited and green.
+
+Drive-by: `tests/test_mission_map_view.sh` looked for the map-view fixtures in
+`port/tests/test_replacement.c`, which ticket 146 had moved to
+`port/tests/test_mission_map_view.c`; the grep named a file that no longer holds
+them, so the slow tier failed on main. The path is the one the fixtures live in.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
