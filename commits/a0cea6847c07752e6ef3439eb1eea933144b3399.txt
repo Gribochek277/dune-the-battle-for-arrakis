@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a0cea6847c07752e6ef3439eb1eea933144b3399
+date: 2026-10-22T16:45:15+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 147: 147-147-pointer-rests-in-the-band
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
