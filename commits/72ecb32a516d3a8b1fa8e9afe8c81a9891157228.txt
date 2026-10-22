@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 72ecb32a516d3a8b1fa8e9afe8c81a9891157228
+date: 2026-10-23T02:03:19+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 151: the window opens the scene path, and the display settings work
+A plain `dune-port --engine next` drew through the software renderer, the
+reference path, which has no shell: the window was 320x240 * --scale and the
+four values a player sets on PORT SETTINGS were read, reported and inert. The
+window's renderer is now the scene path when --renderer names none
+(app/play_renderer.c): the CPU v2 renderer needs no GPU and exists in every
+build, so a plain run has a shell, a layout and a widescreen option, and the
+saved interface scale, world scale and aspect mode reach the layout with no
+flag. An explicit --renderer wins and the name is passed through unchanged; the
+reference path is one flag away and unchanged (its 320x240 * --scale window, the
+same pixels, the differential harness's picture and the fidelity gate's oracle).
+The seam's own default stays software, so the harness, the checkpoints and
+vdp-render are untouched: a run without a window is a reference run, and
+`headless --renderer NAME` still names what it draws through.
+
+A scene path that cannot be created (the CPU renderer's only failure is an
+allocation one) falls back to the reference renderer with one message that the
+display settings cannot be honoured, and the run continues -- even when a shell
+option was asked for, where the v2-only refusal is skipped because the run has
+already said why the settings cannot apply. No other renderer has a fallback: a
+typo or a missing backend must not silently become a different picture. A
+windowed run on the reference path whose four display values are not the
+defaults now says once that they need a v2 renderer rather than ignoring them;
+the defaults are the reference path's own picture (a 2x 4:3 window), so a run
+that changed nothing needs no line.
+
+The help text no longer describes the scene renderer as something to opt into
+and says what software is for. D68 records why the window's default and the
+seam's default are different questions, and says the reference is the
+differential harness and the byte-for-byte evidence.
+
+Tests: port/tests/test_play_renderer.c (the policy and the fallback, with the
+fixture's own create call) and tests/test_renderer_default.sh (the window: the
+default's banner and settings-apply line, a saved display.ini honoured with no
+flag at two aspect modes, --renderer software's reference window and its
+not-honoured message, --renderer stub, the headless default unchanged, and a
+PLAY_SWAP control build whose scene path always refuses, so the fallback's
+message and the continuing run are exercised end to end). The fidelity catalog
+is 9 of 9 pixel-exact, the scene backend and the GL and Vulkan readbacks are
+still the reference's picture byte for byte, and tests/test_renderer.sh,
+test_scene_gl.py, test_scene_vk.py and test_fidelity.sh are green without
+edits. Tests that read a presented picture at the guest's own pixels now name
+--renderer software (their 320x240 screenshot), a test that relied on the old
+default for a v2-only refusal names the reference renderer explicitly, and the
+pacing check's picture accounting separates the default's display-rate presents
+from the one-picture-per-guest-frame path. The pacing report's numbers and the
+180-frame renderer table in docs/native-port.md are measured again, and
+docs/display.md, docs/widescreen.md, port/README.md, docs/build-and-test.md,
+CONTEXT.md and the generated site are updated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
