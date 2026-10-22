@@ -1,0 +1,84 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8899d9bdeb2e970015275f3b1e2736fa300b13bb
+date: 2026-10-22T08:12:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The mouse's three buttons: left selects, right clears, middle pans
+The mission's mouse gets the three-button behaviour a PC RTS has. The left
+button selects (what it did), the right one empties the selection set, and the
+middle one held down drags the map view the way holding C on the pad does. The
+pad's own commit does the moving: the drag asks for no second rule and no
+second clamp.
+
+* `app/input_map.{c,h}`: the shipped mouse map binds left = `POINTER_CLICK`,
+  right = `POINTER_CLEAR` (new) and middle = `POINTER_DRAG` (new, a held
+  level). The vocabulary gains `pointer_click`, `pointer_back`,
+  `pointer_clear` and `pointer_drag`, so the mapping screen can show a map
+  that binds them and a binding file can spell them; `pointer_back` stays for a
+  player who wants the old route. `mda_input` gains `clear` (an edge) and
+  `drag` (a level), and the loop hands both to the front end's `on_pointer`.
+* `next/mission_selection.{c,h}`: the right button empties the set, the
+  primary and the guest's own `SelectedRecord` `$FFFFC25C` -- the `+$6` bit 15
+  marker with them -- and a right click with nothing to clear does nothing at
+  all (no write, no generation, so no report line). The middle button's
+  movement becomes the guest's own direction bits (a four-pixel threshold per
+  poll) and the frame goes to the mission cursor with the held level.
+* `next/mission_pointer.{c,h}`: the frame's drag direction and held level. The
+  release frame is still the pointer's, with no direction, because the mission
+  handler's idle entry coasts in the previous pad `$FFFFBF48`: the release is
+  what lets the cursor's C forget it, so the view stops where the drag left it.
+  The position is not written while the drag is -- the view moves and the
+  cursor rides it.
+* `next/mission_cursor_pad.c`, `next/mission_cursor_placement.c`: at
+  `$003118`/`$003AD0` the drag puts its nibble in `d0` and the pad's C bit
+  (bit 5 of the guest's own pad layout) in both halves of `d5`, so the
+  cartridge's sixteen-case table, its commit at `$0032A0`/`$003BB4`, its
+  whole-cell branch and its `$FFFFE3D2`-`$FFFFE3D6` and `$18`/`$128` clamps
+  move the view -- one rule, one clamp.
+* `app/run_play.c`: the port's screens get `back || clear`, so the right button
+  keeps the panels' way back that ticket 145 shipped; the mission map gets the
+  two edges apart. The deliberate divergence (D60) is the clear itself and the
+  drag's stopped release: `legacy` has no pointer and no selection, and the
+  mission-cursor differential still compares the same bytes.
+* `port/tests/test_replacement.c`: the port's C with the drag against the
+  guest's own pad word `C|RIGHT`, from one constructed state: every register,
+  flag, the four speed bytes, the 64 KiB of work RAM minus the four
+  `ReadController` pad bytes (the drag asks for no pad button, so those are the
+  no-pad run's zeroes), the VDP counters, the clock (14 286) and the view
+  record. `port/tests/test_selection.c`: the clear (the set, the guest's record
+  and the marker; the generation does not move when there is nothing to clear)
+  and the drag's direction bits, threshold and release frame.
+  `port/tests/test_input_map.c`: the three shipped rows, the clear edge, the
+  drag level and the four names in the vocabulary.
+* `tests/test_mission_mouse.sh`: nine window runs on the Atreides route. A left
+  click selects unit 38 and a right click clears it (`$FFFFC25C` 0, the marker
+  clear, the report `count=0` after the click's `count=1`); a right click with
+  nothing selected prints no selection line at all; a middle drag walks
+  `$FFFFE3BE` from the mission's 647 to the guest's own limit `$FFFFE3D2` (512)
+  and leaves the cursor riding the view (190, not the hand's 20); and after a
+  ten-poll drag's release the view is 717 at 7 790 and the same at 7 820 while
+  the hand's next move takes the cursor to 260. Every feature run's
+  `--record-input` is the replay's own button lines.
+* The 64 KiB file bound: the drag fixture took `port/tests/test_replacement.c`
+  over it, so the mission map view's fixtures moved to
+  `port/tests/test_mission_map_view.c` (one responsibility, its own entry) and
+  the two whole-machine measurements (`test_work_ram_hash`, `test_vdp_writes`)
+  now live in `port/tests/selftest.{c,h}` for both files.
+* Docs: docs/mouse.md ("What a button means", "The right button, and what it
+  does outside the mission", "The right button clears, the middle button drags"
+  in the mission's selection), D60 (the decision: the shipped binding, the
+  menus' kept way back, the drag's stopped release), docs/next-engine.md (the
+  drag's injection, the measurements and the table), docs/port-architecture.md,
+  docs/gamepad.md (the shared vocabulary), docs/native-port.md,
+  docs/port-zones.json and the rebuilt site. Legacy untouched: `scripts/build.sh`
+  OK, `make -C port test` green (52 219 selftest checks), `tests/run_all.sh`
+  ALL CHECKS PASSED, and the mission-cursor, mission-panel, selection-box,
+  group-orders, edge-band and front-end-mouse checks all pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
