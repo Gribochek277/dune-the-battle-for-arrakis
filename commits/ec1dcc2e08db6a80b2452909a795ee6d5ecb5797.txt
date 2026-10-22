@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ec1dcc2e08db6a80b2452909a795ee6d5ecb5797
+date: 2026-10-23T00:23:33+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 149: 149-149-pointer-in-the-settings-file
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
