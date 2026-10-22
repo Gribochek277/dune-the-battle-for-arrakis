@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2567c05edc093004e63c49516bcc60d35411cb5a
+date: 2026-10-22T17:36:53+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 136: D64 after the rebase, and the slow checks ticket 135 left stale
+The rebase onto main took ticket 147's D63, so this decision is D64; the
+references and the site are regenerated.
+
+Three slow-tier checks still expected the three-row PORT SETTINGS screen from
+before ticket 135: the locale and font checks now read the visible INTERFACE
+row (ticket 135's display rows fill the five-line window) and the mouse
+check's pinned picture is the screen with those rows. They are test fixes for
+an existing merge, not part of the backdrop.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
