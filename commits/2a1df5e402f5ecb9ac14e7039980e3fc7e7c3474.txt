@@ -1,0 +1,65 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2a1df5e402f5ecb9ac14e7039980e3fc7e7c3474
+date: 2026-10-22T22:27:10+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+next: a click collapses the box, and the pad's A commands the set
+Ticket 148. With a box of units standing, the mouse could not get back to
+the one structure under the pointer: ticket 128's click scanned the cell
+itself and ticket 129's click was an order, so neither collapsed the set.
+
+The click is now the guest's own selection. The cursor already turns a
+click into the pad's A bit at $003118/$003AD0 (ticket 127); what was
+missing was the state the guest selects from, so the click's frame writes
+0 into $FFFFC25C and clears the +$6 bit 15 marker on the record that stops
+being the primary. The guest's $016FF6 then does what it does for a pad A
+with nothing selected: a unit into $FFFFC25C with the marker ($0176D0), a
+structure into the guest's own $FFFFC578 with the marker ($0170FC),
+nothing on empty ground. The port adopts $FFFFC25C as the whole set -- one
+unit or nothing -- after the command pass has run, with a bounded wait
+(four polls) so a click the guest swallowed still settles. The port no
+longer scans a cell for a click at all: click_cell() and cell_at() are
+gone, and a click in the widescreen band works because the cursor's record
+already carries the band's pixel.
+
+The box's write has to be undone rather than left for the A to overwrite,
+and that is measured: with $FFFFC25C still naming the box's primary the
+guest's A on a structure takes the $97CB at $01705E, drops the structure
+out of a3, and the structure is then not selected at all ($FFFFC578
+unchanged, $FFFFC25C = 0).
+
+The group command moved from the click to the pad's A, which is the
+cartridge's own order gesture: next_mission_selection_pad_command() is
+called by the cursor's C at $003118/$003AD0 with the frame's newly pressed
+byte, and with a set standing it marks the primary and re-posts it, so the
+guest's own pass gives it the order and next/mission_orders.c copies it to
+the rest of the set. The module is ticket 129's, unchanged; only its
+trigger is the pad's now, because the click is the selection. The app's
+snapshot of the order is a take rather than a before/after compare: the
+post happens inside the guest frame, before the poll.
+
+tests/test_group_orders.sh is edited for the new trigger (the box is the
+pointer's, the order is the pad's A at the frame the old click's release
+landed in); its arrival run replays the route up to the order and no
+further, because the recording's later A presses would re-order the group
+-- which is the pad's right and not what the arrival measures. The control
+build keeps its meaning: with mission_orders.c stubbed out the A orders
+only the primary. tests/test_selection_box.sh gains the collapse runs (2
+report lines: the box, then 3 -> 1 / 0 / 0) and three pad-vs-pointer
+pairs: the box plus a click against the same hover with --press at the
+release frame, identical in the 64 KiB outside the guest's stack, the VDP
+state, the picture it renders to and the selection ledger; the port's own
+report lines are the one difference.
+
+D64 records the decision, the frame's order (clear, pan, box, click's
+release, press) and what a press inside a drag does, and docs/mouse.md,
+docs/next-engine.md, CONTEXT.md and docs/port-architecture.md carry the
+rule. legacy is untouched: it has no pointer and no selection.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
