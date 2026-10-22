@@ -1,0 +1,63 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4212bfe86a513e0b2b7c3a630cbcd9fa5f71ec34
+date: 2026-10-22T12:18:50+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 135: display settings on the port's screen -- scale, aspect, fullscreen
+The port's settings screen gains a display section: the interface's scale, the
+world's scale, the aspect mode (auto, 4:3, wide, fit-height) and fullscreen or
+windowed, as four more rows of the menu template (their values, their states'
+locale words and the front end's read/write seam, with no navigation code), plus
+the file they persist in and the flags that override it.
+
+The values are the run's (app/settings.h), the four rows are the screen's, and
+what a target shows is now a plan: app/display_layout.c resolves the values and
+a target into a mode and two integer scales and builds the layout from it, so a
+change made on the running screen reflows the next frame with no restart and a
+plan the model cannot build is the nearest one that can. app/display_file.c is
+display.ini beside the gamepad map -- closed vocabularies, a bad line refused
+with its number, a save that writes all four -- and --interface-scale,
+--world-scale, --aspect-mode, --fullscreen/--no-fullscreen and --display-file
+override it for one run.
+
+The interface stays pixel-correct at an integer scale and the world has its own
+scale (auto = the interface's, which is the wide mission's rule), so a forced
+world scale changes how much world shows rather than the picture's height. That
+made the mission's layout hold its interface regions against the target's edges
+at the interface's scale instead of measuring them from the world picture's
+rectangle: byte-identical at equal scales, and the HUD no longer follows a
+smaller world into the middle of the screen. 4:3 and fit-height differ only on a
+target narrower than 4:3 (fitted inside it, or scaled to its height and
+cropped); full-screen screens are the 4:3 picture with bars in every mode.
+
+Tests: port/tests/test_display_file.c and test_display_layout.c (the file's
+format and every mode's arithmetic, in the selftest), test_settings_screen.c and
+test_row_lists.c (seven rows, the display values' words and the seam),
+tests/test_display_settings.sh (the front end: the file read and overridden, an
+invalid value refused with its line, the portrait target telling 4:3 from
+fit-height, a live change reflowing inside the run, the 16:9 mission staying 4:3
+when the file says so, the pad, a scripted mouse and real keys on a private X
+display each operating a row, fullscreen from the file and from the flags, and
+the reviewed screenshot analysis/reference/port-display-settings.png). The
+mission-wide and shell checks now name a display file of their own so a player's
+cannot move what they measure; tests/test_port_settings_screen.sh follows the
+way out to the seventh row of the five-line window and the display rows' cells.
+
+Two test-suite defects the change exposed are fixed here: the direct-compile
+test binaries now depend on the headers (a stale test object built against an
+older words table segfaulted the locale test), and words.c's three tables are
+unsized so the typedef that compares them with the key count catches a table one
+line short -- args was, which is a template that is never checked.
+
+Docs: docs/display.md (the player's page), D62, and the widescreen,
+next-engine, port-architecture and build-and-test pages; the site is rebuilt.
+port/README.md is at its 64 KiB bound (65 536 B) and docs/port-architecture.md
+records that the next module added there has to be a split, not a row.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
