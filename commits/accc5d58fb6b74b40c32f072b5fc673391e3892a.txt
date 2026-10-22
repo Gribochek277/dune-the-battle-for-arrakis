@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: accc5d58fb6b74b40c32f072b5fc673391e3892a
+date: 2026-10-23T00:14:33+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 149: the pointer is a key of the settings file
+PORT SETTINGS' POINTER row held its value for the run and nothing wrote it down
+(D53), so a player who chose SYSTEM got the port's arrow again on the next
+start. The value is now the fifth key of display.ini -- `pointer = port-arrow |
+system`, the screen's own two words in the file's lower-case style -- and the
+file's load, save, format block and header comment know it. The row's handler
+saves after it applies the value, the way a display row does; the load is the
+display values' load, before the window opens, and the front end applies it to
+the window's cursor and the overlay's arrow before the first frame (the path the
+default already used). A file the old build wrote still loads with the default,
+a bad line is refused with its number, and `the pointer:` is now printed at
+start-up for every run, so a log says which pointer the run has.
+
+Evidence: port/tests/test_display_file.c (the two spellings, the old four-key
+file, duplicate and bad values with their lines, the round trip into a fresh
+settings struct); tests/test_mouse.sh (the row writes the file and back; a new
+process on that file starts on SYSTEM before its frame count, its POINTER row
+already reading SYSTEM, and every parallel run gets its own --display-file).
+D67 records the decision and supersedes D53's "no file" clause; docs/display.md,
+docs/mouse.md, docs/next-engine.md, docs/port-architecture.md, CONTEXT.md and the
+docs site are updated. make -C port test, tests/run_all.sh, tests/test_mouse.sh
+and tests/test_display_settings.sh are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
