@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 16d4cf95c1a4c1e5b0c8b7921f2a85d2d88b4f64
+date: 2026-10-22T14:45:44+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 136: wide backdrop art for the full-screen screens
+The build panel, OPTIONS and the house selection keep their 4:3 picture and
+their panels, text and cursor at the same pixels; a wide target's bars now hold
+a port art asset instead of black. A 4:3 target has no bar and is unchanged.
+
+- next/wide_backdrop.c draws the three screens' art in their own palettes and
+  recognises the screens from their measured VDP layouts (six other catalogued
+  screens are the negative controls), so the feature runs in either engine.
+- app/backdrop.c composes it after the renderer and before the pointer's
+  overlay, through the picture region's transform, and feathers the picture's
+  edge into the art; the layout, the scene, the seam and the backends are
+  unchanged.
+- vdp-render composes the same picture (--no-backdrop is the control).
+- Docs: widescreen, display, next-engine, port-architecture (README split at
+  the 64 KiB bound), the reverse-engineering measurement and D63.
+- Tests: port/tests/test_wide_backdrop.c (in make test),
+  tests/test_wide_backdrop.sh (fast) and
+  tests/test_wide_backdrop_window.sh (slow); the mission-wide check's
+  black-bar assertion is kept with the feature removed as the control.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
