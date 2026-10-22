@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b35796cdd86cae3abb8012dfc6f8f03155e99e72
+date: 2026-10-22T20:03:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 136: 136-136-wide-screen-ui-art
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
