@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 55b070a3b4019e8a39f3313f6a8dec207a228fab
+date: 2026-10-22T19:44:51+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 136: the locale check counts the vocabulary it reads
+Ticket 135's display rows took the shipped English keys past the 37 the check
+was written with and the [test] section to five; the fallback total is now
+computed from the file, so a new key cannot leave the number stale.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
