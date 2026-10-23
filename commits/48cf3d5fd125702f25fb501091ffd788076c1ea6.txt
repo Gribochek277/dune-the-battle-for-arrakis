@@ -1,0 +1,46 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 48cf3d5fd125702f25fb501091ffd788076c1ea6
+date: 2026-10-23T19:07:58+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+156: a pointer click selects the record under it, not its map cell
+The cartridge's click asks which record is in the cursor's cell (GetUnitByCell
+through the cell snap sub_01E208), which is the d-pad's target and a 32-pixel
+one: the unit icon is 16x16, so a click a few pixels beside it selected the unit
+anyway. The pointer now has its own hit test and the pad's cell stays the pad's.
+
+next_mission_selection_pointer_at() asks which record is *drawn* under the
+point: the units GetUnitByCell names in the pointer's cell and its eight
+neighbours, a unit a target while the point is inside a 24-pixel square around
+its drawn position (the icon's 8 plus four pixels of grace -- smaller than the
+sprite is a click a player aims and misses, and 12 is still inside the cell's
+16), a structure a target on the tiles it holds. The nearest wins (squared
+distance to the record's drawn centre), a unit before a structure at the same
+distance, then the lower record index.
+
+The click is still the guest's selection: the profile hands it to the guest's
+own A path, and when the target is in another cell than the hand's it aims the
+click first by putting the cursor on the record's cell's corner -- the pixel the
+guest's cell lookup names that cell from. A click beside a record the guest
+would have selected is not delivered at all; $FFFFC25C becomes 0 with the
+primary's marker off and the port's set empties in one step. Open ground (no
+unit in the nine cells) is still handed to the guest's own empty-ground path.
+
+Proof: port/tests/test_selection.c holds the rule (the box's edge at 12 and 13,
+the cell's corners, a unit off its cell's centre, two units in neighbouring
+cells with the tie-break and the aim, a 2x2 structure's tiles and one cell past
+them, a unit on a building's tile, and the guest's own sub_01E208 still finding
+the unit from the point the pointer calls a miss);
+port/tests/test_mission_mouse.c holds the profile's half; and
+tests/test_mission_click.sh is the window -- unit 38's cell's four corners and
+centre and the neighbour's five points, a select-then-miss, and the pad's A at
+the corner the pointer misses as the control. scripts/selection_check.py
+--pointer recomputes every target from the run's own 64 KiB.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
