@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1a3e6da6efc714c8d4fb85d0da48d71a31e409fd
+date: 2026-10-23T19:41:43+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 158: the interface is a layer of its own, drawn over the world
+The playtest's black square and sand strip are the guest's interface, and at
+the world's scale they were composited as the map's right-hand columns. The
+picture is now two layers: the world region is drawn as before and the
+layout's interface regions are painted over it from the guest's 320x240
+picture at the interface's scale, clipped to each region's own rectangle.
+
+* `output/scene.h` carries the layer (`interfaces`, the layer's origin and
+  scale, the regions' source/destination rectangles) and
+  `md_scene_use_layout()` fills it from the one list in `output/layout.h`,
+  refusing regions that disagree about their scale or their composition
+  transform. Fit-height keeps its picture region as one picture, so the
+  reference path and the 4:3 frame are untouched.
+* `output/render_scene_cpu.c` composes the world's target row and paints the
+  interface's regions over it; `output/render_scene_gl.c`'s composite shader
+  and `output/render_scene_vk.glsl` take the same per-pixel decision from the
+  same uniforms, so the three backends cannot disagree about which layer owns
+  a pixel. The Vulkan fixture found the compute shader's window plane applied
+  to columns left of the guest's screen, where the CPU's window_line() skips
+  them; the window is screen-space and now says so in the shader too.
+* The world's source stays the guest's 320 columns (plus the wide mission's
+  extra): the columns under the interface are the map the guest's plane
+  fetches there, and a column scrolling out from under the interface has to
+  be the map's. The interface is what is clipped, not the world's fetch.
+* `app/render_vdp_dump.c` gained `--interface-scale`, `--world-scale` and
+  `--no-interface` (the control: the same world, the interface's regions
+  dropped) and reports the resolved interface rectangles, which is how the
+  checkpoint check reads them.
+
+The checks: `port/tests/test_scene.c` proves the interface's pixels are the
+guest's picture at the interface's scale at two world scales and that the
+control differs inside the regions and nowhere else; the GL and Vulkan
+fixtures compare the two-layer scene with the CPU backend byte for byte;
+`tests/test_mission_wide.sh` renders the mission-map state at 1920x1200 with
+the interface at 2x and the world at 1x, 2x and 3x -- the four regions' checksums
+are one value each, the picture differs, and the control differs exactly inside
+the rectangles. At equal scales nothing moves: 16:9 is still the 4:3 picture
+shifted by 214 and 21:9 the same at x 367.
+
+Docs: docs/native-port.md's layer map page, docs/port-architecture.md,
+docs/widescreen.md, docs/build-and-test.md, CONTEXT.md and D73 in
+docs/decisions.md; the docs site is rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
