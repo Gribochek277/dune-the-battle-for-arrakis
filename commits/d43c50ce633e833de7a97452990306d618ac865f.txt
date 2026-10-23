@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d43c50ce633e833de7a97452990306d618ac865f
+date: 2026-10-23T22:51:51+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the world scale is a wish the target resolves, so the picture fills it
+Ticket 159's playtest report: fullscreen 1920x1200, the WORLD row at 1x, and the
+mission is a 447x384 box in the middle of a black screen. The cause was one
+expression -- the extra columns were `target_width / world_scale - 320` and the
+sprite field caps them at 127, so the world was drawn 447 columns wide at 1x and
+the picture's size became a function of the world's sampling rate.
+
+The row's value is now a wish: when it would need more guest columns than the
+sprite X field can address, the world scale is raised to the smallest one that
+fills the target (`ceil(target_width / 447)`), so 1920x1200 resolves 1x to 5x
+(384 columns at 5x are the target exactly), 1120x480 resolves 2x to 3x (373
+columns, the integer scale's one-pixel leftover), and 854x480 keeps 2x. The
+plan carries the resolved value and re-resolves on a resize; the file and the
+settings screen keep the player's value, and the layout line names both
+(`world scale 5, raised from 1x: this target can show at most 447 world
+columns`). The composition stays the interface's picture at the interface's
+scale -- the one transform the scene requires -- and the world now covers it at
+every resolved scale, so there is no black hole between the interface's
+rectangles; a resolved world below the interface's scale is refused and the
+plan is the fit-height picture instead.
+
+Tests: the reported case, the row matrix and the resolution are in
+port/tests/test_mission_wide.c and port/tests/test_display_layout.c, and
+tests/test_mission_wide.sh edits the reported assertion with the reason (it
+described the bug) plus the 21:9 picture (now the 3x picture's centre crop, not
+the 894-wide picture with two bars) and moves the interface-layer check to
+1300x600, the smallest target where two world scales are legal. Docs:
+docs/display.md, docs/widescreen.md, docs/native-port.md, CONTEXT.md, D76 and
+the rebuilt site. Legacy and the fidelity checkpoints are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
