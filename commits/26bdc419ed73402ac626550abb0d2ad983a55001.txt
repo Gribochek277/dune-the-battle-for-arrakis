@@ -1,0 +1,90 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 26bdc419ed73402ac626550abb0d2ad983a55001
+date: 2026-10-24T02:24:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+160: the mission's picture has one scale, and its own rectangles are drawn once
+The owner's third playtest report of the mission screen: with ticket 159's
+geometry (a fullscreen 1920x1200 target, display.ini asking for the interface at
+2x and the world row at 1x, which resolves to 5x) the credits counter and the
+guest's radar were on screen twice -- the world layer's copy of the guest's own
+interface columns at 5x and the interface layer's copy at 2x -- and the
+selection rectangle was drawn on a black bar while the units it marked were on
+the map. The owner sent a reference picture of the composition it should have:
+one copy of each, at the world's scale, and named the .ini beside the binary as
+the reproduction.
+
+The mission's picture has one scale, and it is the world's
+----------------------------------------------------------
+`mda_wide_mission_layout()` composes the guest's 320x240 at the *resolved world
+scale* instead of the interface's, so the composition's transform is
+`composition.origin + guest * world_scale` for the map, the interface's regions
+and the port's own overlays alike. An interface region's destination is then
+exactly the world's transform of its source: the layer repaints the pixels the
+world already drew, and the picture has one copy of each. At equal scales
+nothing moved (the two copies coincided, which is why the doubling never showed
+before ticket 159). The interface's own scale keeps its meaning where a screen
+is all interface -- the panels, the menus, OPTIONS, the title, the house
+selection are fit-height at the INTERFACE SCALE row.
+
+The world is clipped by the interface's rectangles
+-------------------------------------------------
+`md_scene_guest_pixel_is_interface()` (output/scene.h) answers whether a guest
+pixel is one an interface region is drawn from, and the world layer's sprite
+pass drops it (the planes underneath stay: the map under the HUD is the map, and
+a column that scrolls out from under the interface stays the map's -- D73's
+reason). All three backends take the same decision from the same scene: the CPU
+row, the GL composite shader and the Vulkan compute shader. With one scale the
+clip and the repaint coincide and no pixel moves today; it is what makes "one
+copy" a rule rather than two placements happening to agree.
+
+The port's own rectangles go through the same function
+-----------------------------------------------------
+`md_layout_guest_to_target()` / `md_layout_guest_from_target()` /
+`md_layout_guest_scale()` (output/layout.h) are the guest pixel's target pixel
+and back through the region the picture is drawn through -- the world's in the
+wide mission, the picture's in fit-height, the identity for a NULL layout. The
+pointer, the overlay and the backends call them; the overlay's shapes are the
+caller's value (`mda_selection_overlay`, filled by app/play_backend.c from the
+gesture and the set) and app/selection_overlay.c only draws them, with the
+markers' arms a guest length times the transform's scale. `vdp-render` gained
+`--overlay X0,Y0,X1,Y1`, `--marker X,Y`, `--badge N` and `--no-overlay`, so a
+placement is a picture and not a screenshot.
+
+What proves it
+--------------
+* tests/test_mission_overlay.sh (new, fast tier): the same mission dump with the
+  overlay and with `--no-overlay` at the owner's 1920x1200, 854x480 at 2x,
+  1300x600 at 3x and 4x, 1920x1200 at 5x/5x and the cartridge's 4:3 -- every
+  differing pixel must be on exactly one rectangle's stroke at
+  `world.dest + (guest - world.source) * world_scale`, inside the picture, with
+  the selection's colour on all four sides and none of it in the control;
+* tests/test_mission_wide.sh: the interface-on picture is byte-identical to the
+  `--no-interface` control at every one of those cases, and every region is the
+  picture's transform of its guest rectangle (before, the control differed --
+  that *was* the doubling);
+* port/tests/test_layout.c: the transform's round trip, a bar refusing, the
+  scale; port/tests/test_mission_wide.c and test_display_layout.c: the layout's
+  numbers; the GL and Vulkan fixtures compare all three backends' pictures with
+  the rule in place.
+
+Assertions that described the doubled HUD are edited, not deleted (D31/D36):
+D73's "the interface's four regions are one value at every world scale", the
+640x480 composition at 1280,360 and `interface_scale 2` on the reported case
+become the one-scale numbers, and tests/test_mission_wide.sh's interface section
+becomes the one-copy check. The 4:3 path is unchanged and still pixel-exact; the
+layer map, the world's source, the 447-column cap, ticket 159's resolution,
+D72's group, the renderer seam, the reference renderer and legacy are untouched.
+
+Docs: docs/widescreen.md (the one-scale composition), docs/mouse.md (the
+overlay's placement and the shapes split), docs/display.md (the INTERFACE SCALE
+row's two meanings), docs/native-port.md (the measurements), docs/decisions.md
+D77, and the regenerated docs/html site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
