@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c68b8abe2cb0e77a5845a3e4191f0470ba105abe
+date: 2026-10-23T08:36:26+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decisions: the windowed run's default renderer is the scene path
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
