@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c49c17d8221a4d7d0ff96efa05ce3c68dbb8dddd
+date: 2026-10-23T20:45:29+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the startup line says what the mouse profile's buttons do
+Ticket 153 replaced the mouse's meanings (the right button is the pad's A in
+the mission, the left drag draws the box) and the run's one-line summary still
+described the old ones, which is the line a player reads before the first
+frame. Referenced from D71 and docs/mouse.md, which were already correct.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
