@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 176765fdae6e8520605d2f8799acb30759760e4c
+date: 2026-10-23T14:52:17+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 153: the mission's pointer is one module, and its right button orders
+`next/mission_mouse.{c,h}` owns every meaning the pointer has on the mission
+map and in its two sidebar panels: the frame's report (position and the five
+pointer functions' edges and levels), what each press meant, the drag's own
+anchor and box, the box selection setting, and the injection at the three
+places the guest reads its pad ($0030FA/$003AA6, $003118/$003AD0,
+$017C36/$017E16). The front end hands it a report and asks for the frame's
+injection; it never asks which button meant what.
+
+The meanings, as the player asked: left selects (a click, or a press that
+drags a box), right issues the order the pad's A issues, middle holds and
+drags the view like the pad's C. Ticket 146's right-button-clears rule is
+superseded (D71); `pointer_clear` stays a bindable function. Box selection is
+a PORT SETTINGS row, ON by default: with it off a drag selects and issues
+nothing while a plain click still selects. An order and a select press in the
+same poll are two edges and both are taken.
+
+The pad's route is untouched: with no pointer every injection answers the
+guest's own value and writes nothing. `port/tests/test_mission_mouse.c` runs
+one cursor-handler frame twice -- the pad's own button and the pointer's report
+through the module -- and compares registers, flags, pc, cycles, the VDP
+counters and the 64 KiB of work RAM minus the pad's four bytes, for select,
+order and pan, naming the port's own box and anchor in the report;
+`tests/test_mission_mouse.sh` is the window half, and the mission checks it
+does not edit (cursor, edge band, panels, box, orders, recording) pass.
+
+Also: the gesture's snapshot fields now read the gesture from the module that
+owns it (app/state_file.c's format is unchanged), docs/mouse.md is rewritten as
+the mouse profile, and tests/test_group_orders.sh's control-build stub answers
+the two mission_orders state functions ticket 154 added -- the check did not
+link on main.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
