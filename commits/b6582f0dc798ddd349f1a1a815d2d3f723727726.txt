@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b6582f0dc798ddd349f1a1a815d2d3f723727726
+date: 2026-10-23T19:56:21+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 158: 158-158-interface-is-a-layer
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
