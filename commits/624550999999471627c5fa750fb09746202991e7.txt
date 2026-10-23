@@ -1,0 +1,66 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 624550999999471627c5fa750fb09746202991e7
+date: 2026-10-23T14:45:58+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 157: the picture and its interface are one composition, placed centred
+The owner's playtest report: fullscreen 1920x1200, the interface at 2x and the
+world at 1x, and the mission's map drawn small -- correct, that is what the
+world scale asks -- but against the target's right edge with a 1473-pixel black
+bar to its left. The cause was a rule from tickets 132 and 135 that was true
+only while the world fills the target's width: the world's right edge was held
+to the target's (it *is* the guest's screen's right edge, which is what the
+layer map's anchors were measured against) and the interface's margins were
+measured from the target's edges. A WORLD scale smaller than the interface's
+makes the picture narrower than the target, and every rule that anchored to the
+target then anchored to the black bar.
+
+The layout gained a composition: the rectangle its regions are laid out in, in
+target pixels -- the guest's 320x240 at the interface's scale -- so an interface
+margin is a distance to the picture's own edge at every integer scale and every
+world scale. The wide mission states its own in app/wide_mission.c, fit-height's
+is its picture, and a layout that states none is placed against the target
+itself, which is what every layout that predates this ticket does.
+
+The group -- the rectangle the regions occupy together, their union, so the
+world's band is in it and a world drawn smaller than the composition does not
+shrink it -- is then placed in the target as one thing: centred on both axes
+when it fits, the leftover split with floor so an odd pixel is a bar and never a
+stretched one; and when it does not fit, the wide world keeps its right edge on
+the target's (D61's rule, the only one that keeps the measured anchors on
+screen) while fit-height keeps showing the picture's middle. A group that fills
+the target has an offset of 0, so 16:9 at 2x -- the target the layer map was
+measured on -- does not move by a pixel, and the checkpoints (4:3, fit-height,
+legacy) cannot move.
+
+The reported case: the world 447x240 at 736,478, the group 447x384 at 736,408,
+equal bars on both axes where there was one 1473-pixel bar. 21:9's 226-pixel
+left bar became 113 on each side, 1080p's 132/120 became 66/60, and the
+assertions that read those destinations are edited with this reason (D31/D36),
+not deleted. The fast fixtures report the resolved group for the reported case
+and its two neighbours (the world at the interface's scale, and a target the
+composition fills), and tests/test_mission_wide.sh runs the reported case in the
+window and reads the same line out of the log.
+
+The log's layout line now says both scales and how the group was placed
+(`group WxH at X,Y (centred)`); the old wide line printed the world's scale
+under the words "interface scale", which was invisible while the two always
+matched. docs/widescreen.md, docs/display.md and docs/native-port.md describe
+the composition and the group, CONTEXT.md has the two words, D72 records the
+decision (D71 is ticket 153's, merged first) and the clauses of D61/D62 it
+supersedes, and the docs site is regenerated.
+
+Gates: scripts/build.sh OK; make -C port test (56 996 selftest checks, 728
+fixture checks, 41 322 sweep addresses, 3 203 locale checks, 0 failures);
+bash tests/run_all.sh -> ALL CHECKS PASSED (fast tier); tests/test_layout.sh;
+tests/test_mission_wide.sh with the reported case;
+tests/test_display_settings.sh; tests/test_display_window.sh;
+tests/test_docs.sh -- all green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
