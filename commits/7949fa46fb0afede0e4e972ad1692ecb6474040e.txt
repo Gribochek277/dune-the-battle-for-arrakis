@@ -1,0 +1,82 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7949fa46fb0afede0e4e972ad1692ecb6474040e
+date: 2026-10-23T11:56:24+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 154: the machine's snapshot, and a run that restores to the same picture
+A bug that happens after five minutes of scrolling cannot be described in words.
+The first half of the player's answer is a state a run can be started from, and
+the first thing such a state must do is not lie: a state that restores to a
+different picture is worse than no state at all.
+
+`app/state_file.h` is that state, and it is the whole machine: the 68000's
+registers, PC, SR and USP; the 64 KiB of work RAM; the VDP's V-RAM, C-RAM,
+V-SRAM, its 24 registers, the address register and command latch, the VBlank
+flag and frame counter, the pending DMA's busy window and the data-port FIFO's
+four slots; the Z80's registers, flags, interrupt latches, bank register, both
+YM2612 address latches, the bus handshake and reset line, its own clock and the
+machine clock at its last run, and the 8 KiB of sound RAM; the machine's cycle
+counter with the DRAM refresh phase; the three controller ports' latches and the
+six-button counter; the PSG's chip struct and the YM2612's register file; and the
+port's own live state -- the arrangement and the C replacements it ran, the
+renderer's name, the display settings and the plan they resolved, and the
+mission's pointer, selection set, drag box and pending order. What it leaves out
+is in the header: sound in flight, the traces a run happened to be writing, the
+idle diagnostic and the port screens' transient row state.
+
+The file is a binary blob with a text manifest beside it: the magic "MD68KSNP",
+a version, the total length, four sections ("MCOR", "Z80S", "SOUN", "PORT") and
+a SHA-256 trailer. Every load verifies all of it -- and the run's identity: the
+engine, the --replace names, the renderer and the cartridge's SHA-256 are
+checked, never adopted (the arrangement is assembled before the state is read,
+and a state that silently changed which routines run as C would be the lie this
+exists to prevent) -- before it touches the machine, so a truncated, edited or
+foreign file is a refusal with its reason and the prepared machine is untouched.
+
+`--debug` writes a session directory (`run.log` with one digest line per guest
+frame, `state-<n>.bin` and `frame-<n>.png` every N frames or every frame on
+request, `manifest.txt`), `--debug-load PATH` starts a run from a state, and the
+harness refuses `--debug` loudly with its own three switches: `--state-save
+FRAME:PATH`, `--state-load PATH` and `--state-log PATH` -- the same format, so
+the acceptance is a test with no window.
+
+The machine accessors the restore needed, each documented where it lives:
+mdz80_state_get/set (the whole Z80 and its two clocks), md68k_cycles_restore with
+md68k_cycles_refresh_phase, mdloop_seat (the frame clock's grid from the restored
+point), md68k_pad_state/set_state, md68k_ym2612_registers_get/set (replayed
+through the chip's own write path), md68k_sound_seat (the timeline moved, not
+played, so a restore does not render a minute of unheard audio), next_app_seat
+and mda_machine_seat, and a get/set pair for the four next/ modules that keep
+the port's own state.
+
+The first version round-tripped for three frames and then drifted by ten cycles
+with the Z80 a few instructions out of phase: the DRAM refresh's phase is state
+too, and restoring the total without it moves every later charge. Measured on
+the round trip rather than assumed.
+
+Tests: `tests/test_state_file.sh` in the fast tier (a state at frame 1 000 of a
+1 060-frame run, 60 frames from it compared line for line -- RAM, the VDP's
+memories, the picture, every 68000 register and flag, the Z80, the cycle clock --
+and the exit PNGs byte for byte; the comparison proved able to fail with a state
+from the wrong frame; the refusals with their messages and no output; the
+window's session and its resume under SDL's dummy driver). `port/tests/test_state.c`
+in `make -C port test` is the field-by-field half: values a guest would take
+thousands of frames to reach (a selection set, a drag box, a pending order, a
+pad mid-handshake, a stopped Z80) planted, saved, cleared and required back,
+with a sentinel proving every refused load wrote nothing. Verified by hand on a
+mission run too (8 100 frames of `atriedes-mission.pad`, a state at 8 000, 100
+frames identical) and on `--engine next` with the whole replacement table.
+
+Docs: `docs/debugging.md` (the new page: the flags, the format, the identity
+rule, the cadences and their cost, what proves it, what it is not), D70,
+`docs/build-and-test.md`, `port/README.md`, the zone declaration and the
+regenerated site. scripts/build.sh, make -C port test and tests/run_all.sh are
+green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
