@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bb150c0ca31d51f4f9b883e8e6f63654cd8b9637
+date: 2026-10-23T04:50:14+03:00
+author: pi <pi@localhost>
+branches: main
+
+message:
+ticket 150: the window opens at the size the saved display settings ask for
+The display settings were saved, read and applied, and the window they were
+applied into had been sized from the command line alone: a player who chose 3x
+got a 640x480 window with the 3x picture cropped inside it. The target is now
+the aspect mode's shape times the interface scale when no size flag named one
+(app/display_window.c), AUTO is the largest integer of 1..4 whose shape fits
+the display's usable area (capped at the model's 4x, floored at 1x, and the run
+prints which size it opened and why), --window/--scale/--aspect still win, and
+an INTERFACE or ASPECT row resizes the target in place through the shell's own
+path -- a refusal keeps the old value and the file records what stands.
+
+The display's front half moved out of app/run_play.c into app/play_display.c
+to stay inside the zone's size bound; the plan adoption, the four rows, the
+pointer row and the file save are one concern there.
+
+Tests: port/tests/test_display_window.c (the rule as arithmetic, the four
+cases, AUTO's bounds, the plan's scale agreeing with the window's),
+port/tests/test_window.c (the display's usable area and the window's resize),
+tests/test_display_window.sh (the four cases in the window under the dummy
+driver, the live resize with no lost frame, and a refused resize). Checks that
+asserted the old default window or the old live target are edited, and the
+mission mouse/edge-band checks now ask for --scale 2 because their script
+points are arithmetic on a 2x picture. Docs: docs/display.md, docs/native-port.md,
+docs/widescreen.md, docs/port-architecture.md, port/README.md, D69 and the
+regenerated site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
