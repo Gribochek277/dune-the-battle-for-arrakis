@@ -1,7 +1,7 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-23T05:43:55Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-23T10:26:03Z
 
 ---
 
@@ -66,6 +66,7 @@ HOME=$PWD/work/emu/home tools/blastem/blastem -b 900 -l build/dune.bin
 * [`docs/rom-analysis.md`](docs/rom-analysis.md) — what the dump is, header, vectors, checksum
 * [`docs/disassembly.md`](docs/disassembly.md) — the split, the 14 decoder fixes, why each was needed
 * [`docs/build-and-test.md`](docs/build-and-test.md) — commands and what each check proves
+* [`docs/debugging.md`](docs/debugging.md) — `--debug`, the run's session directory, and the machine snapshot (`--debug-load`) that restores a run exactly
 * [`docs/toolchain.md`](docs/toolchain.md) — install commands, revisions, REA integration and its limits
 * [`docs/decisions.md`](docs/decisions.md) — autonomous decisions and reasoning
 * [`docs/reverse-engineering-notes.md`](docs/reverse-engineering-notes.md) — findings, the applied modification, and the plans
