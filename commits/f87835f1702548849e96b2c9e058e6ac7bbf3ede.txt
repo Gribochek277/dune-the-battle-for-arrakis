@@ -1,0 +1,86 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f87835f1702548849e96b2c9e058e6ac7bbf3ede
+date: 2026-10-23T18:09:01+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 155: the debug session is a directory that says what made it, and F12 writes a state
+Ticket 154's snapshot made a run restorable; this is the directory the player
+asked for: one flag turns a session into the thing a bug report is made of, and
+the command that replays it. A report is four steps -- run with `--debug`, do
+the thing, quit, send the directory -- and `--debug-load <state>` starts the run
+again from the frame the report names.
+
+What the directory gained on top of 154's files:
+
+* `run.log`'s line carries the mission's own two scroll words (`$FFFFE3EC`/
+  `$FFFFE3EE`, the view's left and top) while the mission is the screen, and the
+  display plan's resolved scales beside the settings' raw values. Both are
+  appended to the one line shape -- `mission no scroll none` and `plan none` off
+  the mission and off a front end with no target -- because a line whose shape
+  depended on the screen would be a line two runs could not compare, which is
+  what the round trip compares. The mission question is ticket 134's measurement
+  (`next_mission_wide_live()`: the VDP and work RAM), so `legacy` and `next`
+  print the same words for the same screen.
+* `manifest.txt` says what made the directory: the build's identity (the commit
+  plus `-dirty`, and `release` or `debug`) and the command line that started the
+  run, quoted so a shell takes it back apart. The identity is a generated header
+  (`build/build_identity.h`) rather than a `-D`, so a new commit rebuilds the one
+  object that prints it instead of leaving a stale commit in a report. `make -C
+  port clean play DEBUG=1` is the debug build (`-O0 -g3`): the guest's counts are
+  the same either way, the frame rates are not, and the manifest says which
+  reading of them a reader has.
+* F12 writes a state on demand, with the frame's picture. It is the window's own
+  key, like F11 (`MDP_WINDOW_SNAPSHOT`), and the request travels beside the close
+  box (`mda_input_report.snapshot`, `mda_app_config.on_snapshot`) to the front
+  end at the entry just recorded, so the file's frame is the frame the player
+  saw. It is deliberately not a function in the input map: it writes a file and
+  presses no button, and the mapping screen's vocabulary is the player's
+  controls. A frame the cadence already recorded is not written twice, and
+  without `--debug` the run says no session is recording.
+* the log's end says what the directory holds and how big it is, in the same
+  words the run prints, so the file that carries the frames answers "what did I
+  just record".
+
+The measurement the ticket asks for is a check: the same sixty-frame route with
+`--debug --debug-every 1 --debug-frames all` (a state and a picture on every
+frame, the heaviest cadence) and without a session prints the same guest frame,
+instruction and cycle counts -- `60 guest frame(s), 801546 instructions,
+8832423 cycles` both ways on this tree -- and leaves the same work RAM at frame
+60 and the same VDP dump. The session draws its pictures through a renderer of
+its own into a surface of its own, so it cannot be seen by the window and cannot
+disturb a present, and its I/O is host time: the loop never skips a guest frame.
+
+The checks, and what each half holds:
+
+* `tests/test_debug_session.sh` (new, fast tier, 24 s): the directory's files,
+  the log's shape and its end, the manifest's fields; a resumed run's
+  `frame-11.png` … `frame-30.png` compared byte for byte with the session's (the
+  ticket's acceptance, as pictures and not only as hashes); the same route with
+  and without the session, compared on the pacing line, work RAM and the VDP;
+  the documented ffmpeg one-liner over the picture sequence (skipped without
+  ffmpeg); and a real F12 on a private X display (Xvfb and xdotool) that writes
+  a state the manifest marks and a fresh run loads.
+* `port/tests/test_debug_session.c` (new, `make -C port test`): the same without
+  a window -- the digest's shape with a planted mission and with no target, the
+  cadence, the on-demand file, the manifest and the log's summary.
+
+The documented ffmpeg line uses `-framerate 60 -start_number N -i frame-%d.png`
+and not a glob: a glob sorts `frame-10.png` before `frame-2.png`, and the
+pictures are numbered by the guest's frame, so `-start_number` is the first one
+the session wrote. The test runs the line unchanged.
+
+The decision is D73; `docs/debugging.md` is rewritten around it (the log's fields
+and what the memory hashes mean, the cadences, F12, the video line, the worked
+example); `docs/keyboard.md` gains F12, `docs/build-and-test.md` the new check,
+`port/README.md` the module's new facts, and the docs site is rebuilt.
+
+scripts/build.sh -> OK, make -C port test -> 57212 checks 0 failures,
+bash tests/run_all.sh -> ALL CHECKS PASSED.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
