@@ -1,0 +1,64 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9b71664886b7a556350cd59b23b8faf9e357770a
+date: 2026-10-23T14:20:36+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 152: the wide camera's bound is the camera's, and the scroll is measured
+The mission map's scroll showed blocks of terrain that belong nowhere along the
+edge it pushed into view. The cause is one word written in the wrong direction:
+ticket 132's wide view moves the guest's bounds by the extra columns, and it
+wrote `24 - extra` into the view record's own x word (`$FFFFBF12 + $8`,
+`$FFFFBF1A`). That word is the *cursor's* 24-pixel margin in
+`UpdatePlacementCursor` (`$003BD6`, where the record's x is the cursor's screen
+position), but it is the *camera's* bound in `UpdateMissionCursor` `$0030FA`:
+`$0033BC`/`$0033C2` clamp the record's x with `+$8`, and `$0033F4` adds the map
+origin `$FFFFE3EC` to it and turns it into the cursor's cell `$FFFFC240`. With
+`24 - extra` there, the mission handler's camera ran `extra` (107 at 16:9)
+pixels past the map's left edge, where the plane's cells are its 8 KiB ring's
+far side -- the map's right-hand terrain, drawn at the picture's left.
+
+The fix is to put that word back on the camera's side of the line: it, and the
+map view's own limit `$FFFFE3D2` (`$003BC8`), become their guest bases plus the
+extra, so the camera stops with the picture's left column on the map's left
+column. `24 - extra` stays where it belongs, the placement handler's *cursor*
+clamp, which its C reads from next_mission_wide_cursor_left() and which is
+unchanged. At 0 extra all three are the guest's own values, so the 4:3 run is
+byte-identical (measured: the legacy and next 4:3 runs' VDP dumps identical).
+
+What proves it, and what the plane holds outside the drawn window:
+
+* tests/test_mission_map_scroll.sh (new, slow tier) -- the four directions
+  (right, left, up, down) held from entry 7 700 to 7 960, compared with
+  `legacy` (the guest's own code) frame by frame: the picture, the 64 KiB of
+  work RAM, the raw VDP state and the whole 7 960-entry `--vdp-log` identical,
+  with 248/114/44/44 entries moving the hscroll; both edges at 7 990 (the
+  camera at the map's limits 512 and 1215, the view record at 24 and 296, the
+  picture the guest's); and the wide picture's band measured against the
+  guest's *frame* for the same world columns (entry 7 790 wide against entry
+  7 745, the same world 107 px left: 0 of 102 720 pixels differ; the control's
+  emptied plane column differs in 4 544, so the comparison can see a stale
+  band).
+* tests/test_mission_wide.sh -- a new last case: a held left scroll in the
+  16:9 window stops the view record at 131 (24 + 107) with the camera at 647,
+  inside the map's 619. The rest of the ticket's cases still pass (the 4:3,
+  16:9 and 21:9 pictures, the guest's clock and RAM, the band's appended unit).
+* port/tests/test_mission_wide.c -- the fixture pins the two camera words at
+  base + 107 and the cursor's accessor at 24 - 107, so the two can no longer be
+  confused silently.
+
+docs/reverse-engineering-notes.md, "The map plane outside the drawn window, and
+the camera that walks it (ticket 152)" records what the plane holds there (the
+columns the camera has passed, the guest's own, 0 of 102 720 pixels different),
+the two handlers' use of the record's x, the correction and the measurements;
+docs/next-engine.md, docs/native-port.md and D61's correction note say which
+bound is whose. The docs site is rebuilt.
+
+tools/sega2asm, the disassembly, src/ and the cartridge are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
