@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 06eeb5a244cc1ec2c401adc9d6945f42fdc77bcd
+date: 2026-10-24T21:36:43+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 166: 166-166-the-band-is-the-windows-border
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
