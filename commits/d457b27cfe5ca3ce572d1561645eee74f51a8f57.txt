@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d457b27cfe5ca3ce572d1561645eee74f51a8f57
+date: 2026-10-24T18:37:09+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 164: 164-164-the-buttons-are-not-swapped
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
