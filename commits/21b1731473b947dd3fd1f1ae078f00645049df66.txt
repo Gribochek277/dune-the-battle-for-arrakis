@@ -1,0 +1,51 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 21b1731473b947dd3fd1f1ae078f00645049df66
+date: 2026-10-24T13:39:25+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+163: the widescreen band is the map's own cells
+The wide picture's band (the `extra` guest columns left of the guest's
+320-column window, tickets 132/159) is the VDP plane's cells at negative source
+x, and the guest's own redraw never writes them: it only places the cells its
+320-pixel picture shows. Before this the band held whatever the plane had when
+the view last passed. The measurement on the Atreides recording at 16:9 (Right
+held from entry 7 700): at entry 7 705 the band's visible plane columns 3..16
+held 756 zero words of 812 -- the first at column 3 (guest x -111), row 0,
+plane B: $0000 where the map's tile is $0213; a misplaced tile appeared by
+entry 7 870 (column 52, 66 words), and by 7 900's scroll the band's cells at
+the plane's right end were wrong too (columns 60..63, 96 words).
+
+The fill is the port's C, in the two places the ticket names:
+next_mission_wide_band_columns() and next_mission_wide_band_word()
+(next/mission_wide.c) name the band's plane columns and the map's tile for
+each, with the guest's own DrawMapCellTile ($002FEC) arithmetic and MapCells'
+tile word through the cartridge's table at data_059FBE;
+next_mission_map_view_band_fill() (next/mission_map_view_plane.c) writes both
+planes' words once a guest frame at the frame boundary (app/run_play.c calls it
+after the entry's state is taken and before the VBlank handler writes the
+hscroll table from the same work-RAM words). V-RAM is written directly: the
+guest's VDP counters, its clock and its RAM stay the guest's, and at 0 extra
+the fill writes nothing (the 4:3 path is the cartridge's). No replacement row
+is added and the guest's 320-wide routines are unchanged.
+
+tests/test_mission_band.sh (slow tier): states saved at entries 7 700 and 7 800
+of the held-right run, stepped by the window under Right, Down and both,
+eighteen samples at 16:9 and 21:9 plus every frame of a 24-entry moving
+stretch. Each frame's dump is compared with the same state fully repainted by
+the port's own fill (mission-wide-test --fill-band), and every visible band
+cell with the map's own tile (scripts/compare_band.py, no port code), with a
+control that empties a cell and requires the comparison to report it. The 16:9
+guest part is the same frame's 4:3 picture and the 21:9 one its 3x crop;
+--fill-band 0 is a no-op. port/tests/test_mission_wide.c pins the columns and
+the words (16:9's 107 and 21:9's 53, the vertical scroll, the map's edge).
+
+Docs: docs/widescreen.md, docs/next-engine.md, D78 in docs/decisions.md,
+docs/build-and-test.md and the regenerated site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
