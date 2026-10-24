@@ -1,0 +1,79 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6a71db3487044c43b3ef59f6f84421b0e29b750e
+date: 2026-10-24T17:38:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+164: SDL's mouse masks are one table, not the port's enum index
+The playtest report was that on the mission the right button panned the camera
+and the middle button issued the order. The map was right
+(MDP_MOUSE_RIGHT -> POINTER_ORDER, MDP_MOUSE_MIDDLE -> POINTER_DRAG), the app's
+plumbing was right and so was next/mission_mouse.c; the platform layer built the
+held-buttons bitmap as
+
+    for (i = 0; i < MDP_MOUSE_COUNT; i++)
+            if (buttons & SDL_BUTTON(i + 1))
+                    now |= MDP_MOUSE_BIT(i);
+
+which indexes SDL by *this* backend's enum. SDL's order is left, middle, right,
+X1, X2 and this backend's is the binding file's left, right, middle, X1, X2, so
+index 1 (RIGHT) read SDL's middle button and index 2 (MIDDLE) read SDL's right
+one: the reported swap exactly, and only the two middle buttons were wrong
+because the port's left and its X1/X2 happen to coincide with SDL's.
+
+The fix:
+  * platform/mouse.c: one written-out table, mdp_mouse_sdl_buttons[] --
+    { SDL_BUTTON_LMASK, LEFT }, { SDL_BUTTON_MMASK, MIDDLE },
+    { SDL_BUTTON_RMASK, RIGHT }, the two thumb masks -- with the comment that
+    names SDL's order against the enum, and mdp_mouse_held_from_sdl() as its
+    only reader. The poll calls it; nothing indexes SDL by the enum again.
+  * The enum is untouched (a binding file's `right` keeps meaning the right
+    button), X1/X2 are where they were, and the map, the profile and the
+    mapping screen's names are unchanged.
+  * A compile-time assertion ties the fixture's numeric masks to SDL's own
+    macros, because a port test may not name SDL (tests/test_port_zones.py: the
+    host is platform/'s).
+
+What proves it:
+  * port/tests/test_mouse.c (make -C port mouse-test, also run by `make -C port
+    test` where SDL2 is installed): every SDL mask through the mapping, each
+    required to be the one MDP_MOUSE_* bit the fixture's own list names, the
+    table a bijection, the binding file's names still those buttons, the app's
+    mouse map still naming pointer_click/pointer_order/pointer_drag -- and the
+    pre-164 index mapping kept as a local control that must be wrong on exactly
+    the two swapped buttons, so the fixture fails if the bug comes back.
+  * tests/test_mouse_buttons.py (slow tier, ~67 s): the Atreides mission saved
+    at entry 7 700, the window on a private Xvfb display, and real button events
+    from xdotool -- a right press must make the port's report say
+    `gesture=order`, a middle hold `gesture=drag`, a left press `gesture=click`
+    -- then a control build with the table's middle and right rows in the old
+    order must report the swapped pair (right -> drag, middle -> order). Each
+    press is held a third of a second: the port polls the buttons once a guest
+    frame, so a one-shot click is a press nobody saw.
+
+The report line is new and is part of the fix: next/mission_mouse.{c,h} answer
+what the last poll meant (next_mission_mouse_resolved() and the gesture's
+names), and app/run_play.c prints `dune-port: pointer: gesture=...` when it
+changes. "What did this button do" is now a line the port says rather than
+something a check infers from the guest's work RAM.
+
+Docs: docs/mouse.md's button table gains SDL's number and mask per physical
+button and the mission/menus columns the ticket asked for, its checks table
+gains the new check, and D81 records the bug, the cause and what proves it.
+port/README.md and tests/run_all.sh (slow tier) are updated; docs/html rebuilt.
+legacy is untouched.
+
+Gates: scripts/build.sh "==> OK", make -C port test 0 failures (97 fixture
+checks), tests/run_all.sh fast tier ALL CHECKS PASSED, the new check 0, and the
+mission checks that read the two buttons' effects (mission_mouse, mission_click,
+selection_box, mission_panels, group_orders, mission_edge_band) plus
+tests/test_mouse.sh all green.
+
+Rebased onto main, which had moved only with the ticket status updates, so the decision is D81 and no number had to change. All the gates above were re-run on the rebased branch.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
