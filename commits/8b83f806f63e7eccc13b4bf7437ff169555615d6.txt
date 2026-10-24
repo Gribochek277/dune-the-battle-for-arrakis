@@ -1,0 +1,79 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8b83f806f63e7eccc13b4bf7437ff169555615d6
+date: 2026-10-25T02:53:31+03:00
+author: pi <pi@local>
+branches: main
+
+message:
+169: the mouse's left button is the pad's A and the right one its B
+The player's word after playing with ticket 162's pair: left is the pad's A
+and right is its B. A left release in place is the A -- the select at the
+pointer's own target with nothing selected, the guest's own command (mark the
+primary and re-post it) with a set standing; a left press that drags is still
+the selection box and its release is never a button. A right press is the B,
+the mission's own cancel, wherever the hand is. Ticket 162's contextual rule
+is deleted, not left behind a flag: `release_a()` in next/mission_mouse.c is
+one function and it always answers the same button.
+
+Where it lives:
+  * app/input_map.c: the left button carries POINTER_CLICK (the gesture) and
+    POINTER_ORDER (the A its release delivers); the right button carries
+    POINTER_BACK, the same function the menus read as their way back; the
+    middle stays POINTER_DRAG. The function names are unchanged -- the map
+    decides the button.
+  * next/mission_mouse.c: step 3 is the right button's B (read when no select
+    gesture is in progress, so a cancel cannot be undone by the box's own
+    release); step 4 is the order as a press of its own, only for a map that
+    binds POINTER_ORDER to a control which is not the select's (the shipped
+    map binds both to the left, where the release is the A, so a press can
+    never command before it knows it is not a drag); step 6's release is the
+    A. The panels' leave is the back edge (or a clear), never the order: the
+    left button must keep choosing.
+  * app/run_play.c: the screens' back edge is the back function, not
+    `back || order`, because the left button carries the order too and a left
+    click must keep activating a row. The startup line names the new pair.
+  * The B is injected at the same two instructions the A is
+    (`$003118`/`$003AD0`), so `$00364A` posts `$42`; it never becomes a pad
+    byte.
+
+Tests edited with the reason, not deleted:
+  * port/tests/test_mission_mouse.c: "the two buttons are the pad's A and B"
+    walks the five contexts (nothing selected, one unit, a box, a panel open,
+    a menu) with both buttons and reads the guest's posted command byte. The
+    order fixture's pointer side is the left release now; "an order and a
+    select press in one frame" asserts the shipped pair is **one** press (no
+    command at the press, the A at the release) instead of ticket 162's two;
+    the target fixture's corner-with-a-set case is the command, and its
+    open-ground case clears the set first so it is still the select.
+  * port/tests/test_input_map.c: four rows, and a left press is one click edge
+    and one order edge; the right press is the back edge.
+  * port/tests/test_mission_panel.c: the leave comes from the back edge.
+  * port/tests/test_mouse.c: the map's names are pointer_click/pointer_order,
+    pointer_back and pointer_drag.
+  * tests/test_mission_mouse.sh: the order is a second left click; a right
+    click with a set standing cancels (gesture=cancel) and with nothing
+    selected selects nothing.
+  * tests/test_mission_click.sh and tests/test_selection_box.sh: the cancel is
+    the right button's press now, and the left click with a set standing is
+    the pad's A (for one unit the guest's command path ends the selection).
+  * tests/test_mouse_buttons.py: a real right press must log gesture=cancel,
+    the middle a drag, the left a click; the pre-164 control logs the swapped
+    pair.
+
+Docs: docs/mouse.md's five-function and button tables, its gesture step list,
+the cursor and selection sections and the panels; D85 (which records the
+player's word and D80's supersession); CONTEXT.md, docs/gamepad.md,
+docs/next-engine.md, docs/port-architecture.md and docs/native-port.md; the
+site rebuilt with scripts/build_docs.py. legacy is untouched.
+
+Gates: scripts/build.sh OK, make -C port test 0 failures, bash
+tests/run_all.sh ALL CHECKS PASSED, and the window checks tests/test_mission_mouse.sh,
+tests/test_mouse_buttons.py, tests/test_mission_click.sh,
+tests/test_selection_box.sh, tests/test_mission_panels.sh, tests/test_mouse.sh
+and tests/test_group_orders.sh all OK.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
