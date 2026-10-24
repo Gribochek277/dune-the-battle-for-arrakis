@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9f1826ab3c74e00a03c60df68c54f2e0f9fc3122
+date: 2026-10-24T12:10:14+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+161: F5 cycles the world's scale and F6 the interface's, live
+The two scale rows were reachable only five key presses away on PORT
+SETTINGS or by editing display.ini. F5/F6 are now controls of the
+keyboard map (MDP_KEY_WORLD_SCALE/MDP_KEY_INTERFACE_SCALE) with two
+functions in the shared vocabulary (world_next/iface_next), resolved as
+press edges into mda_input and handed to the front end through
+on_scale_next.
+
+The front end cycles mda_settings_next_scale() over the scale enum and
+applies the value through play_display_set(), the same seam a settings
+row uses: the setting, the interface row's window resize, the next
+frame's layout plan, the run's report and the whole display.ini save.
+The report now says what the row reads and what the target resolved it
+to -- 'world scale 1x resolved to 5x: this target can show at most 447
+world columns' on a target the 447-column cap raises.
+
+The vocabulary entries are ten cells or less so a binding file can put
+either on a gamepad control and the mapping screen shows the row without
+cutting the name. Tests: the input map's rows and edges, the enum cycle,
+the binding file's words, the mapping screen's rows, and real F5/F6
+presses on a private X display whose run lines, saved file, next run and
+PORT SETTINGS cells are read back. Docs, decisions (D78) and the site are
+updated; legacy and the generated listing are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
