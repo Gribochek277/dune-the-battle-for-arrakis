@@ -1,0 +1,77 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f9437e4c98a8f06334742ee4a2e3c37f92959a5a
+date: 2026-10-24T20:31:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+166: the mouse's edge-scroll band is the window's border, in window points
+The mission's camera scroll tested the gameplay surface's bounds; it now tests
+the physical window's. The pointer arrives in window points -- SDL's unit,
+before the layout transform -- so the band is read there: within
+MDA_POINTER_BAND_POINTS (24) of any window border, bars included. The picture's
+scale and placement can no longer move it, a hand over a bar is part of the band
+and not a hole in it, and the same window point asks for the same direction at
+every world scale. The pad's and the keyboard's band keep the cartridge's own
+numbers, and the middle-button drag asks the band for nothing.
+
+The guest's arithmetic is untouched. On a pointer frame the sixteen instructions
+D58 owns are still the guest's own compare-branch-subtract, charged at its own
+address, with the comparison's operand made from the record and the direction: an
+axis inside the band compares the record with itself (the guest's idle pair
+runs), a low edge with the record plus one (blt is taken) and a high edge with
+the record minus one (bgt is taken). The subtraction hands the guest the old
+one-twentieth-of-the-picture distance (16 pixels across, 11 down), so the step
+is its one-pixel floor and the remainders end at zero.
+
+Where it lives:
+  * app/pointer.{c,h}: mda_pointer_window_band() is the band (the window's
+    points; outside the window is no direction) and
+    mda_pointer_point_to_picture() is the picture pixel nearest a point over a
+    bar, for the cursor's record.
+  * app/play_backend.c, app/app.{c,h}, app/input_map.h: the poll's pointer is
+    one struct -- valid, moved, inside, band_x/y and the near pixel -- and the
+    loop hands it to the front end whole.
+  * platform/window.{c,h}: mdp_window_pointer_inside() tracks ENTER/LEAVE and
+    FOCUS_GAINED/LOST, because SDL's position is a level it keeps reporting after
+    the hand has gone; a driver with no such events (the dummy one) is a window
+    the pointer is on, so the scripted checks are unchanged.
+  * next/mission_pointer.{c,h}: the frame's window facts ride with its position
+    (set_band(), near_x/y, band_x/y); a move anywhere in the window is a pointer
+    edge, while a click on a bar is still no gesture.
+  * next/mission_mouse.c: pointer_record() is the record (the hand's pixel, or
+    the picture's nearest one over a bar); a frame the middle button holds asks
+    the band for nothing, so the drag's whole-cell commit is not double-stepped.
+  * next/mission_edge_band.{c,h}: the window's direction per axis and the
+    record-made operands, with next_mission_edge_band_step_x()/y() naming the
+    distance. D82 records the decision.
+
+What proves it:
+  * port/tests/test_pointer.c: the band at the corners, edges, interior and
+    inner boundary of two window sizes, the constant not being a fraction, the
+    outside-window answer, and the nearest picture pixel over a bar.
+  * port/tests/test_replacement.c: the pad's band still matches the guest's own
+    code (registers, flags, bytes, cycles); a hand in the window's interior is
+    the guest's run byte for byte; the window's band walks the camera one pixel a
+    frame; a hand over a bar walks it the other way with the record held at the
+    picture's edge; and the drag fixture now carries a non-zero band, so it would
+    part from the pad's C run if the drag asked the band.
+  * tests/test_mission_edge_band.sh: the same on the Atreides recording through
+    the playable window, with a bar run (854x480, fit-height: 647 -> 537 over 110
+    frames with the record at the picture's edge) and its control.
+  * tests/test_mission_band_window.sh (new): a real pointer on a private X
+    display (Xvfb and xdotool) at two target sizes and world scales 1x..4x, the
+    direction per frame from the port's new --report-band line; the same window
+    point asks the same direction at every scale, the bar at 1280x720/4x is the
+    band and the picture's first columns are not, and a pointer outside the
+    window asks for nothing.
+
+Docs: docs/mouse.md's edge section, docs/next-engine.md's measurements,
+docs/port-architecture.md, port/README*.md and the decision record; the site is
+rebuilt. legacy is untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
