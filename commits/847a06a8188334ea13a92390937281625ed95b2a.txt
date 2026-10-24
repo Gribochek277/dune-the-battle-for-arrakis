@@ -1,0 +1,79 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 847a06a8188334ea13a92390937281625ed95b2a
+date: 2026-10-24T14:40:37+03:00
+author: pi <pi@local>
+branches: main
+
+message:
+162: the mission's two mouse buttons are the pad's A and B, contextually
+The right button is the pad's A in every place the mission reads a button
+(unchanged from ticket 153), and the left button's release in place is the pad's
+B -- the mission's own cancel -- while a unit selection stands, and the pad's A
+(the select, at the pointer's own target) with nothing selected. A press that
+moves past the four-pixel threshold is the selection box and its release is
+never a button. Box selection and unit selection are unchanged.
+
+Where it lives:
+  * next/mission_mouse.c: one function, release_select(), is the whole context
+    rule (press held back, threshold, release); the frame's step 5 calls it.
+  * next/mission_pointer.{c,h}: the frame's face button is a mask
+    (NEXT_MISSION_POINTER_CLICK / _CANCEL) so the one-frame seam did not grow a
+    parameter; take_cancel() sits beside take_click().
+  * The B is injected at the same instruction the A is -- the two cursor
+    handlers' pad reads ($003118/$003AD0) through the same mask seam -- so the
+    guest's own $00364A posts $42 and its own command pass cancels. It never
+    becomes a pad byte; a recording has no line for it.
+  * next/mission_selection.{c,h}: next_mission_selection_standing() (the port's
+    set or the guest's SelectedRecord -- a structure alone is not a unit
+    selection and does not make a release a cancel) and
+    next_mission_selection_cancel() (empties the port's set and `$FFFFC25C`; a
+    guest-only unit selection is left to the guest's own B).
+  * The map keeps three rows and both function names: POINTER_CLICK is still
+    the left button's function and POINTER_ORDER the right's, and the profile
+    decides what the click means there. A second function number would put a
+    word on the mapping screen's row that is false on every other screen.
+    D80 records that and the rest of the decision.
+
+Tests edited rather than deleted, and why:
+  * port/tests/test_mission_mouse.c: ticket 153's "the order and a press in one
+    frame" asserted that the press's release is a click. The ordered set is
+    still standing (ticket 129 keeps it), so under the new rule the release is
+    the B; the assertion is split into the B and a control (the same poll with
+    nothing selected still releases the A). Ticket 156's click fixture keeps
+    every assertion: its corner click now cancels the set the earlier click
+    made, which is what its count/$FFFFC25C/generation checks require.
+  * tests/test_selection_box.sh: ticket 148's "a click with a box standing
+    collapses it" is the behaviour 162 replaces, so its three runs assert the
+    cancel (a new scripts/selection_check.py --cancel), and the click-vs-pad'sA
+    pair moved to the click with nothing selected (0 stack bytes differ). The
+    cancel's two-device comparison is the command the guest's $00364A posts
+    (the new fixture), because the port clears $FFFFC25C one frame before the B
+    is read, the same order a click's undo uses.
+  * tests/test_mission_click.sh: comments only (its clear run is the cancel;
+    every assertion passed unedited).
+
+New: port/tests/test_mission_mouse.c's "both buttons are contextual" walks the
+five contexts (nothing selected, one unit, a box, a panel open, a menu) with
+both buttons and checks the guest's posted command byte.
+
+The snapshot carries the one-frame edge: the state file is version 2 with the
+cancel byte beside the click (port/tests/test_state.c plants both).
+
+Docs: docs/mouse.md's button table and its mission/cancel sections, D80, the
+pointer vocabulary's words, docs/gamepad.md, docs/port-architecture.md,
+docs/next-engine.md (ticket 148's section), docs/native-port.md and CONTEXT.md;
+docs/html rebuilt. legacy is untouched.
+
+Rebased onto main (ticket 163 took D79 for the widescreen band, so this
+decision is D80). Gates: scripts/build.sh OK, make -C port test 0 failures,
+tests/run_all.sh
+ALL CHECKS PASSED, plus the window checks test_mission_mouse.sh,
+test_mission_click.sh, test_selection_box.sh, test_mission_panels.sh,
+test_group_orders.sh, test_mouse.sh and the slow-tier checks for the edge band
+and a recorded session.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
