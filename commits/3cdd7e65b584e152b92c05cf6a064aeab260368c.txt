@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3cdd7e65b584e152b92c05cf6a064aeab260368c
+date: 2026-10-24T18:37:03+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decisions: the scale keys follow the visible picture, and the band is the window's
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
