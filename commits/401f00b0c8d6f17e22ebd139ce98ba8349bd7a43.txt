@@ -1,0 +1,78 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 401f00b0c8d6f17e22ebd139ce98ba8349bd7a43
+date: 2026-10-24T21:04:36+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+165: the scale keys walk the pictures the target can show
+The fifth playtest report: on the mission F5 and F6 changed nothing visible.
+Measured on a 1708x960 window (the window a 1920x1200 display opens at,
+INTERFACE AUTO = 4x), F5 printed "world scale 1x resolved to 4x" and then "2x
+resolved to 4x", and F6 printed nothing at all. The keys reached the app and the
+front end -- the value in the display line changed -- so the report is not an
+input bug: ticket 159's resolution maps a whole range of a row's values onto one
+scale (ceil(1708 / 447) = 4), and ticket 160 made the mission's picture one scale
+(the world's), so the INTERFACE row F6 edited is not the row the map draws with.
+The key was honest and the picture was unchanged.
+
+The cycle is now over *pictures*, not over values. app/scale_cycle.c asks the
+model what each value of a row draws for the target (mda_display_plan_for()
+reduced by the new mda_display_plan_picture() to the mode and the scale the
+pixels are drawn at) and takes the next value whose picture differs from the
+row's now. 1x, 2x and 3x are the 4x picture on 1708x960 and are skipped; 7x..12x
+are the 4:3 picture 6x already draws and are skipped after it; the walk closes on
+AUTO, which is always a picture of its own. mda_display_plan_equal() was not the
+test: it also compares the world's wish, which a fit-height plan records and
+never draws with, so 6x and 7x are two plans and one picture.
+
+The vocabulary grew from AUTO,1X..4X to AUTO,1X..12X (MDA_DISPLAY_SCALE_MAX,
+app/settings.h; the words in port/locale.ini, next/words.h and
+next/settings_screen.c). A row that stopped at 4x -- the largest scale AUTO opens
+a *window* at -- could not hold the scale the mission's picture is drawn at: a 4K
+fullscreen target resolves the world to 9x for every value the old row could
+name, and its fit-height end is 12x (ceil(3840 / 320)). The window's own cap is
+still 4x and became its own constant (MDA_DISPLAY_WINDOW_SCALE_MAX,
+app/display_window.h): AUTO still chooses at most a 1280x960 window, and a saved
+or keyed 5x..12x is the player's own choice.
+
+On the mission both keys move the world's row (mda_scale_cycle_row()): the map's
+picture has one scale (ticket 160), so F6 moves the value that changes the
+picture and the log says so before the value's own line. Every other screen keeps
+the two rows apart. A row that draws no picture there (the world outside the
+mission) walks its nominal list as before, and a target whose whole row draws one
+picture -- a 4:3 target has no world column to add -- leaves the value alone and
+says "the world row has one picture on this target" instead of looking like a key
+that does not work.
+
+Every press still goes through play_display_set(): the settings, the interface
+row's window resize, the report and the whole display.ini save are one path, and
+the settings screen draws the value a key set (its WORLD cell reads 5X after five
+F5 presses in the check).
+
+Tests. port/tests/test_scale_cycle.c is the walk as arithmetic: the distinct
+pictures each row has on the ticket's targets (three on 1708x960, two on
+1920x1200, one on a 4:3 target, four on a 4K one), that no step lands on the
+picture before it, that the walk closes, that a row left below the resolution goes
+straight to the first value that changes the picture, and which row each key
+answers on and off the map. tests/test_display_settings.sh sends real F5/F6 on a
+private X display over a saved mission state (frame 7800 of the Atreides
+recording, headless-fast --state-save): at 1708x960 two presses rebuild the
+target twice (the wide world at 5x, then the 4:3 picture), at 1920x1200 they
+rebuild it twice (the 4:3 picture, then the wide world at 5x), F6 on the map moves
+the world's row and leaves the interface's alone, and the 4:3 control prints the
+one-picture line with the layout it already had; each run's file keeps the value
+its last press set. The five-state assertions in port/tests/test_display_file.c
+and port/tests/test_settings_screen.c are edited with this reason and not deleted
+(D31/D36).
+
+Docs: docs/display.md (the two scale rows, the picture cycle, the 12x vocabulary),
+docs/keyboard.md, docs/gamepad.md, port/README.md, docs/build-and-test.md, D83 in
+docs/decisions.md and the regenerated site. legacy, the layout's arithmetic, the
+447-column cap and the resolution rule are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
