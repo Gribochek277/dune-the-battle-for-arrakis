@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9d241d5d8b2852ef7822b1262daab51c46c9816c
+date: 2026-10-25T01:23:12+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+decisions: a short key tap is a press, and the mouse's buttons are left=A, right=B
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
