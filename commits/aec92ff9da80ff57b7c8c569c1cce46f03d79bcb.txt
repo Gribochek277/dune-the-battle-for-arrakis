@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: aec92ff9da80ff57b7c8c569c1cce46f03d79bcb
+date: 2026-10-24T15:02:43+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 162: 162-162-contextual-mouse-buttons
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
