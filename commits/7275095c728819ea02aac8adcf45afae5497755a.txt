@@ -1,0 +1,84 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7275095c728819ea02aac8adcf45afae5497755a
+date: 2026-10-25T00:58:42+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+167: a key's press edge is latched, so a tap shorter than a poll is a press
+The playtest report was "in the mission it is impossible to switch scaling with
+F5/F6". Measured with real keys at the mission's wide layout: four `xdotool key
+F5` presses three seconds apart, of which two changed the picture (auto -> 5x,
+5x -> 6x). Ticket 165's cycle was right -- every press that arrived did change
+the picture -- so the presses were being lost before the app, and the log said
+nothing about them either.
+
+The cause was in port/platform/keyboard.c and nowhere else:
+mdp_keyboard_poll() sampled SDL_GetKeyboardState() once per poll and derived the
+edge as `now & ~mdp_keyboard_down`. SDL's array is updated by the event pump, so
+a tap whose key-down and key-up both arrive between two polls -- exactly what
+`xdotool key` produces -- is already released when the sample is taken: no held
+bit, no edge, nothing. The window's own F11 and F12 never lost a press because
+they are read from the SDL event stream, not from the sampled state.
+
+The fix is the latch the gamepad already had, applied where the keyboard's
+events already are:
+
+  * mdp_window_poll() reports every non-repeating SDL_KEYDOWN to
+    mdp_keyboard_press(scancode); a scancode the backend's table does not hold
+    presses nothing, so F11, F12 and every unbound key stay inert and the table
+    remains the only place a scancode becomes a control.
+  * mdp_keyboard_edges(sampled, &down) is the poll's whole arithmetic -- the
+    sample's new bits united with the latched presses, the latch cleared as it is
+    handed out -- and mdp_keyboard_poll() is that plus the sample.
+  * `held` is still the sampled state and nothing else: a tap is pressed and
+    never held, a key held across frames has one edge at its start, and a repeat
+    (event.key.repeat, the X server's auto-repeat) is not a press.
+
+One edge per control per poll, because a poll is a frame and the pad a frame
+carries one press; two different keys in one frame are two edges.
+
+What proves it:
+
+  * port/tests/test_keyboard.c (port/build/keyboard-test, also in `make -C port
+    test` where SDL2 is installed): every row of the backend's own table tapped
+    between two polls is one press of that row's control and no level; a held key
+    has one edge at its start and no second; a released key leaves neither edge
+    nor level; two keys in one poll are two edges while two presses of one
+    control are one; Start's Return and Space are one edge; an unbound scancode
+    presses nothing; a key is one row and every control has a key. The pre-167
+    sample-only arithmetic is kept as the control and loses all 22 taps. 617
+    checks, no display and no SDL state.
+  * tests/test_keyboard_taps.py (slow tier, ~90 s): the Atreides mission saved at
+    entry 7 800, the window on a private X display at 1708x960 (the ticket's
+    target, where the world row's pictures are AUTO's wide 4x, 5x's 21 extra
+    columns and 6x's 4:3 view) and four real `xdotool key F5` taps that rebuild
+    the target four times, each picture different from the one before; then F5
+    held for a second, which rebuilds it once; then the same four taps on a
+    control build with the latch left out of the poll's edge, which loses two or
+    three of them -- the playtest's measurement reproduced from real keys, and
+    the proof that the check can fail.
+
+The window now includes keyboard.h (platform to platform, never the reverse), so
+window-test links platform/keyboard.o; the gamepad's header and source no longer
+say the keyboard is level-only.
+
+Docs: docs/keyboard.md gains "A tap shorter than a poll is a press" and both new
+checks, docs/gamepad.md, port/README.md, docs/port-architecture.md,
+docs/native-port.md and docs/build-and-test.md are corrected where they said the
+keyboard could not see a press shorter than a frame, docs/decisions.md records
+D84, and docs/html is rebuilt (docs/port-zones.json gains the fixture). legacy
+and the reference path's window are untouched.
+
+Gates: scripts/build.sh "==> OK", make -C port test 0 failures (keyboard-test
+617 checks), bash tests/run_all.sh ALL CHECKS PASSED (28/28, fast tier), and the
+slow checks the change can reach: test_input_map.py (held state end to end),
+test_display_settings.sh (F5/F6 on the mission), test_gamepad.py (the union with
+a real key), test_mouse_buttons.py, the new check three runs (control lost 2-3 of
+4 each time), window-test and test_wide_backdrop_window.sh.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
