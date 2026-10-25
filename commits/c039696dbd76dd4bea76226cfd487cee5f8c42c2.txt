@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c039696dbd76dd4bea76226cfd487cee5f8c42c2
+date: 2026-10-25T20:53:19+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+171: the pointer's scroll is a screen speed, not the guest's one-pixel loop
+The playtest's slow-and-jerky camera came from the pointer's frame driving the
+cartridge's edge-scroll loops: their `distance / 16` moved the view one guest
+pixel a frame (60 a second at 320 wide) and their remainder
+`$FFFFBF3C`/`$FFFFBF3E` alternated the visible step between one pixel and none.
+
+The band's subtraction now hands the guest's loop zero and the port's own pace
+moves the view with ticket 170's `next_mission_map_view_scroll_by()`:
+`next/mission_pointer_scroll.c` owns the constant -- 8 **screen** pixels a guest
+frame, 480 a second at 60 Hz, one and a half 320-wide pictures -- divided by the
+scale the map is drawn at (8 guest pixels at 1x, 4 at 2x, 3 at 3x, 2 at 4x,
+rounded to the nearest and never below 1). The scale is
+`play_display_picture_scale()`: the world region's in the wide mission, the
+picture's in fit-height, `--scale` on the reference path. The x band test makes
+the frame's one call with both axes (a corner is the guest's own two tests, not
+a normalised diagonal); the y test calls only when x asked for nothing. The
+camera moves once a frame, the first frame in the band moves the same as the
+tenth, the frame the hand leaves moves nothing, and the cursor's record stays
+the hand's pixel -- the d-pad's pull against the view is not the mouse's.
+
+`tests/test_mission_pointer_scroll.sh` is the frame-by-frame measurement: the
+camera read once per guest frame from the new `--report-scroll` line, 16:9 at
+854x480 (wide 2x) and 1600x900 (wide 4x) and 4:3 at 640x480 and 1280x960
+(fit-height 2x and 4x) all cross 8 target pixels a frame (4, 2, 4 and 2 guest
+pixels); the entering frame is the full step, the leaving frame nothing, a
+corner both axes at one step, the map's edge clamps at 1 215 and holds, and a
+control build with the pace module removed takes the guest's own one-pixel step
+(2 target pixels at 2x).
+
+The band's unit fixtures are the same claims on a still machine (8 guest pixels
+at the fixture's 1x, the record on the hand's pixel, the step at 1x/2x/3x/4x);
+the pad's byte-exact run is unedited. `test_mission_edge_band.sh` keeps its
+band, switch, bar and control statements with the pointer's numbers moved to the
+pace; its pad frames and control are unchanged. The gates also found
+`test_mission_band_window.sh` stale against ticket 165 (its F5 walk asked for
+1x..4x rows that ticket 165's picture-walking keys no longer reach): it now
+walks the pictures the target can show, with the same statement.
+
+`docs/mouse.md`, `docs/next-engine.md`, `docs/port-architecture.md` and
+`port/README-next.md` state the pace and the choice; D88 records it. The docs
+site is rebuilt. `legacy` is untouched. `scripts/build.sh`, `make -C port test`
+and the default tier of `tests/run_all.sh` are green. `--tier all` reports three
+failed window checks, none of them this change's: the presentation and audio
+checks fail on `main` too (this host's CPU scene render misses the 120 Hz
+presentation slot, and the paced run's present/drop count is off by one), and
+the display-settings check is an X focus race that passes standalone.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
