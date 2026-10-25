@@ -1,0 +1,82 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d83c0877be441306f2f27856e998b2dfbdced776
+date: 2026-10-25T22:03:00+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+176: the ported game is a zone, and the 68000's state is a direction it may not take
+The port's own C had one home for two different things: the arrangement that
+switches engines and the game it runs. `port/game/` is now the ported game's
+zone -- the logic the port runs of the game itself and the material its screens
+are made of -- declared before the first slice lands so a slice has a place to be
+written and a rule it cannot quietly break.
+
+What moved (git mv, contents unchanged apart from the paths in their comments):
+the port's words (ticket 122), the UTF-8 decoder, the cartridge's text catalog
+(ticket 124), the menu cursor the game's OPTIONS screen slides (ticket 137) and
+the pointer's one-frame state the screens read (ticket 123) -- the modules that
+already obey the rule. The screens that are still paired with the guest stay in
+`next/`: one case per guest instruction, their cycle cost is what the differential
+harness compares, and they move as each slice is ported onto the state layer.
+
+The rule, and what makes it enforced rather than hoped for:
+
+* `game -> machine`, `game -> chips` allowed; `game -> next`, `generated`,
+  `app`, `platform` and (for now) `output` are not. `app -> game`, `next -> game`
+  and `tests -> game` are the directions that compose it, one way.
+* The declaration gained a `denied` list: a zone and one file of `port/` it must
+  not include, with the reason. `game` denies `machine/md68k.h` (the register
+  file, pc, sr, the instruction helpers) and `machine/md68k_priv.h` (the
+  decoder) -- the CPU's own state, which is exactly what the port's screens use
+  today and what a ported slice must not. The model reports the offending file
+  and the direction (`port/game/x.c -> machine/md68k.h`), a deny rule that names
+  no module fails like a member that does not exist, and two new negative
+  controls prove both on a throwaway tree (nine controls now).
+* The diagram shows the zone as one box with its file count (the member is the
+  pattern `game/*`) and its legend prints the denied directions in the failing
+  colour; the site is regenerated.
+
+Documentation: docs/port-architecture.md
+gains the game zone's row, the rule and "The ported game's zone"; docs/decisions.md
+gains D89; port/README-game.md is the zone's module table, linked from
+port/README.md and port/README-next.md; the module comments that named the moved
+headers say game/ now (the historical entries in docs/decisions.md are left as
+recorded, D28's rule).
+
+Recorded decisions (the ticket left them open):
+
+* The zone starts with the modules that already obey it, not with the paired
+  screens. Moving the screens would need the state layer first (ticket 172), and
+  the ticket's order puts this one before it; a zone with a rule and no failure
+  behind it would be a comment, so the rule's fixture and the zone's residents
+  are what the ticket actually builds.
+* The deny is file-level, not identifier-level: `md68k_cpu`'s fields cannot be
+  hidden behind a header split without changing every bus signature. The known
+  transitive hole (`chips/vdp.h` takes a `md68k_cpu *` for its DMA control port)
+  is written down in the prose and belongs to tickets 192/193.
+* The moved symbols keep their `next_` prefix. Renaming `next_text()` and friends
+  is a rename of every caller in `app/`, `next/` and `tests/`; it travels with
+  the slices that move the screens, not with the directory move.
+* The state layer (172) is the memory view the game is handed, so it is not a
+  game module: it lives beside the machine and includes `md68k.h` on the game's
+  behalf. That is why the deny holds after it exists.
+* `output/` is not allowed for `game` yet: the only renderer paths in the tree
+  are the VDP-facing chip model (allowed through `chips/`) and the GPU/host
+  backends. Ticket 192 adds the scene direction when the port's renderer exists.
+
+Proof: `make -C port test` (57748 + 728 + 252 + 146 + 4556 + 99 + 617 checks, 0
+failures; the 41322-address sweep agrees), the fast tier 29 PASS / 0 FAIL
+(including the docs gate, the zones check and its nine controls), and the two
+slow-tier checks the move touches re-run on their own: tests/test_menu_cursor.sh
+(the control build now swaps game/menu_cursor.c through NEXT_SWAP, 286 + 496
+recorded frames unchanged) and tests/test_locale.sh. The two committed cursor
+traces were re-recorded with the documented command: the only line that changed
+is the header that names the reproducing module, and the check re-captures them
+on every run.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
