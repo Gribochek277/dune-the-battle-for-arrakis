@@ -1,0 +1,93 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 47085b76670bcf9ddedddf036f0efb7dfacb7386
+date: 2026-10-26T00:48:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+175: a subsystem is measured, paired, then solo, and parity keeps the guest's cycles
+The rule every slice of the porting epic (tickets 172-201) is costed against,
+and the half the project had never written: what a subsystem's contract is once
+the guest's code is no longer beside it (D91).
+
+While both forms exist the ported one is indistinguishable from the
+transliterated guest -- cycle cost included -- because the cycle cost is what
+the frame boundary, the game's timers, the pad's 56 000-cycle handshake and the
+sound driver's polling are built on. Two of this project's own defects are that
+sentence: D37's missing DRAM refresh put the VBlank at a different point in the
+guest's frame and moved a unit's turn ten frames off, and the house selection's
+one-cycle replacement stepping leaves the Z80's accounting counters up to six
+instructions apart. Relaxing the cycle bound is how a port silently stops being
+the game.
+
+A stage belongs to a group, never to a routine. **Measured**: only the guest
+runs and the measurement exists. **Paired**: both run and the differential
+comparison is the proof -- work RAM byte for byte, the picture pixel for pixel,
+the chip writes, the 68000 cycles -- and a *complete* group is one whose C hands
+no address back (complete is measured, not declared). **Solo**: only the port's
+C runs; the contract is the banked fixtures of ticket 173 plus the playtest
+route of ticket 177, and the guest's instruction path, its scratch registers and
+the frame's total cycle budget may stop being equal while the fixtures' entries
+still are. Retiring the cycle model is not a loss of a check, because the
+fixtures carry the guest's entries, RAM windows, chip writes and cycle points
+forward.
+
+Solo is earned, not declared, and all three conditions are required: zero
+delegations in the group (the inventory ticket 174 prints), the group's fixtures
+committed, and the playtest route green. `tests/test_stages.py` refuses a claim
+over a module that can hand an address back, requires the fixture directory and
+the recording to exist, and prints the reason; its negative controls provoke
+every failure it can see plus one legal solo claim, so the branch the project
+has not entered yet is exercised rather than assumed.
+
+The classification is data, not prose. `analysis/porting-stages.json` records
+all 30 rows of the replacement table in eight groups: two complete (the pad
+protocol; the guest's text), six partial with what each C hands back named (the
+options and title screens, the house selection, the mission cursor, the map
+view's sixteen rows, and the two sidebar panels that answer two instructions of
+each and are the port's C but not the port's design). No group is solo yet. The
+port's own features -- the port screens, the pointer, the renderer and the
+widescreen shell, presentation time, the locale and the font -- are listed apart
+because there is no guest form for them to agree with. The record says which
+part is which and why a transcription that is never replaced stays evidence.
+
+The **porting dashboard** (`docs/html/dashboard/index.html`) is generated from
+that file by the same `scripts/porting_stages.py` the fast-tier check runs, so
+the page cannot say what the check does not see; D91's own classification table
+is compared with it and with the replacement table. `legacy` is untouched (D32)
+and the fidelity checkpoints keep their meaning for a structural reason: they
+render `legacy`, so a solo group in `next` cannot move a pixel of them. The
+engine equivalence check and the group's own differential check are edited with
+a control build when a solo group deliberately diverges, never deleted
+(AGENTS.md). The migration recipe now walks the three stages instead of five
+steps -- and still sends a ported slice through ticket 172's state layer --
+CONTEXT.md defines the vocabulary, and the dashboard is a page of the site.
+
+`analysis/porting-stages.json` is a new pipeline input (the MANIFEST and the
+audit in docs/disassembly.md), `docs/project-status.md`'s gate counts are
+corrected to the measured 30 fast / 59 slow / 89 total, and
+docs/port-architecture.md's "table today" no longer says the options screen has
+three rows or leaves the mission's panels out.
+
+The rebase took the decision number D89 -> D91, because ticket 176's D89 and
+ticket 172's D90 landed while this branch was open; the record's references, the
+dashboard's anchor and the stage file moved with it. The recipe's state-layer
+paragraph is ticket 172's, kept in the staged shape.
+
+Gates: `bash tests/run_all.sh` is green on the rebased tree (31 PASS lines:
+prepare and 30 checks). `bash tests/run_all.sh --tier all` was run on the branch
+before the rebase (88 checks): 86 passed, and the two failures were presentation
+*timing* checks on a host loaded by concurrent ticket worktrees (load ~11 on 16
+cores) -- `tests/test_play_audio.sh` passed on its own re-run, and
+`tests/test_presentation.sh` read 82-93 pictures/s where it wants 108-126 (88.0
+after the rebase) while its guest rate stayed inside its 58.5-61.5 band. No port
+or src source is touched by this change (`git diff main --name-only -- port src`
+is empty) and `tests/test_presentation.sh` is not in the diff, so the check's
+binary, script and inputs are main's: the shortfall is this host's, not this
+commit's. Everything else the tier measures was green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
