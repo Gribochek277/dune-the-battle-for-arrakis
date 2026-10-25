@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 72091c7f29d5d671acb7cff8eb8f7102d3ab12d3
+date: 2026-10-25T16:22:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+170: the mission's scroll is one routine
+next_mission_map_view_scroll_by(dx, dy) moves the map view by a stated
+number of guest pixels in one call: the camera $FFFFE3BE/$FFFFE3C0, the
+scroll pair $FFFFE3B6/$FFFFE3BA and the map origin $FFFFE3EC/$FFFFE3EE,
+each axis clamped to the map's own bounds, and the strip the move uncovered
+blitted in C with the guest's own tail's rule ($003EE6) -- the columns across,
+the rows down, both terrain planes, no guest instruction.
+
+The pad's and the keys' frames stay on the guest's $003456-$00362B loops and
+their checks are unedited; this is ticket 171's path. tests/test_mission_scroll_by.sh
+compares the guest's own handler on a saved mission state with the routine at
+1, 4, 8 and 16 pixels in four directions, at the four edges and at a corner:
+the camera, scroll pair, map origin and both terrain planes' words are the
+guest's, the 8-pixel moves' rendered pictures are the guest's, and a one-cell
+control proves the comparison can see a difference. D87 records the decisions
+(the words, the per-axis clamp, the uncovered strip rather than a page pass,
+and why the object plane and the sprite table are not the scroll's).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
