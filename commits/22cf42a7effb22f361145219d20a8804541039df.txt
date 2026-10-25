@@ -1,0 +1,88 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 22cf42a7effb22f361145219d20a8804541039df
+date: 2026-10-25T22:11:36+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+172: the port's state is a typed, width-exact view of the guest's memory
+The port's C read the game's state by hand -- `md68k_read2(cpu, record +
+0x54u)` -- which is the guest's own access and untypable: nothing said which
+offset was a byte, that a side is one, that a handle is a word with a class tag,
+or that two modules agreed about what `+$5A` held.
+
+`port/state/guest_state.{c,h}` is that vocabulary, and it is a zone of its own
+so only `next`, the ported game and the fixtures may include it: the machine, the
+chips, the output zone, the app and the generated translation cannot name it,
+which is what makes `legacy` unable to execute any part of it and leaves the
+ported game a state seam that is not a route to the CPU's registers (the header
+names the 68000 only as an incomplete type for the same reason).
+
+It holds three things. **The windows** -- the cartridge, work RAM and the VDP's
+ports, the ranges the game's logic reads and writes; an access outside them, or
+a write to the cartridge, is the machine's address fault rather than a read,
+because the pad's port is a handshake and the sound chips are a protocol, not a
+field. **The width-exact primitives** -- one bus access per call at the width the
+guest's own instruction used, so the work-RAM trace records what it recorded and
+a ported routine stands in for the same instruction. **The layouts the notes
+establish** -- the unit, the structure, the side record, the two type
+descriptors and the order entry as typed handles with one named accessor per
+field, plus the input state's five named bytes. A field whose meaning the notes
+have not established has no accessor at all (the unit's `+$0E`/`+$10`/`+$12`,
+the structure's `+$54`-`+$56`, the descriptors' `+$02`, the side record's
+per-type tail), and `InitOrderEntry`'s two established-but-unnamed bytes live in
+`guest_order_reset()` as that routine's own step rather than as a guessed name.
+A handle is a word with a tag: `guest_handle` reads and writes `$4000`/`$8000`
+by name.
+
+`port/tests/test_state_layer.c` (685 checks, `tests/test_state_layer.sh` in the
+fast tier) proves every accessor is exactly one bus access at its field's offset
+and width, that a setter moves only its field's bytes, that the arrays'
+arithmetic and the descriptor tables are the notes', and that the three windows
+are the three the game owns. Every case carries the phrase the notes use for its
+field and the check requires it in `docs/reverse-engineering-notes.md`, so a
+name the layer invents fails the suite; three controls -- a moved offset, a
+narrowed width and a notes file missing a phrase -- prove the check can fail.
+
+It is used, not decoration. `next/read_controller.c` reads and writes its four
+work-RAM bytes and its mask through `guest_pad_*`, and `tests/test_replacement.sh`
+keeps its exact arithmetic with the layer in the run: 1 418 calls, 46
+instructions saved per call, and `cycles 347408323 and 347408323: identical` --
+the ticket's cost line proved end to end. `next/mission_orders.c` names the unit
+record's fields, its order entry, the descriptor flags, the handles and the
+cartridge's tables through the layer, and its byte-for-byte fixtures against the
+guest's own `SetUnitOrder`/`SetUnitTarget` are unchanged
+(`make -C port test`, `tests/test_group_orders.sh`).
+
+Map cells, the pointer tables and the mission's own globals stay the modules'
+named constants: they are the record subsystem's and the map's data (ticket 185),
+not a record's fields. `docs/port-architecture.md` gains "The state layer",
+`CONTEXT.md` the term, the migration recipe a step 3 sentence, and D90 records
+the choice; the site is regenerated.
+
+Merged onto ticket 176 (the ported game's zone), which the layer is the memory
+view of: the zones file keeps both declarations, `game -> state` is declared for
+the first slice that moves onto the layer (an unused declaration is not a
+failure -- the check fails a measured direction that is not declared), ticket
+176's parenthetical now names `port/state/`, its prose's ported-game row and the
+"eight things worth reading twice" list gain the layer's one direction, and this
+ticket's decision is D90 because D89 is ticket 176's. `tests/run_all.sh`'s
+sentence above the zone check said "seven failures" where the check has reported
+nine since ticket 176: corrected in passing, no behaviour change.
+
+Found on the way, not fixed here: the replacement's 3-button pad path already
+differed from the guest before this change (a `--pad 3` run of
+test_replacement.sh's recording ends 6 cycles and one map-cell byte apart, with
+the pre-172 `read_controller.c` too), so `tests/test_replacement.sh` covers only
+the 6-button path. It is a finding for a ticket of its own.
+
+Gates: `scripts/build.sh`, `make -C port test`, `tests/test_state_layer.sh`,
+`tests/test_replacement.sh`, `tests/test_group_orders.sh`,
+`python3 scripts/build_docs.py --check`, `tests/test_port_zones.py`, and
+`tests/run_all.sh` (ALL CHECKS PASSED).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
