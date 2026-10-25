@@ -1,0 +1,113 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c8609b8f4a839895fc8f37da51499f81448ca756
+date: 2026-10-26T01:46:30+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+173: the oracle is the transliterated code, one dispatch at a time
+The port's proof that a routine's C reproduces the guest's was a whole recording
+run twice: the same route as the guest and as the C, and the work RAM, picture,
+chip writes and clock compared. That is a strong claim about one route and a weak
+one about the routine -- it says nothing about the states the route never
+entered, and when it fails it says "somewhere in 2 700 frames these two runs
+differ". What did not exist was the guest's half of a unit test: a way to ask
+"what states was this routine ever entered in, and what came out of each".
+
+`port/app/oracle_corpus.{c,h}` is that, in the shape the differential sweep
+already proved for single instructions -- a deterministic state, one dispatch, a
+full comparison. The unit is **one dispatch of the replacement seam**: the state
+the hook was handed at one address and the state it left behind, which is exactly
+the contract and makes both shapes of row one rule. A row with `span == 0`
+answers its whole routine in one call, so its fixture is entered at the entry
+address and ends at the return address the caller pushed; a row with a span
+answers one guest instruction per call, so its fixture holds one entry per
+execution of an address in the span. Nested registered routines are inside a
+leaf's dispatch, because the machine's hook never sees the addresses in between.
+
+The machine gained the two instruments the measurement needs. The work-RAM hook
+already existed; `md68k_set_bus_hook()` is its other half (every non-RAM access,
+once per access, with the region) and `md68k_set_step_hook()` sees every
+instruction before and after it runs. The "after" call is *inside* the
+instruction -- before the frame clock can deliver a VBlank and before the driver
+runs the Z80 for the instruction's cycles -- because the record must be the
+instruction's: a leaf the frame clock interrupts mid-routine is counted
+(`interrupted`) and left out instead of recorded wrong, and between two
+instructions of a leaf the recorder stops sampling so the Z80's own accesses are
+not attributed to it. Both install nothing by default and `legacy` installs
+nothing.
+
+A fixture record holds the entry state (the 68000's registers, SR and USP; the
+frame point; the pad's wire state and the VDP's bus-visible state when the
+dispatch read them; the first-touch values of every work-RAM byte it read or
+wrote) and the outcome (the exit state, the same bytes' after-values, the chip
+accesses in order, and the guest's own instruction cost -- the number the
+replacement contract makes the C report). Entries are folded by their entry
+state, and the two fields the fold leaves out are the ones no guest read can see:
+how long ago the pad's last TH edge was past the six-button timeout, and the VDP's
+frame counter -- a C that branches on `call.frame` where the guest branched on
+nothing is a C that has invented state.
+
+`port/build/oracle-capture` runs a recording (or `--press` route) on the guest and
+writes one committed fixture per registered row; `port/build/oracle-run` replays
+one against its C and makes three comparisons, because the two oracles can fail
+apart: the C against the recording (the corpus), the live guest against the
+recording (a stale fixture is named as one), and the C against the live guest
+(the whole-recording claim, per routine). The same set then drives the C under
+deterministically mutated states -- flags, a register, an address register in
+RAM, RAM bytes, the pad's buttons and type -- compared between the two live
+implementations, faults included. The arms the fuzz reaches and no recorded entry
+did are printed as uncovered, and so is a conditional branch with only one arm
+ever seen; the pad's type is mutated so the controller read's six-button branch
+takes the other side, which the recordings never do.
+
+The comparison runs in a fixed order (fault, exit pc, registers, RAM window,
+window completeness, chip accesses, cost) and names the first divergence with the
+entry's pc, frame and cycle point -- `recorded vs C: cost: 360 cycles vs 361
+cycles`. A byte either side *wrote* must match; a byte only one side *read* is a
+coverage note, because a C dispatch may be coarser than the guest's instruction
+(the text routine's port reads its row's tile one instruction early so the atlas
+upload happens before the VDP address is computed) and a read that mattered shows
+up in the exit state. Two live runs from a fuzzed seed are not held to the
+recording's window at all.
+
+The 23 committed fixtures (1.8 MiB) cover the routines the whole-recording checks
+already prove -- the controller read, the guest's two text routines, the house
+selection, the title screen, the options screen's frame routine, the mission
+cursor's placement handler, the map view's transcriptions and the build panel --
+so the same C now passes an end-to-end comparison and a per-state one. Seven rows
+have none and the check declares each with its reason rather than letting a
+missing file look like a pass: six are not reached by the committed recordings
+(the mission recording plays the map in placement mode, so the normal cursor's
+handler and its step body are never entered; two scroll helpers sit on branches
+the routes do not take; the starport's unit-order menu is never opened), and one
+is measured but not replayable as a unit -- the options screen's loop, because the
+port's C keeps a flag of its own (the loop is active) that is not guest state, so
+the dispatch at $01097C answers differently outside the screen's flow. The corpus
+found that, which is the point of it.
+
+`tests/test_oracle.sh` (fast tier, ~8 s) runs the corpus's own fixtures (the
+file's round trip, the empty set's refusal, the first divergence on every axis,
+the recorder on a two-instruction routine in work RAM), every committed fixture
+against its C and against the live guest, the declared measured/unmeasured lists,
+and four controls: an empty fixture exits 3, a fixture pointed at another
+implementation is refused, a fixture from another cartridge is refused by its
+SHA-256, and a control build with `ReadController`'s six-button cost off by one
+fails and names the cost. `tests/test_oracle_capture.sh` (slow tier, ~2.5 min)
+regenerates the set from the three committed recordings with
+`scripts/oracle_fixtures.sh` and requires the same bytes, so a fixture cannot
+drift on its own. `make -C port test` runs the corpus's own fixtures with the
+rest.
+
+Ticket 175's staged recipe now says how its `measured` stage is measured (a
+routine with no fixture is not portable yet) and banks the fixtures in its
+`paired` stage's proof; the corpus is also the `solo` stage's oracle. The
+mechanism, its measurements and what it cannot measure are
+`docs/next-engine.md` ("The oracle is the transliterated code"),
+`docs/port-architecture.md` ("The state corpus"), D92 and the glossary.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
