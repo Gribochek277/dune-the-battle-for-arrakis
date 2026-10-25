@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 566893f480a2e6366099517595292bc56ef544e4
+date: 2026-10-25T03:07:46+03:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+168: the band's cells are the world cells the camera shows
+The wide picture's band was filled from the wrong map cells: the row
+subtracted the VDP's vscroll a second time and took the plane's cell-row
+group for the map row, and the column took the camera's 512-pixel page for a
+band that had already crossed into the previous one. The reported block of
+terrain is the two together (the diagonal scroll's entry 7 820: 79 768
+pixels against the map's own repaint).
+
+The mapping is now the world cell the camera puts at the plane cell: the
+column's visible copy in the plane's wrapped row, and the plane row group's
+cell-row residue with the camera naming the page. The fast fixture pins the
+row rotation and the vscroll rule, the wrapped column's page, the sub-cell
+lead, the plane bases/stride, the 32-row bound and the 0-extra no-op, and the
+slow check's map script now derives the cell from the picture's geometry and
+compares the reported frame as pictures (the run against the map's own
+paint).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
