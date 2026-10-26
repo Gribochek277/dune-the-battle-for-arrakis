@@ -1,7 +1,7 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-26T23:23:46Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-10-27T01:14:04Z
 
 ---
 
@@ -55,6 +55,12 @@ HOME=$PWD/work/emu/home tools/blastem/blastem -b 900 -l build/dune.bin
   port's zones as generated pages and diagrams. Committed, so it reads from a
   `file://` URL; `python3 scripts/build_docs.py` rebuilds it and
   `tests/test_docs.sh` is the gate that keeps it current.
+* [`docs/game-rules.md`](docs/game-rules.md) — **the game's rules**: what a
+  side can see, what a hit does, where credits and spice come from, how a
+  structure is placed, built, repaired and lost, how a mission decides it is
+  over, and what a selection and an order are. Every rule cites the instruction
+  that implements it or the committed measurement that established it, and the
+  page's §9 is the honest list of what is not known yet.
 * [`docs/widescreen.md`](docs/widescreen.md) — the widescreen shell: a target
   that is the window's pixels, regions and anchors, the fit-height and
   wide-world modes, and the integer-scale policy that keeps the 4:3 picture's

@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c67e0ce8af16ac07cec84bb57cd13ea289e7622f
+date: 2026-10-26T21:14:33+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+180: the game's rules on a page, each one cited or measured
+The game's rules are now a page (docs/game-rules.md): visibility, damage and
+destruction, credits and spice, a structure's life, a mission's end, and
+selection and orders -- 33 rules, each with the instruction that implements it,
+the measurement that established it, or the observation that would settle it.
+
+The measurements are new and committed: scripts/game_rules.py replays the two
+committed mission recordings to eight named VBlank entries and keeps the 64 KiB
+of work RAM (analysis/rules/), then re-derives the page's numeric claims from
+the dumps with no emulator and no recording. The battle route settles what the
+code alone could not: the explored bit is monotone (62 -> 92 cells), the
+player's side knows 2 of 23 enemy units, a death frees an index that is
+re-issued, a refinery pays 700 credits for a 100-unit spice load, and the end
+gate is re-armed 300 mission ticks ahead.
+
+Ten entry points the rules start at are named (IsPositionOnScreen,
+RevealCellEdges, ReleaseDeadUnit, RunStructurePass, RunRefineryConversion,
+CheckMissionLost, CheckMissionWon, UpdateMissionClockDigits,
+OrderActionHarvest, OrderActionDeliverSpice), and four earlier readings are
+corrected: the 46-word order budget is the drawn window, not visibility; the
+void-tile mask counts unexplored neighbours; a record's map sprite is a VDP
+slot; and the mission's end conditions are per-bit predicates whose counters
+are only now identified.
+
+The site renders the page, and every routine it cites links its rules back.
+Two checks: tests/test_game_rules.py (fast: the page's structure, the measured
+claims, and six negative controls for the citation gate) and
+tests/test_game_rules_capture.sh (slow: the dumps regenerate byte for byte).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
