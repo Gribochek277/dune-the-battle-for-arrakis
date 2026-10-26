@@ -1,0 +1,84 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d7cd09a7c6fed98bbfbbeea7e4aebcf983025289
+date: 2026-10-27T00:44:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+184: the frame block and the input state are the port's C
+Everything above the machine reads two things -- how many frames have passed and
+what this frame's buttons are -- and they are one group now: `frame-clock`, solo
+with entry `seam` (D94), replacing the `input` group whose one row was the pad
+protocol. Twelve rows: `ReadController` (ticket 83, unchanged), the VBlank
+handler `$0016CC` one instruction per dispatch, `WaitVBlank`,
+`GetFrameCounter`, `SetFrameHandler`, `SetSpriteUploadHandler`,
+`MarkFrameBoundary`, `UpdateFrameClock`, `ResetFrameClock`, `FlushPadState`,
+`ReadPadDirection` and `UpdateInputState`.
+
+The handler is not a call: the frame clock stacks SR and the interrupted pc and
+the handler leaves through the shared rte stub, so a row now says how the guest
+enters it (`entry`: `NEXT_ENTRY_CALL`, the default, or `NEXT_ENTRY_INTERRUPT`)
+and the dispatch checks that frame -- a call into the vector's target is
+refused. The exception frame's contents are not checked and cannot be: the
+corpus seeds work RAM from the bytes a dispatch touched, and a handler never
+reads its own frame.
+
+Four shapes in one group, each the routine's own. Seven rows are spans because
+they wait for a frame or call a row (a whole-routine dispatch cannot wait, and a
+call to another row can only be a hand-off); four are whole routines. The whole
+routines charge their instructions through `next_replacement_charge()` --
+ticket 183's rule -- because on the mission route they are called a million
+times (`GetFrameCounter` is 1.1 M) and the seam's clock-step charging moves the
+Z80's poll phase.
+
+Measured. The state layer gained the frame block's five fields and the direction
+byte (`guest_vblank_counter()` and friends, one bus access at the guest's width
+each), and the group's 134 addresses answer at parity: the inventory's
+1,730,911,024 guest cycles are its 1,730,911,024 C cycles, zero delegations.
+
+Ten of the twelve rows carry a committed fixture (the playtest route for the
+mission's rows, the house selection for `WaitVBlank`'s poll), and each replays
+green against the C, the live guest and the fuzz. Two are declared:
+`VBlankHandler` cannot be measured -- its fourth instruction,
+`bset #8,($A12000).l`, reads the Z80's bus-acknowledge line, which the corpus
+does not carry, so a capture of the site diverges on the guest's side too --
+and `SetSpriteUploadHandler` is entered by no committed route. Both are proved
+from constructed states in `port/tests/test_frame_clock.c`: the guest's own code
+and the C run the whole handler from the vector's frame through the rte stub to
+the interrupted pc, and the registers, flags, pc, all 64 KiB of work RAM, the
+VDP counters and the cycle count are compared.
+
+The pair: 2 700 frames of the house-selection recording, legacy against
+`--replace-group frame-clock`, identical in picture, work RAM, chip counters,
+audio, YM timeline and the 68000 cycle count, the instruction count lower by
+exactly the 65 236 the four whole-routine rows report; the mission route to
+entry 7 898 holds the same cycles, picture and work RAM, its audio is the same
+recording (528 windows, envelope r +0.999), and its YM stream is 892 259 writes
+against `ReadController`'s own 892 261 -- the group is two writes from ticket
+83's row, so the new rows do not move the sound. `--no-replace` is legacy byte
+for byte. The counters the ticket names -- `FramesElapsed`, both VBlank counters,
+`FrameCounter`, the four pad bytes, the mask and `PadDirectionCode` -- are the
+guest's at entry 7 898, and a scripted press leaves the same held byte on both
+engines. The two mission-clock entries ticket 115 left do not move: 210 against
+the reference's 208, the roll 986 + 0/8, so they remain the reference's VDP FIFO
+slot scheduling and not this slice's.
+
+Findings. `UpdateInputState`'s first call is the mission's unit command handler
+(`$0089AA`), not the pad-to-direction routine pass 3 recorded --
+`ReadPadDirection` `$0026A6` is that, and `UpdateInputState` does not call it;
+and the pending byte it publishes, `$FFFFBF2A`, is written zero by all five
+writers in this image. Ticket 174's "no cap on a selection" was not true of the
+front end: three `HEADLESS_REPLACEMENT_MAX` (64) arrays and the window's own
+held every enabled name, the table had 63, and this group took it to 74 -- the
+default run wrote past the end of a stack array and snapshots refused "the
+run's identity is longer than a state's fields". The bound is 256 now and the
+header says it must clear the table.
+
+`tests/test_frame_clock.sh` is the check (slow tier); the playtest route's
+frame-clock mix runs the whole route on the group alone.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
