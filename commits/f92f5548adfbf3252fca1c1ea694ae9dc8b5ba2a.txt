@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f92f5548adfbf3252fca1c1ea694ae9dc8b5ba2a
+date: 2026-10-26T08:10:22+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+178: the owner-facing names row counts what the site counts
+The names row of docs/project-status.md still said 243 curated names and 813
+routines; pass 4 took them to 303 and 815 (252 named, 563 still an address),
+and the site rebuilt from the same tree prints the same numbers. No claim
+moved beyond the row this pass changed.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
