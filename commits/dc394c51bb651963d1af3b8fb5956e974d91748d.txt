@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dc394c51bb651963d1af3b8fb5956e974d91748d
+date: 2026-10-26T21:07:10+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+180: the inventory follows the names, and the capture covers the late probes
+Two fixes the slow tier found, both caused by this branch's own work rather
+than by the rules page:
+
+* analysis/flag-inventory.json had not followed ticket 179's names for the
+  script machine's actions and tables, so the flag-groups gate was comparing a
+  universe of 815 routines with a site that has 823. Regenerated; and the
+  universe now draws the same line in scripts/build_docs.py and
+  scripts/porting_inventory.py: a routine is an instruction, so a curated name
+  that lands in a code interval but not on an instruction ($000840, the script
+  machine's helper table) is a name page, not a routine. 820 routines, and
+  tests/test_flag_groups.sh's written-down count says so with the reason.
+* scripts/game_rules.py capture now passes --max-instructions 600000000: the
+  harness's 200-million default is spent at VBlank 16 854 on the battle route,
+  so the three late probes exited without writing a state and the slow check
+  failed on the fourth of its eight runs. The budget changes only where a run
+  may stop, never the state at the entry a dump is taken at, so all eight
+  probes use it and the dumps still regenerate byte for byte.
+
+The two window checks the same run failed (presentation's 120 pictures/s,
+the audio device's padded frame count) fail on a host under load -- this one
+carries the other sessions' work, load average 12-16, and the presentation rate
+measures 73-104 pictures/s against a 108 floor. They exercise port/app and
+port/output, none of which this branch touches.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
