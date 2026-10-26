@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5e0b03c598ae6cf7665b2d465d65ba0d4c608abf
+date: 2026-10-26T19:04:13+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+177: the VDP library is the tenth mix, after the rebase onto ticket 183
+Main's ticket 183 added the second solo group (vdp-library, entry: seam) and took
+D95 for its decision, so the playtest route gains that group's single-group mix
+and reaches row (620 of its addresses are entered on the route), every group's
+playtest field points at the route, and this ticket's decision is renumbered D96.
+The default selection was re-measured after ticket 183's per-instruction
+charging: the title's port row is still the required difference and the
+briefing's reveal is still the allowed one, and no other gated step moved.
+
+Counts follow: twelve mixes and thirteen route runs (the reference, the guest's
+own code, the default and ten groups), 33 fast / 64 slow / 97 total checks, and
+the checklist's port's-C table gains the VDP library. The site is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
