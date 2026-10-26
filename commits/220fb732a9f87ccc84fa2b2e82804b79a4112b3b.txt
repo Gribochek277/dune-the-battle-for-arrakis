@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 220fb732a9f87ccc84fa2b2e82804b79a4112b3b
+date: 2026-10-27T01:31:34+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+184: the briefing's reveal is the guest's picture now, so the pages say so
+The flag groups' checkpoint comparison used to allow two pictures to differ
+between the default and --no-replace: the title screen's (the port's own row) and
+the briefing text's reveal, one character ahead because a whole-routine
+replacement was charged a clock step at a time (D93's bound). With every row that
+can recording its guest instructions the reveal is the guest's picture, and the
+check now requires the set to be the title screen alone; docs/next-engine.md,
+docs/collecting-coverage.md and the flag groups' row in docs/build-and-test.md
+said the old thing.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
