@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ac7fdcaff2dd3ef7c90fbb472e0e665fcec54ecf
+date: 2026-10-26T21:11:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+194: the site and the wording after the first gate run
+The docs gate caught docs/assets.html stale after the last edit to the page and
+the pipeline-inputs check caught assets/ untracked before the commit; both are
+fixed by rebuilding the site and committing the tree, and the page's paragraph
+on --apply now says what the tool does: it refuses a compressed edit whose
+re-compressed stream changes length.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
