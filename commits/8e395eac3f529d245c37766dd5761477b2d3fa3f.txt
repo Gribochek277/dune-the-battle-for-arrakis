@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8e395eac3f529d245c37766dd5761477b2d3fa3f
+date: 2026-10-26T22:56:03+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+194: the page counts the ninth control, and the check is the tier's, not the graphics'
+The stray-file control made nine, and the comment at the top of the check said
+the graphics were the slow tier's rather than the check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
