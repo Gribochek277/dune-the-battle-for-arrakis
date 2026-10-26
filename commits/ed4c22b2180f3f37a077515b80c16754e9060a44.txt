@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ed4c22b2180f3f37a077515b80c16754e9060a44
+date: 2026-10-26T22:42:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+194: the manifest carries a palette and a destination for every asset
+The ticket asks one entry per asset for its palette and where it goes in video
+memory. The tile blocks, the palettes and the two compressed blocks had both;
+the name tables, the fonts and the glyph map were missing one or the other. A
+map now records the palette the resource that uploads it loads with it, the
+fonts record their three V-RAM destinations ($9000 resource 14's loader, $A000
+the text planes, $4400 the boot self-test's failure message), the glyph map
+says it is read and not uploaded, and a facing entry says its cells draw the
+chunk's tiles at the cells' own tile numbers.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
