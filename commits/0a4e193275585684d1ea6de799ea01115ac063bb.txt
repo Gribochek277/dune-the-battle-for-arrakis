@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0a4e193275585684d1ea6de799ea01115ac063bb
+date: 2026-10-26T14:22:15+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+177: the leaf-helpers group is a mix too, and the route's counts follow
+Ticket 182 merged the first solo group after the route record was written, so
+the record gains its single-group mix and its reaches row (the route's screens
+call the leaf helpers everywhere), and the stage record points every group's
+playtest at the route this check gates.
+
+The decision is D95, not D94: ticket 182 took D94 for the seam entry. The
+playtest route's steps no longer say 'below the stack pointer' -- the split is
+the stack's top 1 KiB, as tests/test_mission_panels.sh and
+tests/test_selection_box.sh already state -- and port/README.md goes back under
+the zone check's 64 KiB bound by leaving the harness's --step switches to the
+usage text and the two pages that describe them.
+
+Two counts follow the group: the route drives twelve selections (the reference,
+the guest's own code, the default and nine groups) and the measured cost of the
+check is 3 m 43 s, both stated where they are measured.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
