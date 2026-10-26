@@ -1,0 +1,78 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 857568a338beb6d0e542cbdd8c818ed08a32a179
+date: 2026-10-26T05:00:41+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+181: the data formats, decoded and re-encoded
+The ticket's premise was that extraction needs a format and the formats were
+only half known. This pass establishes five of them as code: a decoder and an
+encoder for each, and the round trip that makes them formats rather than
+descriptions -- decode the real region out of rom/original, re-encode it, and
+the bytes must come back.
+
+scripts/rom_formats.py is the one codec, and the check:
+
+  compression   DecompressRle $000F8C's whole language: a short back-reference
+                relative to the write pointer, literals, a $FE byte-run fill,
+                absolute back-references ($C0-$FD and the 16-bit $FF), and the
+                $80 end marker. The cartridge loads two streams ($001800 and
+                $001C16); both re-encode byte for byte with an encoder whose
+                choices are recovered from them (longest match, nearest on a
+                tie, fills only over 66, literals to 63).
+  resources     the 15 sixteen-byte entries at $02243A field by field, the
+                destination-selector byte, the two palette markers and the
+                window map; every entry and every block list it names.
+  graphics      the nibble-packed tiles, the C-RAM palette, the plane/window
+                map cell word, the 80-entry attribute table and the 12-byte
+                sprite cells, plus the facing table $08424A (49 entries). The
+                pictures are drawn: resource 0 is the house selection screen.
+  missions      the five missions x five sides at $021866, the 12 opcodes of
+                $00C172's dispatcher with their operand sizes, the terminator,
+                and the WSA name chunks the scripts branch over. All 25 scripts
+                round-trip; 20 of them end exactly where the next side's script
+                begins, which is what pins the operand sizes.
+  music         the two pointer blocks, the voice/song/effect/drum tables (all
+                little-endian: the Z80 reads them byte for byte), the 39-byte
+                voice record and the register program at $15F5, the sequence
+                event encoding (notes, $60-$72 opcodes, $80/$C0-tagged lengths)
+                and the note ladder at $1141/$115B. With a recorded timeline the
+                port wrote (--ym-log), each voice burst is named back to a record
+                (8 of 8) and each frequency word to the ladder (17 of 17).
+
+Two conventions the data uses are now written down: the bank byte in every
+32-bit pointer (masked with $1FFFFF, and read for meaning by the resource
+table), and a block list's size being tiles in an UploadGraphicBlocks list but
+bytes in a resource list.
+
+Six pages, docs/formats.md as the index and one per format. Each ends with the
+command that runs its round trip and a "what is not established" section: the
+compressor's choice policy is recovered from two streams; the music's schedule
+and the volume-scaled total-level ladder are the driver's and are documented
+rather than modelled; three opcode fields are named by the byte they write.
+
+The checks: a fast-tier check (18 s, no build, no emulator) with six patched
+dumps and a synthetic timeline as the controls that the round trips can fail,
+and a slow-tier check that produces the -O1 harness's register log from the
+committed house-selection recording and reproduces it from the data.
+
+No source, asset or dump change: rom/original is untouched and the rebuild is
+the same as before this commit.
+
+Decisions made where the ticket was silent:
+* The compressor got an encoder, not only a decoder: the ticket asks for a
+  re-encode, and a decoder alone cannot make it byte-exact. Its policy is
+  stated as recovered (not as the original tool's implementation).
+* The fast tier runs the data round trips and the slow tier the register
+  stream, because the latter needs the harness's --ym-log; the ticket allows
+  "a named slower check".
+* The mission opcodes' meanings are read from the handlers and stated with
+  their addresses; where the code names a field but not its meaning, the page
+  says so instead of guessing.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
