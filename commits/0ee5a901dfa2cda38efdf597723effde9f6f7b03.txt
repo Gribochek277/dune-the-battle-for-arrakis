@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0ee5a901dfa2cda38efdf597723effde9f6f7b03
+date: 2026-10-26T11:45:50+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+178: the corpus regeneration's measured time (47 fixtures, four runs)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
