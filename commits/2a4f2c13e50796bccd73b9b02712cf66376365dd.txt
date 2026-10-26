@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2a4f2c13e50796bccd73b9b02712cf66376365dd
+date: 2026-10-26T17:03:43+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+180: the map-update guard moves to the page's unknowns, and the site follows
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
