@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 879d0d14d12d58a93489f303981a90283ff4e2da
+date: 2026-10-26T17:14:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+183: the site and the inventory after the rebase onto main (ticket 179)
+Rebased onto main after understanding pass 5 (the unit pass, the order
+scripts and the AI): the only conflicts were docs/html, which is never
+hand-merged and is rebuilt here from the merged tree, and
+docs/reverse-engineering-notes.md, where both sides appended a section and
+both are kept (M2-8, then "The VDP library, measured").
+
+The state corpus's bounds moved on main (ORACLE_MAX_RAM 2048 -> 4096,
+ORACLE_MAX_ACCESS 256 -> 1024), so the fixtures were regenerated to be sure
+the group's twenty-five still capture identically under them:
+scripts/oracle_fixtures.sh into a temporary directory produced all 83
+committed fixtures byte for byte, none changed. analysis/flag-inventory.json
+and the site are regenerated from the merged tree.
+
+Known and not this ticket's: tests/test_flag_groups.sh asserts 815 routine
+pages and main's own tree builds 823 since pass 5, so that slow-tier check
+fails on main already.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
