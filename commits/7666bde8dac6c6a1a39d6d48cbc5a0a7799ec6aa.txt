@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7666bde8dac6c6a1a39d6d48cbc5a0a7799ec6aa
+date: 2026-10-26T07:35:29+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 174: 174-flag-groups-inventory
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
