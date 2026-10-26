@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 07481eeb5e5f882774cba3e482691f7005156451
+date: 2026-10-26T23:27:25+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+180: port/README.md stays under the 64 KiB bound (the pointer lives in the recipe)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
