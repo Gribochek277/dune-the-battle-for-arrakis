@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 80ce51610b1c641d55444165e5aff79326f3a3a2
+date: 2026-10-26T05:28:29+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+178: the helpers the whole game calls, named, measured and measured again by the oracle
+Understanding pass 4. The unnamed routines with the most call sites and the
+largest bodies are read end to end and named by meaning, with the evidence
+line the curated table demands (43 names, 209 -> 252 curated routines): the
+structure library (the command, the damage, the death and the refunds), the
+unit constructor and the damage path, the record's order-script table, the
+cell geometry, the mission's script tick, its prelude, its briefing and its
+end screens, and the panel's widget library.
+
+The measurement the epic was missing is now on the routine index: the share
+of the image's instructions that sit inside a curated name, per 8 KiB region,
+with both readings printed (the span a name covers: 35.2 % -> 42.4 %; the
+routine's own body: 6.8 % -> 10.9 %) and the definition next to it.
+
+The oracle gets its candidate list (analysis/oracle-candidates.txt): the named
+routines that have no C yet, captured by the same recordings and replayed
+against today's transliterated code with oracle-run --guest-only. 24 of the
+43 are on the committed routes and have fixtures; the other 19 are declared
+in tests/test_oracle.sh with the route that would settle each. Two properties
+the pass found and documented: a leaf dispatch owns what it calls (nested
+candidates need their own capture run) and a routine that spans frames cannot
+be a leaf (the list's span= shape, one instruction per dispatch).
+
+Findings in docs/reverse-engineering-notes.md 'M2-7': the order table behind a
+record's +, the structure cell writer's bit clearing, the mission's full
+flow, UnitArray as the intro's 48 KiB scratch buffer, the sub-CPU device
+pocket at $01F248 ('MAIN-SUBCPU', never reached by a coverage log), and the
+routines left unnamed with what would settle each.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
