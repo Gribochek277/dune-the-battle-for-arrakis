@@ -1,0 +1,45 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3719e209353225fe39eb4dde11181e4a617af820
+date: 2026-10-26T13:56:44+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+177: the playtest route, its baseline and every selection
+The route is one committed recording (analysis/recordings/playtest.pad): boot,
+the intro, the title screen, the house selection, the briefing, the mission with
+the base's panel and the mission's OPTIONS -- the Atreides route's presses
+unchanged through entry 9 498 so its catalog checkpoints are reached in the same
+state, plus a three-press tail that leaves the panel and opens OPTIONS, which is
+the one replacement group the Atreides route alone never reaches.
+
+analysis/playtest-route.json is the record: ten steps, the reference
+arrangement's whole step line at each (the baseline), the legal mixes with the
+difference each may or must answer and why, and the mixes that cannot work with
+the name the refusal has to carry. scripts/playtest_route.py reads, checks and
+regenerates it; scripts/compare_state_logs.py names the first frame two runs
+part at; scripts/playtest.sh is the one command a person plays.
+
+The harness gained --step FRAME[:PATH] / --step-log PATH: the step line is the
+per-frame digest plus the work RAM outside the stack (the top 1 KiB is the
+stack, the project's convention), and a step with a path is also a machine state
+the window resumes with --debug-load. The front ends now name the selection they
+refuse (a group on legacy, an unknown group, --no-replace next to a group).
+
+tests/test_playtest_route.sh is the gate: the record against the tree, the
+reference and the guest's own code frame by frame over the whole route, the
+baseline byte for byte, every mix inside the picture and ram-outside-stack
+gates, the groups the route reaches measured from --flag-inventory, the
+refusals by name, the playtest command's snapshots and resume commands, the
+port's own screen and the widescreen mission in the window, and seven negative
+controls. About three minutes in the fast tier.
+
+docs/collecting-coverage.md has the human half (what to press, what to look at,
+what is the port's C on the way); D94 records the route, the baseline and the
+gates.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
