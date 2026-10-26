@@ -1,0 +1,84 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8eb5560fe9f9529b8ea04ec72bbf818aa3796228
+date: 2026-10-26T02:18:23+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+174: the feature flag is per subsystem, and the truth is countable
+One flag per routine is the unit the screens needed and the wrong one for the
+game. `NEXT_REPLACEMENT_MAX` capped a selection at 32 entries, `--replace NAME`
+could not say "the record subsystem, all of it", and nothing distinguished the
+guest's code from the port's C from C that hands work back to the guest one
+instruction at a time -- a subsystem that reads as ported while a third of its
+addresses still runs the transliterated body.
+
+A row of the replacement table now names its **flag group**, a subsystem named
+with D91's stage-record ids (`analysis/porting-stages.json`, ticket 175):
+`next_replacement_enable_group()` / `--replace-group NAME` enables every row that
+names it and only those, so a group cannot be half on and a screen plus the
+helpers only it calls comes as one selector. `tests/test_stages.py` now also
+reads the row's group field and the table's own group list, so the record, the
+flag and the page cannot disagree: every row's group is the group the record
+lists it in, and a group's `complete` flag is the record's `delegations: 0`. The
+mechanism enforces that claim -- a complete group's implementation that returns
+`next_replacement_delegate()` is `MD68K_FAULT_REPLACEMENT` naming the group and
+the address -- which is ticket 174's acceptance rule in the one form that
+survives D91's stricter staging (solo also needs fixtures and the playtest route,
+so every group today is `paired`; `input` and `guest-text` are complete).
+
+The selection is one slot per row and "every implementation" is a mode
+(`next_replacement_enable_all()`, the front ends' `replacements_all`), so the cap
+and the fixed-array expansion of the default are gone: a run of `--engine next`
+installs all 30 rows, and the option lists are selector lists, not a policy
+(raised to 64, with the state file's format bound alongside).
+
+The truth is measured, not declared. With `--flag-inventory` the dispatch
+records every address it sees inside a row's region -- the guest's cost of the
+instruction from the machine's own cycle model, whether the C answered it or
+handed it back, and the addresses themselves -- and writes it as the `flags`
+block of the harness's JSON. `scripts/porting_inventory.py` runs the committed
+route (three recordings to the catalog's last checkpoint on each), joins the
+record with the committed listing (815 routines) and writes
+`analysis/flag-inventory.json`: every routine with its address, group and state
+(735 guest, 61 the port's C, 19 C with delegations at this commit), and per
+group the addresses, the delegations still owed and the instruction and cycle
+cost of both sides -- e.g. the pad protocol's 649 728 C steps standing in for
+30 537 216 guest instructions at 171 027 828 cycles a side, and the title
+screen's 436 addresses still handed back.
+
+The **porting dashboard** page (ticket 175's) now renders that document too,
+beside D91's stage table: per group the addresses, the delegations owed and the
+cost of both sides, the rows, and all 815 routines with their group and state.
+The page still needs no port binary, no route and no clock, so it stays a
+committed byte-identical rebuild. The recipe for one screen (ticket 175's staged
+version) ends on the dashboard.
+
+`tests/test_flag_groups.sh` (slow tier, ~11 minutes) is the gate the inventory
+turns into a rule. It requires the committed inventory to be the tree's, then
+fails when a group the record calls complete still delegates, when an address
+belongs to two groups, when a routine has no single group and state, when a row
+is not enabled by the default selection, or when the flag cannot select exactly
+one group. It finishes by booting the catalog's checkpoints with all eight groups
+on and with none: with ticket 115's cycle charges off the only picture that
+differs is the title screen's (the port's own row -- a feature, asserted to
+differ), and with them on the briefing text's reveal is one character ahead, the
+seam's per-cycle charging that the audio comparison already bounds. Any other
+checkpoint differing fails, so a group cannot be load-bearing by accident.
+
+The mechanism's own fixtures (`make -C port test`) add the group table and the
+uncapped selection, `next_replacement_check()` (no address claimed twice), the
+audit's slots and the JSON report, and the complete-group fault with its control.
+Three existing checks patched an exact row's text and were updated to find the
+row by what it says (and to name no group, as a fixture's row). The four slow
+checks that exercise the mechanism (engine equivalence, the state file, guest
+text, the options screen, the mission cursor) are green, as are the fast tier,
+`tests/test_stages.py`, `tests/test_docs.sh` and `tests/test_pipeline_inputs.py`.
+CONTEXT.md distinguishes the flag's group from the layout's; D93 records the
+decision beside D91 (the stages) and D92 (ticket 173's state corpus).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
