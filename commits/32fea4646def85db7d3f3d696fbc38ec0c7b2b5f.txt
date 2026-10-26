@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 32fea4646def85db7d3f3d696fbc38ec0c7b2b5f
+date: 2026-10-26T14:51:08+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+179: the site after the rebase onto main (ticket 182's solo group)
+The three pages the merge resolved by hand -- the dashboard's group counts, the
+notes page and the index -- are regenerated from the merged markdown, so the
+committed site is the generator's output again.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
