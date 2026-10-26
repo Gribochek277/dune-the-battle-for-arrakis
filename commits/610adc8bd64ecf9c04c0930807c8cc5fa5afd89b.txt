@@ -1,0 +1,64 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 610adc8bd64ecf9c04c0930807c8cc5fa5afd89b
+date: 2026-10-26T14:50:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+179: the units, their orders and the AI are one script machine, measured on a battle
+Understanding pass 5. The order and AI region is no longer a count of unnamed
+instructions: a unit's "order" is a 56-byte entry into which the cartridge loads
+a program of 16-bit words, and one interpreter (RunOrderScript $00CBFC) runs it
+in the same three blocks the image keeps -- 27 unit-type programs, 19 structure
+programs and 6 AI strategies. The words name 19 built-in operations and 19 game
+actions (a 64-entry table at $022750), and the script's own helper library (20
+entries at $000840) is how a program reads its unit: facing +$6A, target +$5A,
+hit-point ratio, side, type, build progress +$71.
+
+The four hypotheses the earlier passes carried are settled with the capture that
+exercises each, and two are corrected:
+  - AimUnitTurret's +$68/+$6B are the *steps* of two angle triples; the angles
+    are +$69/+$6A (body) and +$6C/+$6D (turret), and TurnAngleTriple turns them.
+  - SetUnitTarget's +$5A is the target handle and +$5C a *different* handle --
+    the structure/or-destination link SetUnitStructureLink writes.
+  - SetUnitBuildProgress's +$71 is the build progress and +$70/+$6E the 4.4
+    speed step the movement tick reads.
+  - CompleteUnitConversion's +$8 <- +$74 switch is the *undo* of ConvertUnit's
+    deviator capture (+$5F = $78): the capture is temporary.
+
+The per-frame pass is six time slices, measured: a 3-frame body-turn-and-move,
+a 2-frame turret turn, a 20-frame aim/refresh, a 5-frame order program, a
+5-frame map-cell/build-progress repaint and a 60-frame conversion check. The
+unit record's remaining offsets are named or declared out of scope with the
+observation that would settle each.
+
+The AI layer is the same machine with a 15-action vocabulary (7 group records at
+$FF789C, created by a mission-script op): AiScanForTarget, AiSelectTarget,
+AiCommandGroup, AiRegroupUnits, AiRallyUnits and the four group-record routines
+are named and documented, and the finding that matters is that **no committed
+mission creates a group** -- the records are zero for the whole Atreides mission
+and the mission-script op is never reached.
+
+Evidence: a new route, analysis/recordings/atriedes-battle.pad, enters the
+mission and sends no input for 26 000 frames. The mission recording's unit pass
+stops at frame 8 298 (its build panel); the battle route runs 17 745 unit-pass
+dispatches, 12 095 order-program words, 8 583 movement ticks and 334 damage
+dispatches, and its 11 fixtures move DamageUnit, CellDistance and
+FindFreeAdjacentCell from the oracle's unmeasured list. The interpreter's and
+its movement tick's fixtures are withdrawn with the reason the corpus found: the
+sound path reads the Z80 driver's queue index at $A00036 and the corpus seeds
+work RAM only, so both rows are declared unmeasured with the bound that would
+settle them.
+
+The split now claims the interpreter's handler tails and the AI's cold halves as
+code (measured 0.83-1.00 by scan_code_likeness.py), which is why the region's
+denominator grows with its share: $01A000 goes from 0 of 2 424 (0 %) to 702 of
+2 633 (26.7 %) instructions inside a curated name, $01C000 from 13.6 % to
+38.9 %, and the image from 42.4 % to 45.8 %. 35 curated names, 823 routines
+(287 named), 338 names, 58 fixtures; the site and both tiers are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
