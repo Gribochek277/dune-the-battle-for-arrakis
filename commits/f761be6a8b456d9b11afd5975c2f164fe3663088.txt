@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f761be6a8b456d9b11afd5975c2f164fe3663088
+date: 2026-10-26T17:44:13+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+177: the refusal keeps the phrase the checks read, and names the group
+The legacy refusal now says both things: which selection was asked for
+(--replace-group mission-cursor) and that the flags are the next arrangement's
+and need --engine next. tests/test_replacement.sh's statement ('next
+arrangement's') and tests/test_flag_groups.sh's ('need --engine next') are
+unchanged, and the group's name is in the line; tests/test_replacement.sh passes
+on the new build.
+
+The checklist's port's-C table gains the leaf helpers (ticket 182's solo group),
+the decision quotes the real message, and the project-status page's tier counts
+follow the suite (33 fast / 63 slow / 96 total).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
