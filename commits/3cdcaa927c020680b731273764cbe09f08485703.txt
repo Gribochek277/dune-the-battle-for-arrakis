@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3cdcaa927c020680b731273764cbe09f08485703
+date: 2026-10-26T13:21:44+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+182: the shared leaf helpers are the first solo group
+The seven leaf routines understanding pass 4 named -- HasOrderScript,
+InitOrderScript, InitOrderScriptByIndex, GetLinkedUnit, SplitFramesToClock,
+ScatterPosition and PostStructureToMapCells -- run as the port's C, as one
+group, on by default. Each is a whole-routine replacement (span 0), charged at
+every guest instruction's own address, with the record fields read through the
+state layer and the pointer-chasing reads falling back to the machine's bus
+where a fuzzed pointer leaves the layer's windows.
+
+The group is solo (D94): its callers are still the guest's, so its rows stay in
+the replacement table with entry "seam" and the group flag is the control pair.
+The committed fixtures are the contract -- captured alone, because a leaf owns
+what it calls; the first capture, beside the candidates that call them, was
+four, eight and one states short. The Atreides route measures the pair: 295
+calls, 8 882 guest instructions in 295 machine steps (8 587 fewer), identical
+cycles, picture, work RAM, audio and YM timeline; the group off is legacy byte
+for byte. The inventory route sees 484 calls and 14 682 guest instructions for
+484 C steps, zero delegations.
+
+Three boundaries the slice found and recorded: the state layer's windows are
+stricter than the bus for a wild pointer; the generated translation's dc.w
+$00067C runs the interpreter's no-flag ADDA/SUBA; and a whole-routine C now
+reports the guest instructions it stood in for, so the inventory and the engine
+check use the path's number instead of the routine's body length. The recipe
+gained the entry distinction, the group's page and D94.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
