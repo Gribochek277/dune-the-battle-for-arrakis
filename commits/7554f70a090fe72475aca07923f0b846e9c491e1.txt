@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7554f70a090fe72475aca07923f0b846e9c491e1
+date: 2026-10-26T21:18:48+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+180: the inventory and the site after the rebase onto main (ticket 183's VDP library)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
