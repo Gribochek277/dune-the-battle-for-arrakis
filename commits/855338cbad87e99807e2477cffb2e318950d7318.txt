@@ -1,0 +1,80 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 855338cbad87e99807e2477cffb2e318950d7318
+date: 2026-10-26T16:42:29+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+183: the VDP library is the port's C, one dispatch per guest instruction
+The routines the whole game calls instead of touching a VDP port are
+port/next/vdp_library*.c now: twenty-nine rows, one per guest entry --
+the register file and its shadows (the plane, text, hscroll and sprite
+bases, the display pair, the window map's base and position, the fade
+delay), the address arithmetic, the VRAM plane write and the CRAM clear,
+the palette upload and its range clear, the sprite table's build and DMA
+upload, the DMA queue's append, drain and flush, and the RLE decoder with
+the glyph, graphic-block and window-map uploads through it. The group is
+solo with entry seam: its callers are still the guest's, and --no-replace
+is the control that restores the guest's body.
+
+The shape is measured. A whole-routine dispatch freezes the clock until it
+returns, so (1) the VDP's data-port FIFO slots and dma_busy_until would be
+the guest's only by accident -- the corpus compares both, and
+UploadSpriteTable, ProcessDmaQueue, WriteVramWords and ClearCram write the
+data port or start transfers; (2) mdloop_run() services a VBlank at an
+instruction boundary, so a dispatch that covers a routine pushes the
+interrupt, and the frame number the sound is advanced at, to its end (the
+first version moved one YM2612 write's frame stamp at frame 1547); and
+(3) QueueDmaTransfer's full queue waits a VBlank and FlushDmaQueue's body
+is a spin only the drain can end. So every row answers one guest
+instruction per dispatch, charged at its own address.
+
+The mechanism needed one change for a group this hot. The seam charged a
+replacement one clock cycle at a time -- finer than the guest, which does
+it once per instruction -- and with 4.8 M of a 2 700-frame route's 31 M
+instructions going through the seam that moved the Z80's register writes
+across the sound's sample boundaries: 587 623 differing samples against the
+engine equivalence check's bound of 400. A replacement may now record what
+each guest instruction cost (md68k_replacement_charge) and the seam charges
+those, at the guest's own boundaries (D95). A replacement that records
+nothing is unchanged, so the leaf helpers' and the screens' measurements
+stand.
+
+Measured. tests/test_vdp_library.sh, house-selection 2 700 frames and the
+Atreides mission 9 500: instructions, cycles, picture, work RAM, audio and
+the YM2612 timeline all identical, the instruction count unchanged (a span
+removes no step), --no-replace byte for byte against legacy, no fault, and
+the mission's checkpoints inside the route. Twenty-five of the rows carry
+the committed per-instruction fixture a recording reaches
+(analysis/fixtures/vdp-library/manifest.txt has the hashes, and each
+replays against the C, the live guest and the fuzz); on the house-selection
+route the group answers 4 831 763 guest instructions over 22 of its 29
+rows.
+
+Two findings the fixtures measured. ClearBackdrop $000BDC is not a routine:
+the eight-byte register write there has no rts before FadePaletteToBlack
+$000BE4, so the two are entry points into one body -- a jsr here clears the
+backdrop and then runs the whole fade -- which is why it is not a row and
+why the fades are the frame clock's slice. And the splitter has a hole at
+$000F0E-$000F52, the drain's last block, which the disassembly calls data
+and the interpreter decodes; the row answers it with the listing's
+instructions and says so beside them.
+
+The four rows no committed route enters (SetWindowVramBase, SetWindowBase,
+LoadWindowTiles, LoadWindowTilesB -- the mission's lost/won/end screens and
+the briefing pages) are proved from constructed states in
+port/tests/test_vdp_library.c, ticket 130's precedent, and declared with
+that reason in tests/test_vdp_library.sh and tests/test_oracle.sh.
+
+D95 records the step record and why the group is a transcription rather
+than a design; docs/next-engine.md, "The VDP library", has the
+measurements, and docs/reverse-engineering-notes.md the routine boundaries.
+docs/html is rebuilt from the tree, the flag inventory regenerated, and
+the group added to docs/port-zones.json, analysis/porting-stages.json and
+D91's table.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
