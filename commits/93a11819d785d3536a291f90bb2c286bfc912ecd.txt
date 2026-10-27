@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 93a11819d785d3536a291f90bb2c286bfc912ecd
+date: 2026-10-27T15:14:04+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the layer splits by region, and the route's list grows by one group
+sound_api.c was 75 788 bytes, over the 65 536-byte bound
+docs/port-architecture.md records, so the group is three files now, split the
+way D41 asks: sound_api.c is the $005D06-$005F41 region (the voice line,
+PlaySound, PlayMusic and the music selector), sound_api_queue.c is
+$018AD6-$018BBD (the reset, the driver's data sets, the command queue and the
+four wrappers), and sound_api_driver.c is the Z80 interface. Each states its
+Owns:/May call:/Must not call: contract, which the zones check requires.
+
+And the two records that enumerate the groups learn about this one: the playtest
+route gets its single-group mix (and its `reaches` entry -- the route asks for
+sound on every screen, which is why the group's own rows run from reset), and
+the route check's run count follows the mixes rather than a literal.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
