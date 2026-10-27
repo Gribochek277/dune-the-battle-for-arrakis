@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3aabbbe4d74db91306fdf61e7409694f03e8f426
+date: 2026-10-27T18:35:58+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tests: the VDP library's comment line is a comment
+Ticket 183's block in run_all.sh lost the leading `#` on its second line, so the
+slow tier tried to execute `dispatch` and exited 127 after the sound check --
+which is why the post-merge gate of ticket 191 failed on main while the fast
+tier stayed green (the line sits inside the slow section).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
