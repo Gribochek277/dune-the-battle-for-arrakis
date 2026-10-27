@@ -1,0 +1,54 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 65f3015a890321f9550922013d8f6e03a26ee0ac
+date: 2026-10-27T14:57:28+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+185: the record world is the port's C, and the guest says what a handle means
+The game's data model in C: twenty-four rows in port/next/records.c and its
+three parts, the `records` group, solo with entry seam (D99). The handle library
+(the side record, the six-byte team test, the two pointer tables and the two
+one-based cell tables, the class tags, MakeUnitHandle's live-record test,
+CheckHandle's three answers, the position with its per-shape origin, the cell
+index); the two side-record clearers and the colour writer; the four team-list
+links with the free pool at $FFFFBEAA; AllocateStructure and CreateUnit (the
+allocators' create half, with the per-type ranges, the 98- and 140-byte clears
+and the counters); and IsCellExplored, the reader of the map's sticky explored
+bit. Every record field is the state layer's accessor; the two bytes the notes
+do not name (+$5E on a type-$19 unit, +$F on a structure) are the guest's bytes
+at the guest's offsets and are recorded as blockers rather than invented.
+
+Two shapes, chosen by measurement. Twenty-two rows are whole routines.
+CreateUnit and ClearSideRecords are spans, one instruction per dispatch: with
+them whole every state matched and the audio did not -- the recording has a
+VBlank inside both, a whole-routine dispatch holds it off until the routine ends,
+and one YM2612 register write moved one cycle (audio differed at byte 11339600,
+the YM timeline at byte 18586164). With the two split, the mission route is
+identical in picture, work RAM, audio, YM timeline and cycles, and the
+instruction count is lower by exactly the 175 516 the C reports it stood in for.
+
+A call inside a row is inlined with its stack -- the return address the guest's
+jsr wrote and the callee's rts popped are both reproduced, so the corpus's RAM
+window is the guest's. The guest's own oddities are kept because the corpus is
+the guest: GetRecordPosition's first branch tests the caller's flags, MOVEQ does
+not clear V/C in the translation, a move.b keeps the destination's upper 24 bits,
+and the byte written through the layer goes through the bus outside work RAM
+because a cartridge write is ignored there and a fault in the layer.
+
+Proof: 23 committed fixtures (the one row no committed route enters,
+SetRecordSideColours, is declared unmeasured with the reason); tests/test_records.sh
+is the fixture hashes, the pair, the group-off control, the house-selection route
+where the group is selected and never entered, and the playtest route's
+checkpoints. tests/test_oracle.sh gains the 23 measured rows, the stage record
+and D91's table name the group, the inventory measures it complete with zero
+delegations, and the site, the dashboard, the diagrams and the notes pages are
+regenerated (docs/reverse-engineering-notes.md, "The record world in C";
+docs/game-rules.md cites the code for V1 and the team rule; docs/next-engine.md,
+"The record world"; docs/build-and-test.md has the check).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
