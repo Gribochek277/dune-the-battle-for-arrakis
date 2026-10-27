@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 32774e3dcfe1d903f2d975781d71042b4f0e0047
+date: 2026-10-27T16:04:34+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the API is the only way is a check, not a sentence
+tests/test_sound_api.sh now asserts what the ticket's fourth box claims: no
+module of the port's own C writes the driver's ring except the group's three,
+and the vector table's play and stop pointers are named there and nowhere else
+but the VBlank handler's own row (which is the guest's `movea.l (data_024024)`
+instruction, answered by the frame clock and handing the pc over). A screen that
+asked for sound behind the group's back would work with the group off and break
+the day the driver's program is replaced -- which is exactly the coupling this
+slice exists to remove.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
