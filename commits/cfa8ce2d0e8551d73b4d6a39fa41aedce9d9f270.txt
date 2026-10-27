@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cfa8ce2d0e8551d73b4d6a39fa41aedce9d9f270
+date: 2026-10-27T15:52:27+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the queue's own file states its contract, and the gate's page has the check
+port/next/sound_api_queue.c is a module of its own and the zone check requires
+each to say what it owns: the split's second file was the one whose header came
+from the first, so it inherits the contract block it needs. And
+docs/build-and-test.md's table of checks gains this ticket's row, which is where
+the gate's own documentation lives.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
