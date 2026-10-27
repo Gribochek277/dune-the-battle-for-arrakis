@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 46f0b42cf7153d627906781480d85741ec967dcc
+date: 2026-10-27T17:45:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the snapshot's replacement bound fits the merged table, and the route's run count is counted
+Two collisions the rebase onto tickets 185 and 196 made visible.
+
+`MDA_STATE_REPLACEMENTS_MAX` was 128, raised by ticket 184 when the table passed
+64 names. `records` (ticket 185) and `sound` (this ticket) landed beside each
+other, so "every implementation" is 129 names now and a snapshot of the default
+run was refused with "the run's identity is longer than a state's fields" -- the
+playtest route's snapshot walk hit it first. The bound is the snapshot's, not the
+flag's (a count followed by names, so raising it keeps every older file
+readable), and the header's own rule is to raise it when the table outgrows it:
+256.
+
+And `tests/test_playtest_route.sh` counted the runs it launches with a literal
+(13, then 14 as each new group arrived). That is a second copy of the record that
+a new group silently invalidates, so it counts them from the same `--mixes`
+command the runs come from.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
