@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 389aad0090695e1e88a266af80102a5b96b6641c
+date: 2026-10-27T16:35:47+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the owner-facing status says what the audio path is now
+The music row names the audio API (this slice) rather than the driver alone,
+with the check that proves it, and the name counts are the site's own again --
+this slice's seven curated names moved them and the page had drifted a little
+before that (ticket 107's rule: the owner-facing pages say what is true today).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
