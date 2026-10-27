@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6a1ee2474fb08b9bc2c81a312878f52551692e8a
+date: 2026-10-27T13:17:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+196: the music is the port's data, and the sequencer proves it
+The port replayed the Z80 driver's register stream, which proved the music
+played and said nothing about what it was. The cartridge's two sound sets are
+now text files under assets/music/: one per voice, song header, channel stream,
+effect and drum record, plus the player's register program, frequency ladders
+and volume ladder. The stream files keep the exact event bytes (the cartridge's
+length encoding has choices) with the decoded event in the comment; --check
+re-encodes every file, rebuilds every offset table and song header, regenerates
+the manifest and requires a fresh extraction to be the committed tree.
+--apply puts the files' bytes back and is how a changed note or instrument
+reaches an image.
+
+The timeline is the other half. tools/music/sequencer.c is the port's own code:
+it reads the files and the driver's tables and follows the driver's tick
+arithmetic, note/voice path and total-level scaling. For the committed
+house-selection recording's 300 frames it derives all 500 YM2612 writes in the
+reference's order and frame grid (compare_ym_logs.py: 0.49-frame spread, no
+drift), and tools/music/ymrender.c renders that stream through the port's own
+YM2612: compare_audio.py passes at the gate's 3 dB / 50 cents / 0.6-envelope
+thresholds (r +0.822). The play situation is a scenario
+(analysis/music/house-selection-300.scn: two starts of mission song 0 channel 0
+at frames 234 and 249 at volumes $19 and $27); the notes, voice and timing are
+the extracted data.
+
+The MIDI export writes the melody, part layout and driver timing, names the FM
+voice in a text event and emits no program changes: the console's four-operator
+voices are not General MIDI, and D99 records that limit rather than implying
+parity. The test edits a note and an instrument and proves the image changes at
+exactly the two bytes those edits name, so a musical change is a data edit.
+
+The fast check is 3 s, the slow check 19 s; the slow one needs the pinned
+emulator and skips without it. docs/formats-music.md has the tree, the formats,
+the sequencer and what it does not cover yet (kit/PSG paths, effect-record
+fields, $69-$71).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
