@@ -1,0 +1,60 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b978b981bcfaf17471f1f464f6dcf17d8fd2b6f4
+date: 2026-10-27T14:17:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the sound driver's 68000 side is the port's C
+The last piece of guest logic in the audio path is the 68000 side of the sound
+driver: the enable flag and the music id, the command queue, the wrappers the
+screens and the unit paths call, and the stubs that put a byte in the driver's
+ring. It is one group now -- `sound`, thirty-two rows in
+port/next/sound_api.c (the game's layer) and port/next/sound_api_driver.c (the
+interface) -- reached through the seam like the other guest-caller groups,
+claimed complete and earned solo.
+
+The driver did not move: the Z80 still runs the cartridge's own image, and the
+point of the slice is that its input does not move either. On the
+house-selection route and the Atreides mission the two arrangements are
+identical in every dimension the comparator has -- picture, work RAM, the 68000
+cycle count, the WAV and the YM2612 timeline -- with the instruction count
+unchanged, and --no-replace is legacy byte for byte.
+
+Every row is a span because the Z80 says so: RequestZ80Bus, SoundPollReady and
+BeginSoundCommand poll the bus-acknowledge line, which the machine sets at the
+Z80's next instruction boundary -- between two dispatches, never inside one --
+and BeginSoundCommand reads the ring index, which moves with the Z80. D95's
+per-instruction charge keeps the sound timeline at the guest's cycle points.
+
+What the transcription measured, and the prose it corrected:
+
+* the command queue is one id deep, not three: SubmitSoundCommand refuses the
+  append once its count is 1, so the drain's three-id walk is a bound;
+* the vector table at $024000 is thirty-one longs, not the twenty-four the
+  notes counted; the seven slots this image calls are the rows, and the rest
+  are driver modes nothing here selects (eight of them still in seg_data blobs,
+  so D41 keeps them out of every row);
+* PlayMusic's same-id compare skips the *stop*, not the submit, and
+  CurrentMusicId holds the mapped byte rather than the table index;
+* EndSoundCommand has no call-shaped entry (every stub jmps to it with
+  BeginSoundCommand's saved SR at a7), so the two are one row;
+* UploadZ80Program's sub.l a0,d0 at $0D5352 is a dc.w the assembler cannot
+  write back, and the C answers it with the machine's interpreter, so the
+  interpreted counts stay equal.
+
+The gate is the register timeline and the audio: 32 rows, twenty-six committed
+fixtures (analysis/fixtures/sound/ hashes them; scripts/oracle_fixtures.sh
+makes them), six declared -- the voice line has no route, the alternate music
+device is dead behind $FFFFC017, and three read Z80 state the corpus does not
+carry, proved from constructed states in port/tests/test_sound_api.c -- the
+pair on two routes, the control, the three cases the ticket names (a music
+start at frame 2236, a stop at 2206, sound 41 at 2235 inside the palette fade)
+and the playtest route audible. D99 records the decisions and the findings;
+docs/game-rules.md §8 is the rule list the C keeps.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
