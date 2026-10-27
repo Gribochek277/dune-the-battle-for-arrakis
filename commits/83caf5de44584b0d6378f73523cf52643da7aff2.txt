@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 83caf5de44584b0d6378f73523cf52643da7aff2
+date: 2026-10-27T18:09:19+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the pages after the merge name the right rows and the right section
+Three things the rebase left saying the pre-merge thing: the group's note still
+counted 33 rows in two files (it is 32 in three), `docs/next-engine.md` pointed
+at `docs/game-rules.md` §10 for the sound rules where ticket 185's and 196's
+sections had moved the numbering (§8), and the site is rebuilt from both.
+
+tests/test_stages.py re-reads the record and the table together (12 groups, 133
+rows, 6 complete, 5 solo) and the fast tier on this tree ends green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
