@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 79b2520beb041e59f1df90e9785003e2b3da7203
+date: 2026-10-28T17:14:48+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+195: the manifest names the dump by path relative to the repo
+The committed manifest recorded the dump's absolute path, so it was stale in
+every checkout but the one that wrote it -- the merge gate's fresh-extraction
+comparison caught it ('manifest.json is stale'). It now records the path
+relative to the repository root next to the size and the hash, which are what
+--check actually compares; the tree is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
