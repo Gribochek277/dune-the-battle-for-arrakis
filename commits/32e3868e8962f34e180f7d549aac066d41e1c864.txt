@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 32e3868e8962f34e180f7d549aac066d41e1c864
+date: 2026-10-28T19:27:46+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge main into ticket/197-audio-engine
+main moved to f3b3ee2e (ticket 186, the mission map view). The only content
+conflicts were docs/decisions.md -- both sides added D103 -- and the generated
+site. Main's map-view decision keeps D103; the audio engine's decision is
+renumbered D104, with its references updated, and docs/html is regenerated from
+the merged sources.
+
+Post-merge checks: scripts/build.sh (byte-identical to the expected
+ba045de8...), make -C port test, tests/test_audio.sh, tests/test_formats.sh,
+tests/test_ym_log.sh (500 YM writes in the same order, spread 0.49 frames),
+tests/test_audio_compare.sh (PASS, r +0.877), tests/test_audio_engine.sh, and
+the fast tier (ALL CHECKS PASSED). The audio path did not move.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
