@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0c9b27c8122c06800979ac41ec36a958299c3735
+date: 2026-10-28T11:46:32+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge main into ticket/191-port-sound-api again, keeping both sides
+Main's tree at 676f80dc is 3ef1ee77's tree: the revert of the 5abe84ed merge
+took the slice's 98 files back out and brought nothing new with them, so the
+merge base (ad916030, this branch's own earlier merge of 3ef1ee77) differs from
+main only by this ticket's content. Keeping both sides is therefore keeping this
+branch's files: every delete/modify, the thirty-three deletions and the seven
+generated routine pages that the revert had renamed back are resolved with the
+branch's version, and `git diff HEAD` before the commit is empty, which is the
+check that nothing main added was dropped -- main added nothing since the base.
+
+The branch also carries the fix for the reason the merge was reverted three
+times: tests/test_sound_api.sh runs port/build/md68k-selftest for the group's
+three unmeasured rows but never built it, so in the gate's checkout it read a
+stale binary and failed. It builds it now (7e777046).
+
+Main's tip is an ancestor of this commit, so the retried merge is a fast-forward
+and the content lands.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
