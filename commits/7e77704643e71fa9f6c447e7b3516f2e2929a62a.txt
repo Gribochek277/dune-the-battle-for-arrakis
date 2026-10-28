@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7e77704643e71fa9f6c447e7b3516f2e2929a62a
+date: 2026-10-28T11:45:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+191: the check builds the selftest it reads
+The merge gate caught this on main, not in the worktree: test_sound_api.sh runs
+port/build/md68k-selftest for the group's three unmeasured rows but never built
+it, so it read whatever binary the checkout happened to have -- fresh in a
+worktree where another check had built it, stale in the gate's checkout, where
+the grep for 'the sound group's unmeasured rows and its two rules ok' failed and
+the merge was reverted three times.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
