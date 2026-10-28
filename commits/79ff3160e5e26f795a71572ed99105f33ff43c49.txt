@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 79ff3160e5e26f795a71572ed99105f33ff43c49
+date: 2026-10-29T00:37:18+02:00
+author: pi <pi@localhost>
+branches: main
+
+message:
+wip 192: the frame API, the seam's frame entry, the budget
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
