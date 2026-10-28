@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fc3a51158b27de8f114028e179177f5f6a98b8ba
+date: 2026-10-28T17:58:09+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 195: 195-data-as-source
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
