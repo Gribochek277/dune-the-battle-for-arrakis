@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a737b1963387479906c42514214f81aeccfdb9a2
+date: 2026-10-28T22:22:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+203: the lookup is its own module, and the inventory is regenerated
+The page table outgrew port/next/replacement.c: the file was at 67 628 bytes
+with it in and the zones gate's hand-written bound is 64 KiB (R4,
+docs/port-architecture.md). It is port/next/replacement_lookup.{c,h} now -- one
+responsibility (which row owns a pc, the page table and its encoding) with its
+own contract, the module the mechanism asks one question of -- and
+replacement.c is 61 103 bytes. Its capacity rule went with the encoding it
+protects (next_lookup_check(), called by next_replacement_check() over the
+committed table), so the gate's failure mode is still "a row added later fails
+the gate" and not "a page is silently empty at run time".
+
+The measurement is unchanged by the move: the same fixture, the same ratios
+(a miss 1.1x the translation's price, the two hits 1.2x and 1.3x, the lookup
+134 rows against 1 row 1.05x), the same control failing at ~280% and ~260%. The
+host's load moves the absolute nanoseconds by more than 2x, so the docs quote
+the ratios and keep the nanoseconds as one snapshot -- the fixture's bound was
+a ratio already.
+
+analysis/flag-inventory.json is regenerated. It was stale on main, not because
+of this ticket: ticket 191 added seven curated names and ticket 195 took the
+game's data out of the listing (two routine-body counts), both after ticket 186
+last wrote the file, so tests/test_flag_groups.sh was red before this branch
+started. The regeneration changes nine lines and no number the dispatch
+produces -- seven names and two body lengths -- and every group's calls,
+addresses, guest and C cycles are the file's.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
