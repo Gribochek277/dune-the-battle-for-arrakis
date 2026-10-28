@@ -1,0 +1,77 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 24c836d163927730d0b853abb8fff8aee38cd811
+date: 2026-10-28T16:42:13+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+186: the mission map view is one module of whole routines, and it goes solo
+The port's largest transcription is a view module: `port/next/mission_map_view.c`
+and its five parts now hold seventeen rows as the guest's routines written as C
+-- the view record and its scroll, the viewport descriptor loader, the plane's
+rows and their packing and upload, the draw script, the object and edge
+repaints, and the cursor and overlay records -- and each routine is executed
+from its entry to its `rts` in C, charging every guest instruction at its own
+address. A dispatch ends at exactly two kinds of boundary, and neither is "one
+instruction":
+
+* **a call out** -- to a row of the group (`LoadViewportDescriptor`,
+  `QueueDmaTransfer`), to another group's row (`GetStructureByIndex`,
+  `GetUnitByIndex`) or to code that is still the guest's (`AddSpriteRecord`).
+  The C pushes the return address the guest's `jsr` pushed, leaves pc at the
+  callee and carries on where the callee's `rts` brings the machine back; or
+* **a VDP data-port write** -- `UploadMapRow`'s eight long writes of a plane
+  row. The FIFO's service time is the clock at the write and the machine
+  advances the clock between dispatches, so each write opens its own.
+
+Everything else is one dispatch: a whole row of cells, a whole pack, a whole
+frame step. `mission_map_view.h` states the frame the ticket asked for: what
+changes the scroll, what uploads, what repaints and in what order, and what the
+panels ask the view to draw (nothing of their own -- the map shows their
+structures through the same object pass).
+
+The group is `mission-map-view`, **solo** with entry `seam` (D102) and
+**complete**: zero delegations, which the mechanism now enforces for it. The
+first draft was exact in every dimension except one interrupt frame -- 84 bytes
+of stale stack, 6 cycles of wait-loop overshoot and one pixel at the frame
+boundary -- and the cause was a real defect (a data write dispatched at its
+entry's clock instead of the guest's), found by adding the per-row fixture this
+commit keeps: a constructed state run through the guest's code and the C, every
+register, the 64 KiB, the VDP write counters and the cycles compared. With the
+fix the Atreides mission pair is identical in picture, work RAM, VDP write
+counters and DMA counts, the Z80's state, the YM2612 timeline and the clock,
+and the translation is smaller by exactly the 131 692 instructions the C reports.
+
+The fixture set is the group's own, because the state corpus's span shape is one
+guest instruction per dispatch (the transcription this deletes): two route states
+hashed at their frames in `analysis/fixtures/mission-map-view/` (inside the
+held-right stretch and at the build panel's checkpoint), the three constructed
+situations the route cannot show (a side change, a structure placed, a unit
+destroyed) and the whole-recording pair. The rows are declared unmeasured in
+`tests/test_oracle.sh` with that reason, and their old per-instruction fixtures
+are deleted.
+
+The two fidelity differences the notes carried now have owners. A unit's icon is
+its facing: `sub_00B3B2` reads the unit record's `+$6A`, which the aim/order
+path owns -- the view owns the node and the plane, not the angle. The build
+panel's bar is a countdown: `StructurePanelFrame` ages `$FFFFC574` by the
+`FrameCounter` delta and `seg_code_00416E` draws the bar from `$FFFFC768`, so
+"the port's drains, the reference's is static" is two values of that countdown.
+D102 records both, and `docs/reverse-engineering-notes.md` has the measurements.
+
+The dashboard gains a third row mode, `chunked` (a dispatch that answers several
+guest instructions), and the mechanism, the inventory and the engine-equivalence
+check now read a span row's reported instruction count instead of assuming one
+per dispatch.
+
+Proof: `tests/test_mission_map_view.sh` (the two banked states, the 8 000-frame
+pair, the checkpoints 7 898 and 8 148, `--no-replace` byte for byte against
+legacy), `make -C port test` (the constructed fixtures), `tests/test_oracle.sh`,
+`tests/test_stages.py`, `tests/test_flag_groups.sh`, `tests/test_docs.sh` and
+`bash tests/run_all.sh` (fast tier, ALL CHECKS PASSED).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
