@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d59afa8ffc7ac58cafe938cdba75e01854ebba54
+date: 2026-10-28T02:39:06+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+tests: the assets tree is both generators' output
+Ticket 196 added assets/music/ (the music extractor's output) to the same tree
+that ticket 194's graphics extractor generates, so the fresh-extraction
+comparison reported 'Only in assets: music' and the check failed on main --
+invisible to the fast tier, which does not run it. The fresh copy now runs both
+extractors before the diff, so the check still says one thing: the committed
+tree is what the generators make.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
