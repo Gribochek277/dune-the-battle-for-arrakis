@@ -1,0 +1,74 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5284d3bd81241289d37f02f3214bdb221ff3ba58
+date: 2026-10-28T21:10:24+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+203: the dispatch answers "not mine" with a page-table load, and its price is measured per instruction
+The playtest report was a picture that stutters and drops. Measured on the
+ticket's route (900 frames of analysis/recordings/atriedes-mission.pad,
+1920x1200, the scene renderer, --no-interpolate, every group selected, the
+median of three runs each way, on a shared machine):
+
+                      guest ms/frame   --no-replace   the mechanism's share
+  before (the scan)        8.89            5.13              3.76
+  after (the page table)   5.93            5.19              0.74
+
+The transcription did not move, so the whole 2.96 ms is the mechanism's. The
+same measurement per instruction, which is the unit that can be held
+(`make -C port dispatch-cost`, -O1, ns per md68k_step):
+
+                                  scan    page table   the translation
+  a miss, no row owns it          827        217            199
+  a hit, WaitVBlank's poll       602        414            358
+  a hit at a row's entry         775        469            372
+  the same miss, 134 rows vs 1    288%       108%
+
+The structure: enabled_find_address() was a linear scan of the selected rows --
+two compares and a range test per row, per guest instruction, and most guest
+instructions are misses, so the scan was the dominant term and it grew with the
+table (six groups took it from 20 rows to 134). It is a page table now, one
+16-bit entry per 256-byte page of the extent the rows span, holding where that
+page's candidates start in a second array, NEXT_LOOKUP_NONE for a page no row
+owns, and each page's list terminated by NEXT_LOOKUP_NONE instead of a count: a
+miss is one load, one test and one branch whatever the table holds, and a hit
+walks that page's few rows (the rows are disjoint, so rarely more than two) with
+one range compare each. It is built when the selection changes and never on the
+dispatch's path, it covers the rows' own extent rather than the address space or
+the ROM, and next_replacement_check() refuses a table too large for its 16-bit
+offsets so a row added later fails the gate instead of emptying a page.
+
+The dispatch's other two per-dispatch scans went the same way: table_index() was
+a scan of the table (for the report's instruction count) and the call counter
+walked the selection; both are O(1) now, a pointer's address inside the array
+and a selected[] flag.
+
+The contract is unchanged, which is what the epic's gates keep proving: a group
+is a set of rows, a row is one guest instruction or one whole routine, a
+complete group may not hand an address back, and the two checks around an entry
+(the call-shaped stack, the exit the C leaves) are untouched -- they are most of
+what a dispatch costs now. The flag inventory, the zero-delegation gate and
+ticket 202's name semantics are as they were.
+
+The regression check is per instruction, because a frame's `guest` mixes the
+route, the host and the renderer's load: port/tests/dispatch_cost_main.c times
+one md68k_step() through the dispatch against the same instruction from the
+generated translation, requires the translation side to be translated, and
+requires the lookup's price with 134 rows to be the price with one. Its control
+is the structure this commit replaced -- a copy of next/replacement.c with the
+scan in front of the page table, built through the Makefile's NEXT_SWAP the way
+tests/test_replacement.sh builds its deleted-row control -- and the fixture must
+fail on it (the miss at 302% of the translation, the scaling at 288%).
+tests/test_dispatch_cost.sh is fast tier and ~17 s: one link of the objects
+tests/test_headless.sh already built, then the measurement.
+
+Docs: docs/next-engine.md has the replacement page's section, docs/native-port.md
+the window's pacing numbers, docs/port-architecture.md the structure one
+paragraph, and D105 the decision. The docs site is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
