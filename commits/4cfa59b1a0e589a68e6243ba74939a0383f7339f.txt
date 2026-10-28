@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4cfa59b1a0e589a68e6243ba74939a0383f7339f
+date: 2026-10-28T16:21:40+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+197: the playtest command plays the port's engine by default
+`scripts/playtest.sh` now passes `--sound-engine port` when the arrangement is
+`next` (the default), so the route a person sits down to is the played path the
+ticket is about; `--sound-engine z80` puts the cartridge's driver back for a
+comparison, and `legacy` still refuses the port engine. The snapshots' manifest
+records the sound path, so changing it refreshes the walk. docs/collecting-
+coverage.md and docs/build-and-test.md say which command is which.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
