@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5091abe9225cfd061ce94e7fc72c70c01f82b169
+date: 2026-10-28T10:00:23+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 202: 202-175b-the-replace-names-still-mean-what-they-said
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
