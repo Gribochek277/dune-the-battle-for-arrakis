@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2efdb0e9c7a696861e8036e10020f1eb2911860f
+date: 2026-10-29T01:15:40+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+192: the frame is the port's picture, and the budget is a number on a page
+The renderer's picture is the port's now. `output/frame.h` is the vocabulary a
+ported screen draws with -- layers of tiles, a scroll as a picture position, a
+window as a strip, sprites with a facing/flip/priority, the palette, the
+frame's own bits -- and a builder that fills the `md_scene` the three backends
+already draw, so a frame is a scene and not a second picture type. The
+composition moved into one function (`md_frame_compose()`): the passes a frame
+is drawn in, the world and then the interface's regions over it, are answered
+once and the CPU backend and both GPU shaders walk that list instead of each
+re-deriving it.
+
+The seam grew the two calls the split needs: `md_renderer_draw_frame()` draws a
+frame the port built, and `md_renderer_picture()` answers the frame the
+renderer last drew. `software` and `stub` publish neither -- they are the chip
+model's, and `md_renderer_takes_frames()` is how a front end tells them apart.
+The wide backdrop's screen question is the first caller: it read the VDP's
+registers and now asks the picture the renderer drew.
+
+The chip's vocabulary moved into the chip: `chips/vdp.h` carries the semantic
+accessors the picture's structure needs (plane maps, the fetch layout, the
+window, the table bases, the mode), inline so a module that asks one need not
+link the chip's model, and `output/scene.c`'s capture goes through them. No
+module under `port/next` or `port/game` names a VDP register any more and
+`tests/test_frame.sh` fails on one, with the scanner's own control.
+
+The budget is measured and it is on the dashboard: a frame the port built costs
+1.27 ms against the chip model's 2.74 ms for the same 320x240 picture (46 %),
+because it is never captured and its tile fetch is hoisted per cell. The
+fixtures write one picture twice -- into a VDP state and through the builder --
+and require the same 71 680 pixels, then the same frame at 16:9 and 21:9 against
+the reference picture's blocks, the map's own extra columns, the interface's
+regions and the bars.
+
+`render_scene_gl.c` went over the 64 KiB bound with this change, so the GLSL text
+moved to `output/render_scene_gl_shaders.c` (+ header) as the bound's rule asks;
+no shader byte changed. Zone declaration follows: `next -> output` is allowed and
+`next` may not include the seam, the shell, the surface or a backend.
+
+Gates: scripts/build.sh OK; make -C port test 73459+14629 checks, 0 failures;
+tests/run_all.sh (fast tier) ALL CHECKS PASSED, 43 of 43, the playtest route
+included; scripts/build_docs.py --check clean; the shell's own measurement at
+1920x1200 has `render` 6.10 -> 4.85 ms with the guest unchanged.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
