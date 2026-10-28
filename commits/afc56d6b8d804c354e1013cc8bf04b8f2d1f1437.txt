@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: afc56d6b8d804c354e1013cc8bf04b8f2d1f1437
+date: 2026-10-28T16:22:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/197-audio-engine
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
