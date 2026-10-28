@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 78aa7d0babe4cfb637f6de4e3491c3e35d617817
+date: 2026-10-28T07:42:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+status: ticket 202, the replace names' regression
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
