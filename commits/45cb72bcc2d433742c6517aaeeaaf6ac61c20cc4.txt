@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 45cb72bcc2d433742c6517aaeeaaf6ac61c20cc4
+date: 2026-10-28T18:54:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 186: 186-port-mapview
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
