@@ -1,0 +1,74 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e802247580185e733bcdc360557983bcced90f2d
+date: 2026-10-28T15:44:24+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+195: the game's data is source, and the build assembles it
+The tables the game's logic reads were bytes at computed offsets inside
+`incbin` blobs and, worse, inside a code segment: the footprint table at
+`$02187A` was decoded as a run of `ori.w` instructions and the first twelve
+bytes of three structure descriptors as code. They are source now, and the
+build assembles them.
+
+* `assets/data/` -- 17 files, 180 114 bytes: `units/unit-types.asm` (32
+  descriptors, fields named after `port/state/guest_state.h`),
+  `structures/structure-types.asm` (19), `missions/mission-table.asm` (the five
+  mission pointers and the seven footprints), `missions/footprint-counts.asm`,
+  `missions/mission-index.asm` (five tables, nine script pointers each),
+  `missions/mission-1..5.asm` (the 45 scripts, one line per command with the
+  operands named and each mission's own summary in its header), and seven
+  `text/` files. Assembly and nothing else, so there is no second encoder to
+  disagree with the assembler, and a field is greppable because its name is on
+  its line. A field the project has not established is `unnamed_XX` and says so.
+
+* `scripts/extract_data.py` -- the extractor: builds the catalogue from the
+  dump, writes the files, `assets/data/manifest.json` (origin, size, hash per
+  file, the field table, the per-script command counts, `not_extracted` with a
+  reason each) and `assets/data/regions.txt`, the split's data-source
+  catalogue. `--check` re-encodes every file and compares it with the cartridge
+  (naming the byte and the address), and regenerates both records to catch
+  staleness; `--apply` writes a copy of the dump with the files' bytes in it.
+
+* `scripts/make_segments.py --data-source` -- carves those regions out of the
+  split: they leave the segment list, so sega2asm neither decodes nor copies
+  them, and `src/segments.inc` emits `org` + `include` where it emitted
+  `org` + `incbin`. The splitter refuses a region that overlaps code, leaves
+  the body, or claims an address the emulator executed. 276 bytes withdrawn
+  from the disassembly, 3 731 lines of table data that was being decoded as
+  code removed, 3 bogus code segments gone -- and the image is still byte-exact
+  (42 differing bytes, all in the hand-modified header).
+
+* `tests/test_data.sh` (fast tier, 25 s) -- the round trip; a fresh extraction
+  equals the committed tree; eight mutations each named (a descriptor value, a
+  structure hit point, a mission operand, a string, a missing file, a stray
+  file, a stale manifest, a stale catalogue); no `incbin` covers a source
+  region; the whole tree assembled in a scratch directory **with no `rom/`**
+  reproduces the body byte for byte; one `base_value` changed in the source
+  moves exactly that field's two bytes and nothing else; each mission's header
+  summary matches the decoder; and the text files' names and `NEXT_TEXT_*` keys
+  agree with `port/game/guest_text_catalog.c` and `port/locale.ini`, with the
+  coverage stated per screen.
+
+* `tests/test_segment_split.py` -- the invariant is now over the config *plus*
+  the source regions: together they tile `$000200..end` exactly.
+
+Two corrections the extraction measured, both now on their pages: a mission's
+table is **nine** longwords, not five (five sides, then four more that decode
+as the same command stream and hold a third of the data), and the footprint
+entries are 18 bytes with the count in the parallel table at `$021968`, not a
+count word inside the entry.
+
+`docs/data.md` is the page: what each table is, what each field means, the
+balance-change recipe, the text coverage per screen, and what is not extracted
+with the reason. D102 records the decision.
+
+Gates: `make -C port test` 58 738 checks / 0 failures; `bash tests/run_all.sh`
+fast tier green; `scripts/build.sh` OK; the docs site rebuilt and current.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
