@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 88685c0a3d7140e718d2cae3b4ebb756dc6f9035
+date: 2026-10-28T16:34:37+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+195: the fast tier is 38 checks, not 37
+The count in tests/run_all.sh's header is the assignment table's own, and the
+data check made it 38.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
