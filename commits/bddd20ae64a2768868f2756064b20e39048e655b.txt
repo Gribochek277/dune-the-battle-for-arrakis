@@ -1,0 +1,68 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bddd20ae64a2768868f2756064b20e39048e655b
+date: 2026-10-28T09:38:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+202: the replace names still mean what they said, and the line says which
+`--replace NAME` was not narrowed by ticket 174. The table's thirty pre-174
+rows are unchanged (the diff is additions only) and `next_replacement_enable()`
+is still the loop that adds every row carrying the name: `MissionCursor` is its
+three spans, `UpdateCursorPosition` is another name, and the pair the four
+mission checks pass has selected the same four rows before and after. On a
+clean build of the base commit `tests/test_mission_click.sh`,
+`tests/test_mission_panels.sh`, `tests/test_mission_mouse.sh`,
+`tests/test_mission_wide.sh` and `tests/test_gamepad.py` pass with their
+assertions unedited, so none was edited. The one failing run seen in the main
+checkout had dropped 1 417 of 7 800 presentations and passed again on the same
+binary; the fifth failure (the gamepad's pad timeline) never selects a
+replacement at all, so it does not share the flag's cause.
+
+The decision is the ticket's (b): a name stands for the implementation it names
+-- every row of the table carrying it -- a list of names is their union, and
+`--replace-group` is the coarse subsystem selector. One sentence now states it
+in both usage texts (`play_options.c`, `headless_options.c`), the two option
+headers and `next/replacement.h`, and `docs/next-engine.md`,
+`docs/port-architecture.md`, D93 and `port/README.md` carry the same rule.
+
+What had actually drifted was the run's own report. The line printed
+`options.replacements`, the command line's words, so `--replace-group
+mission-cursor` and the default (no selector) both said "nothing (--no-replace:
+the guest's own code at every address)" while a whole subsystem ran, and a name
+could not say whether it had taken one row or all three. It is now printed from
+the machine's own selection (`mda_machine_replacement_names()` /
+`mda_machine_replacements()`) with each implementation's row count:
+
+    MissionCursor (3 rows)
+    MissionCursor (3 rows), UpdateCursorPosition (1 row)
+    MissionCursor (3 rows), MissionCursorTail (1 row), UpdateCursorPosition (1 row)
+    every entry in the table (98 implementations, 101 rows)
+    nothing (--no-replace: the guest's own code at every address)
+
+The report moved into `app/play_report.c` (its third line) rather than growing
+`run_play.c` past the zone bound; `port/README.md`'s paragraph was condensed for
+the same 65536-byte bound. `play_report.h` includes `app_machine.h` for the
+selection row's type only, and the diagram's app-internal include count moved by
+that one edge as a result.
+
+The gate is `tests/test_replace_selection.sh` (fast tier): it drives
+`--replace` with one name, two names and a group, plus another group, both
+selectors at once, the default and `--no-replace`, and reads the "running as the
+port's C" line back in every shape -- the line the four mission checks' runs
+print. The mechanism's own fixture gains "a name is every row it names"
+(`port/tests/test_replacement.c`), which reads the same rule from the table
+without a run: `MissionCursor` = 3 rows and 1 implementation name, the pair = 4,
+the group = 5 rows and 3 names, `RunOptionsScreen` = 2.
+
+Verified: `scripts/build.sh` OK (the header's intended differences only),
+`make -C port test`, `tests/run_all.sh` fast tier (36 checks),
+`tests/test_flag_groups.sh`, `tests/test_docs.sh`,
+`python3 scripts/build_docs.py --check`, `tests/test_stages.py`,
+`tests/test_port_zones.py`, the four mission checks and the gamepad check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
