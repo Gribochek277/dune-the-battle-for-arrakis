@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bdd270649bea24acca60259ddc0e245834eb498d
+date: 2026-10-28T16:38:58+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+197: record the short data blobs a second sega2asm pass leaves
+A run of scripts/regenerate.sh on ticket 197 left three bin segments shorter
+than their YAML ranges (the title strings, a pointer table and the cartridge's
+tail), so the rebuilt image was 967 040 bytes on a clean output while the size
+check passed over a stale 2 MiB file. The assets are generated and ignored; the
+recovery is to rewrite each bin segment's range from the dump, and the note says
+so with the snippet. This is the toolchain trap the next person will hit.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
