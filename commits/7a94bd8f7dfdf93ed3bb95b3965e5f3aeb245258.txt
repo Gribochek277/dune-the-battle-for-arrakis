@@ -1,0 +1,53 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7a94bd8f7dfdf93ed3bb95b3965e5f3aeb245258
+date: 2026-10-29T00:56:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+190: the reset vector is the port's C, and so is the front end's loop
+The boot path and the front-end driver, in C: `EntryPoint` $000468 and the
+chain it reaches -- `BootStub`, `InitVdp`, `ClearWorkRam`, `InitSpritePool`,
+`BootInit`, `DetectHardwareVersion`, `InitTitleGraphics`, `InitAttractScreen`,
+the cartridge probe and `GameEntry` -- and `RunFrontEnd` $00518E, which
+dispatches to the screens above the machine.
+
+Two groups, both complete: `boot-path` (11 rows) and `front-end-driver` (1).
+One guest instruction per dispatch, charged at its own address, because the
+boot's cost is the first thing every frame is measured after; the calls out
+(the sound driver's load, the VDP library's uploads, the frame clock's wait,
+the front end, the mission) are the machine's, not hand-backs.
+
+The mechanism gained a third entry kind, `NEXT_ENTRY_RESET`: a reset is not a
+call -- SS and PC come from the vector table, and `BootInit`/`GameEntry` are
+reached by a `jmp` -- so there is no frame to check and the 68000's even-stack
+invariant is what remains. The game's own reboot (`jmp (EntryPoint).w`)
+re-enters the first row the same way.
+
+Three `dc.w` instructions in the listing's spans are spelled out by hand with
+the interpreter's own semantics, which is what the guest's run does; the first
+version of `$00175E` used the mnemonic reading and the pair caught it as two
+RAM bytes (`SUBA.W a1,a1`, no memory access). The dead code (the probe's mapper
+path, `InitTitleGraphics`'s upload behind the driver-magic check, the password
+screen) stays named and the guest's.
+
+The port's own diagnostics: the arrangement runs `next_boot_self_test()` before
+its first instruction (the reset vector, its stack, the group's rows), a mapper
+cartridge is the probe branch's sentence and a fault rather than a bank-switch
+routine it has no mapping for, and `port/tests/test_boot_path.c` exercises the
+reset entry kind and the six rows a seeded machine can isolate.
+
+Measured (tests/test_boot_path.sh, house-selection.pad from reset, 2700
+frames): legacy and both groups identical -- 31 245 885 instructions,
+347 408 323 cycles, picture, work RAM, audio and YM timeline byte for byte --
+12 rows on, 75 888 instructions answered, 0 delegated, the reset path once.
+Each group alone is the guest's for 900 frames and `--no-replace` is the
+control. Names added: `BootStub` $000562, `ProbeCartridgeDevice` $01F1BC;
+the listing, symbols, equates, generated translation, inventory, playtest
+record and site are regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
