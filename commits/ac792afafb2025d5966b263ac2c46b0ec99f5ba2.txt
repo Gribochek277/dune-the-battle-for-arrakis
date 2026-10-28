@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ac792afafb2025d5966b263ac2c46b0ec99f5ba2
+date: 2026-10-28T18:15:39+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge main into ticket/186-port-mapview, keeping both sides
+Main moved while the branch was open: ticket 191 (the sound API), ticket 195
+(the game's data as source, which rebuilds the generated translation) and two
+main-side test repairs. The conflicts were the two expected kinds and both are
+resolved by keeping both sides:
+
+* docs/decisions.md kept ticket 195's D102 and this branch's decision becomes
+  D103 (it was taken first on this branch, but main's number is the one that
+  landed); the D91 classification row and every reference in this branch's
+  prose follow the renumbering.
+* the generated site -- docs/html/docs/decisions.html and the two diagram
+  pages -- is regenerated with `python3 scripts/build_docs.py`, never merged by
+  hand.
+
+`scripts/build_docs.py` is the one file both sides edited: main's change and
+this branch's `chunked` row mode are in different functions and merged cleanly.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
