@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f09227096a715f1d8f23d5e5f9784e9f6749d053
+date: 2026-10-28T16:09:18+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+197: the audio engine is the played path; the Z80 driver stays the comparison build's
+The game's sound API now answers next/audio_engine.c when --sound-engine port is
+given (next only): 16 sequence channels, the six FM / three PSG-tone / one
+noise / one kit destination pools, four effect slots, the driver's tempo
+accumulator, gates and flush, and the register programming the Z80 used to do.
+The engine reads the cartridge's four music tables and the driver's register
+program and ladders through the 68000 bus, so assets/music stays the source of
+truth and extract_music.py --apply is the reviewable edit. mdz80_set_enabled(0)
+holds the Z80 stopped: no driver instruction, no ring byte.
+
+The switch is next-only and z80 is the default, so legacy, the fidelity
+checkpoints, the register-timeline gates (test_ym_log, test_audio, test_formats)
+and ticket 191's pair measure what they measured before. The played path is
+judged by the audio comparator: the house-selection route passes at 3 dB / 50
+cents / envelope 0.6 (20 windows, r +0.762), the engine's --ym-log writes are
+cpu 2 and the run's Z80 instruction count is 0; the 10 400-frame playtest route
+reaches every step with the engine on, peak 6257, no fault. A one-byte edit of
+mission voice 0 in assets/music (applied to a ROM copy) changes 212 240 of
+220 784 samples, which is the data-edit demonstration.
+
+tests/test_audio_engine.sh is the fast proof; --report is the slow per-piece
+report (113 pieces, 38 inside the tolerance, 75 named outside, none silent).
+The per-frame PSG envelope mixer, the kit/PCM player and the driver's exact
+destination bookkeeping are not modelled yet; D102 and docs/native-port.md
+("Audio, slice 4") name them rather than implying parity.
+
+Fast tier: ALL CHECKS PASSED. tests/test_audio_engine.sh and the playtest route
+also pass on their own.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
