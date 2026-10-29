@@ -1,0 +1,106 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 91a3e57d051f56424eaa98afa3d8a5ed69542f8c
+date: 2026-10-29T09:50:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+189: the structures are a group of seven rows, and their transcription is generated
+The structure subsystem and the economy, in C: `port/next/structures*.c` holds
+the per-frame pass `RunStructurePass` $006CFE (570 instructions: the four time
+slices, the walk over the 126 records, the build's payments, the repair, the
+decay, the production and the refinery's dispatch, with `sub_006DA2` inside its
+span), the refinery's conversion `RunRefineryConversion` $007E64 (the price
+table `data_02532E`, the condition factor and the current side's clamp), the
+record's release `FreeStructure` $006C6A, creation `CreateStructure` $008C7E,
+destruction `DestroyStructure` $009954` (the cells, the record and the ledger),
+a hit on a record `DamageStructure` $009C34 (with `PostStructureCellsIfAny`
+$009D48 inside its span) and a hit on a unit `DamageUnit` $01C536 (with the
+death path's tail `sub_01C67A` inside its span). Seven rows, one group,
+`structures`, `paired` with entry `seam` (D94), zero delegations, D109 the
+decision. `PostStructureToMapCells` stays the leaf helpers' row (ticket 182).
+
+The transcription is generated. The seven rows are 3 100 guest instructions and
+every body is the generated translation's own text with its terminator turned
+into a goto, a `call_guest()` or a `BOUNDARY()`; ticket 187 wrote that shape by
+hand and at this size the diff is unreadable. `scripts/transcribe_group.py`
+writes it from `port/generated/`: one label per instruction, `STEP` charged at
+its own address, the guest's branches as the C's branches, a call as a return
+address pushed and `pc` left at the callee, a `jmp` as `pc` set, a `dc.w` word as
+the machine's interpreter (D41), and a PC-relative operand resolved to the
+absolute address it names (the part does not advance `pc` between instructions).
+The manifest of what each part owns is a literal in the script, so a range is a
+diff and `--check` is a gate (tests/test_structures.sh runs it). It refuses a
+shape it does not recognise, which is how the `divu`-by-zero guard and the `dbf`
+two-branch body were caught rather than mistranscribed. Eleven part files keep
+every module under the zone rule's 64 KiB bound.
+
+A dispatch ends at a call out, at the routine's `rts` and at the machine's next
+VBlank -- D108's guard, moved into `next/replacement.h` in this ticket because
+its second group needed it (`next_replacement_frame_boundary()`, with the units'
+macro delegating to it), which is what D108 said the honest next step was.
+
+The pair is byte-exact. The battle route (26 000 frames of the Atreides mission
+with no input), `legacy` against `next --replace-group structures`: the picture,
+the 64 KiB of work RAM (sha256 e673bb0e), the VDP's write counters and DMA
+counts, the Z80's state, the YM2612 timeline (37 MB of register writes), the
+clock (3 330 716 164 cycles) and the interpreted count identical, with 171 677
+dispatches answered by the seven rows -- RunStructurePass 170 209, DamageUnit
+891, RunRefineryConversion 230, CreateStructure 187, FreeStructure 108,
+DamageStructure 52 and DestroyStructure 0 (no structure dies on the route; its
+arm is constructed). The mission's checkpoints 7 898, 8 148 and 9 498 are
+identical in picture, work RAM, VDP dump and clock, `--no-replace` is legacy byte
+for byte, and the window's per-frame `guest` stage is 3.50-3.52 ms with the group
+on against 3.52-3.58 ms with `--no-replace` (8 600 frames of the battle route,
+scene renderer, no interpolation, no vsync; 900 frames of the mission route read
+3.02 against 3.02).
+
+Three rules the ported code showed the rules page had wrong, corrected in the
+same change and named there:
+
+  - E3: a build's construction phase is TEN payments, not twenty. `+$55` starts
+    at 100 ($0183D2) and `subi.b #$0A,$55` takes ten off each payment, so ten
+    payments of `+$16/20` (divs #$14 at $006E82) finish it -- half the type's
+    cost. The other half is the repair path's per-hit-point price, which is why
+    the divisor is twenty and not ten. Whether the two add up to exactly `+$16`
+    is left as the observation that would settle it.
+  - E1: the income clamp is max(side +$16, $FFFFC054) ($007F2A-$007F3E), not the
+    side's `+$16` alone. The committed route's player has `+$16` = 0 and is still
+    capped at the 1 000 in `$FFFFC054`, which the page quoted without explaining.
+  - D4: the damage mask `$FFFFC019` bit 0 protects structures as well as units
+    ($009C56-$009C6A is the same test as $01C558, read as a byte). The page named
+    only the unit half.
+
+The fixtures are the group's own: four banked states of the battle route in
+`analysis/fixtures/structures/` (the mission's four structures and the wreck, the
+starport struck from 892 to 828, the refinery's sale from 7 to 705 credits, the
+late ledger) with the guest's work RAM, VDP dump, picture and `RandomSeed`
+hashed; four constructed states in `port/tests/test_structures.c` (a hit, a clamp
+that reaches zero and runs the whole death path, the damage mask on both sides, a
+unit's hit); and `tests/test_structures.sh`, the 26 000-frame pair, the rules'
+own numbers re-derived from the group's run's work RAM, the checkpoints, the
+group-off control and the generator's `--check`. Ticket 178's per-instruction
+fixtures for `DamageUnit` and `PostStructureCellsIfAny` are deleted with the
+shape they measured, and the seven rows are declared unmeasured in
+tests/test_oracle.sh with that reason.
+
+The playtest route gains the `structures` mix and its `reaches` line; the
+dashboard, `analysis/flag-inventory.json` (7 rows, 13 routines, 1 446 addresses,
+0 delegations) and the site are regenerated. `tests/test_flag_groups.sh`'s routine
+count moves 820 -> 821: ticket 190's `BootStub` name landed after ticket 187
+regenerated the inventory, so main's guard was stale and red; the count is the
+site's and the universe did not change with this ticket.
+
+What the slice does not port, and what proves the rest is the next one's:
+the per-record handlers the pass dispatches through `$FFFFD30C`
+(`sub_00749E`-`sub_008221`), the placement family (`TestStructurePlacement`,
+`PlaceStructureOnMap`), the panels' commands (`ApplyStructureCommand`,
+`CancelStructureBuild`), the mission runner `RunMission` and the mission's end
+(`CheckMissionWon`/`CheckMissionLost`). They are reached by calling out, so the
+group answers every address it owns.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
