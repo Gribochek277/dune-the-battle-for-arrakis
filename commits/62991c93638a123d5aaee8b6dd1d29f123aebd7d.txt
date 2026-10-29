@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 62991c93638a123d5aaee8b6dd1d29f123aebd7d
+date: 2026-10-29T02:16:04+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/190-port-screens-boot
+# Conflicts:
+#	docs/html/diagrams/app-structure.svg
+#	docs/html/diagrams/index.html
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
