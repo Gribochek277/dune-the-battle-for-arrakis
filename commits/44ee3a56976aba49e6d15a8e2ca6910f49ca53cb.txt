@@ -1,0 +1,69 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 44ee3a56976aba49e6d15a8e2ca6910f49ca53cb
+date: 2026-10-29T09:47:34+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+198: the player's save is the cartridge's battery window
+The cartridge declares 32 KiB of battery RAM at $00200000-$0020FFFF and its
+code never touches it: scripts/scan_sram.py finds 3 204 four-byte values inside
+the window and none is an instruction's operand, and the playtest route's
+10 400 frames make 0 accesses now that the bus counts them. The game's progress
+travels through the password screen, a 14-entry level-select table, and the
+title screen has no save row. So the port declares the save's layout in the
+window the header names, keeps the window mapped (the memory map's twelfth
+region), and makes the save that image:
+
+* next/save_state.{c,h}: the game's state as eight regions of work RAM -- the
+  record world, the map, the mission's block and its slices, the view, the
+  random seed -- with a header (magic, schema version, the identity: frame,
+  side, mission, level, the live record counts) and a CRC-32, compressed with
+  an RLE stream into the 32 KiB (the raw state is 52 761 bytes; the committed
+  mission's payload is 14 536). The identity's counts are the state layer's
+  (GUEST_RECORD_ALLOCATED), and the mission clock it uses to answer "is the
+  mission running" is a new state-layer accessor (guest_mission_clock).
+* app/save_file.{c,h}: the container -- savegame.dsv beside the binary,
+  "DUNESAVE", version 1, the 32 KiB image and a SHA-256; a version-0 file (the
+  image alone, an emulator's .srm) is read and reported as raw.
+* app/play_save.{c,h}: F7 writes, F8 loads, --load-save waits for the mission
+  it names (side, number, clock and a live force), a load clears the port's own
+  selection; the window's imperative half, so run_play.c stays under the zone
+  bound (it was over; the port's feature report lines moved to play_report.c).
+
+The harness has --save-at FRAME:PATH, --load-save PATH, --load-at FRAME and
+--perturb-save (the check's control), and prints the window's access count and
+whether the battery holds a save. The playtest route declares the save and load
+steps in analysis/playtest-route.json's "saves" section (scripts/playtest_route.py
+--saves/--check), scripts/playtest.sh gains --save-at STEP and --from-save FILE,
+and scripts/scan_sram.py is the static half of the finding.
+
+tests/test_saves.sh is the gate's check: the reference arrangement saves at the
+mission step with a machine snapshot; the ported arrangement loads it with its
+regions scrambled first and equals the reference on work RAM outside the stack,
+V-RAM, C-RAM, V-SRAM and the picture at the save's frame and at the next step,
+and the snapshot-restored run one frame on. The raw image loads identically; a
+save from another frame differs; a damaged file, a foreign schema, a non-save
+and --perturb-save without a load are refused by name. On a private display a
+--load-save waits on the title screen and applies at the mission, and F7/F8
+write and read. port/tests/test_save.c is the fast fixture (regions, RLE, CRC,
+versions, container).
+
+docs/saves.md is the page (the finding, the layout, the versions and migration,
+the route's steps, what is not saved), D109 the decision; the format index,
+the keyboard page (F7/F8), the project status, the goals table, the
+reverse-engineering notes (F8a), the build-and-test table and port/README-saves.md
+follow it. The snapshot format is version 3 (the battery's image is state a frame
+reads), and tests/test_state_file.sh still passes.
+
+Checks run: tests/run_all.sh --tier fast (ALL CHECKS PASSED), bash
+tests/test_saves.sh, make -C port test, tests/test_state_file.sh,
+tests/test_state_layer.sh, tests/test_memory_map.sh, tests/test_playtest_route.sh,
+tests/test_frame_cost.sh (3.19 ms ported / 6.20 ms guest per frame),
+python3 tests/test_port_zones.py, build_docs --check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
