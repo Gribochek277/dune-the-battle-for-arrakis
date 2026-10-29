@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 234f15d811ef943b5401f45672b6aa3dbf1b143a
+date: 2026-10-29T11:30:09+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/198-saves-not-sram
+Main moved with ticket 189 (the structures and the economy), which took D109
+and added a group to the replacement table, a mix to the playtest route, its
+modules to the zones and a slow-tier check. The merge keeps both sides:
+
+* docs/decisions.md: ticket 189's D109 stays and ticket 198's decision is
+  renumbered D110 (the references in docs/saves.md's page, port/README-saves.md
+  and the notes follow it).
+* docs/port-zones.json: the next zone lists both the structures files and
+  save_state; the memory declaration's measured numbers are the merged tree's
+  (12 regions, 136 touchers, 45 allowances), with the note saying what the
+  battery region's own touchpoints are.
+* analysis/playtest-route.json: the structures mix and the ticket's "saves"
+  section are both kept.
+* The rest auto-merged; docs/html was regenerated from the merged sources
+  (16 porting groups, 161 rows), and docs/html/diagrams and the pages follow.
+
+The merge also fixes the ticket's check to build both binaries
+(`make -C port headless-fast play`): a state file records the arrangement's
+selection, so the stale window refused the state the harness wrote after the
+table grew — the check now builds what it verifies. The slow-tier count in
+tests/run_all.sh is 74 again (both tickets added one), and the check's row in
+docs/build-and-test.md says both binaries are built.
+
+Checks after the merge: tests/test_saves.sh (140 012 fixture checks, the
+reference/ported pair, the snapshot comparison, the raw image, the controls and
+the window half), make -C port test, tests/test_playtest_route.sh (18 mixes),
+tests/test_frame_cost.sh (6.99 ms ported / 13.74 ms guest on the loaded
+machine, budget 8.12), tests/run_all.sh --tier fast (ALL CHECKS PASSED),
+python3 tests/test_port_zones.py, build_docs --check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
