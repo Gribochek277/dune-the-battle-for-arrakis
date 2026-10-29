@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8c934dae0eedb9b27d3985942ee9ff79098f99cd
+date: 2026-10-29T11:18:06+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/188-port-orders-ai
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
