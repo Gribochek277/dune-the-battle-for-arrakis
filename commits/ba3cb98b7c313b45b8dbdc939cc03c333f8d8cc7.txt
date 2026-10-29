@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ba3cb98b7c313b45b8dbdc939cc03c333f8d8cc7
+date: 2026-10-29T09:50:19+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/189-port-structures-economy
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
