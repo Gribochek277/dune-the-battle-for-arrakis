@@ -1,0 +1,72 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3fed58f3e8d9f76c9cbe3bfe2f78a99d99da9f2e
+date: 2026-10-29T02:50:36+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+187: the units are a group of eight spans, and a dispatch stops at the VBlank
+The unit subsystem, in C: `port/next/units*.c` holds the per-frame pass
+`RunUnitUpdate` $0199BE (its two halves and the three leaf helpers inside its
+span), the order's state machine `SetUnitOrder` $0198D6, the aim and the two
+turn triples `AimUnitTurret` $01D47C / `TurnAngleTriple` $01D4F6, the speed and
+its 4.4 fraction `SetUnitBuildProgress` $01D586 / `UnitMoveStep` $01D5E4, the
+conversion countdown `CompleteUnitConversion` $01D19E and the posting back into
+the map cells `PostUnitToMapCells` $00E4D0. Eight rows, one group, `solo` with
+entry `seam` (D94), zero delegations, D106 the decision.
+
+A dispatch ends at a call out, at one of the three `dc.w` words the assembler
+cannot write back (the machine's interpreter runs them in both arrangements,
+D41) and at the routine's `rts`. What this slice adds is the fourth: the
+machine's next VBlank. A chunk holds any interrupt that comes due inside it
+until it ends, and this is the first group whose chunks are long enough for that
+to happen -- the mission's loop spends its frame inside the pass. Measured with
+only `PostUnitToMapCells` on, the battle route's frame 7 679 differed by 30
+bytes of stack under `a7` and 4 cycles, every record byte and the picture
+identical. `units_frame_boundary()` ends a dispatch when the clock reaches the
+machine's next frame multiple (the length is `timing.h`'s, the margin 512 cycles
+covers the DRAM refresh the recorded costs do not include), which is where the
+machine then delivers the interrupt; every instruction of every span is an entry
+in its part's switch for that reason.
+
+The pair is byte-exact. The battle route (26 000 frames of the Atreides mission
+with no input), legacy against `next --replace-group units`: picture, the 64 KiB.
+of work RAM (sha256 e673bb0e), the VDP's write counters and DMA counts, the Z80's
+state, the YM2612 timeline, the clock (3 330 716 164 cycles) and the interpreted
+count identical, and the translation smaller by exactly the 25 348 098
+instructions the C stood in for -- 1 031 303 dispatches (RunUnitUpdate 937 210,
+SetUnitOrder 592, AimUnitTurret 1 861, TurnAngleTriple 3 630,
+SetUnitBuildProgress 1 134, UnitMoveStep 12 795, CompleteUnitConversion 649,
+PostUnitToMapCells 73 432). The mission's checkpoints 7 898, 8 148 and 9 498 are
+identical in picture, work RAM, VDP dump and clock, `--no-replace` is legacy byte
+for byte, and the per-frame `guest` stage in the window is 2.86 ms with the units
+on against 2.86 ms with `--no-replace` (8200 frames of the battle route, the
+scene renderer, no vsync) -- inside the report's 0.01 ms resolution.
+
+The fixtures are the group's own, because the corpus's span shape is one guest
+instruction per dispatch: four banked states of the battle route in
+`analysis/fixtures/units/` (the mission's first frame with its units on the map,
+the enemy's march, the turret triples at the wrap, the survivors), each with the
+guest's work RAM, VDP dump, picture and `RandomSeed` hashed and the records'
+facts beside it; six constructed states in `port/tests/test_units.c` (the wrap
+and the snap, both aim directions, the build clamp, the occupied cell, the
+conversion reaching zero -- the route's 444 conversion dispatches are all the
+`+$5F == 0` guard -- and the pass with all six slices due); and
+`tests/test_units.sh`, the 26 000-frame pair, the checkpoints and the group-off
+control. Four of ticket 179's per-instruction fixtures are deleted with the shape
+they measured, and the eight rows are declared unmeasured in
+`tests/test_oracle.sh` with that reason.
+
+The rules page gains §6a: the six slices (and the notes' M2-8 table corrected --
+the map-cell posting is on the 60-frame slice, 3 606 dispatches over 8 000 frames
+with 27 live units, not on the 5-frame one), the two triples' arithmetic, the
+speed's 4.4 pair, the movement step, the conversion, the posting and the random
+stream, with the two unknowns this slice cannot write as a rule (the deviator's
+release table and the AI's dormant group layer) listed in §10. The playtest route
+gains the `units` mix; the dashboard and the inventory are regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
