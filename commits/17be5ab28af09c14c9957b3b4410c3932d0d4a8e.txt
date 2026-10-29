@@ -1,0 +1,54 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 17be5ab28af09c14c9957b3b4410c3932d0d4a8e
+date: 2026-10-29T14:47:14+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/198-saves-not-sram
+Main moved again with ticket 188 (the orders and the AI), which took D109 and
+D110 and left ticket 189's structure decision on D109 too -- a duplicate in
+main's own decisions file. The merge keeps every side and leaves the sequence
+unique:
+
+* docs/decisions.md: the order machine keeps D109 and the selection set D110
+  (ticket 188's), the structure subsystem is renumbered D111 and the player's
+  save D112. The structure decision's references (port/next/replacement.h, the
+  notes, native-port, next-engine, build-and-test, port/README-next.md) follow
+  D111; the save's (port/README-saves.md, the notes) follow D112.
+* docs/port-zones.json: the orders, structures and save files are all members;
+  the memory declaration's measured numbers are the merged tree's (12 regions,
+  145 touchers, 45 allowances) with the note naming each ticket's share.
+* analysis/playtest-route.json: ticket 188's `orders` mix and the ticket's
+  `saves` section are kept. The record also gains the `reaches.orders` entry
+  ticket 188 did not add: the default run sees 569 of the group's addresses on
+  the route, and the measured check (tests/test_playtest_route.sh) refuses a
+  group the run reaches and the record does not name -- it failed on that gap
+  before this merge resolved it.
+* docs/html was regenerated from the merged sources (17 porting groups, 167
+  rows), including the diagrams.
+
+The ticket's check got two fixes the merged tree asked for:
+
+* the selftest grew past ten minutes with ticket 188's and 189's fixtures, so
+  port/tests/selftest_main.c takes `--only NAME[,NAME...]` (and `--list`): the
+  save's check runs `md68k-selftest --only save` (160 checks, a second) instead
+  of paying for every fixture, and `make -C port test` still runs them all.
+* the window half waits for a *viewable* window before focusing it and retries
+  the focus: with another worker's checks on the machine the focus can lose a
+  race (the X_SetInputFocus BadMatch seen in the merge run), which is the
+  harness's timing rather than the port's behaviour.
+
+The check's measured cost is 3 m 15 s, and tests/run_all.sh's slow tier is 75
+checks again (all three tickets added one).
+
+Checks after the merge: tests/test_saves.sh, make -C port test,
+tests/test_playtest_route.sh (19 mixes), tests/test_frame_cost.sh (2.98 ms
+ported / 5.94 ms guest, budget 8.12), tests/run_all.sh --tier fast (ALL CHECKS
+PASSED), python3 tests/test_port_zones.py, build_docs --check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
