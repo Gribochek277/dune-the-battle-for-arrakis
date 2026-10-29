@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8e38e231ae3e31d3eb23b16b35afc4794d3721bb
+date: 2026-10-29T06:36:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+187: the replacement table is its own file, and the gate is why
+The zone rule's 64 KiB bound (R4) is a build gate, and `next/replacement.c` was
+64 965 bytes on main: the units' eight rows put it 1 529 bytes over. The table is
+data, so the data moved rather than the comments shrinking. `next/replacement_table.c`
+holds the flag's groups and the port's rows behind `next/replacement_table.h`,
+which carries the two counts; the mechanism (`next/replacement.c`, 29 527 bytes
+now) keeps the selection, the dispatch, the entry checks and the reporting.
+
+The counts are the one thing a split like this can get wrong silently: the
+mechanism sizes its selection, its counters and its audit bitmaps at compile
+time, and C99 has no `_Static_assert`. The table file therefore *checks* the
+header's numbers against its own initialiser with a `typedef` whose array bound
+is a constant expression, so a row added without the count moving is a compile
+error in the file that added it. `next_replacement_check()` is the run-time half
+(duplicate and overlapping rows) and is unchanged.
+
+What followed the move, because the table's text is the reviewable record:
+`scripts/porting_stages.py` reads the table file (and finds the group array by
+its new declaration), and the five checks that read or patch the table read it
+there too -- `test_replacement.sh` and `test_mission_cursor.sh` patch a row to
+build their deleted-row controls, `test_boot_path.sh`, `test_frame_clock.sh` and
+`test_sound_api.sh` slice the rows out of the source. D107 records the split
+beside the decision it belongs to; `docs/port-architecture.md`'s bound section
+and `port/README-next.md`'s module table say where the table went.
+
+Merge branch 'main' into ticket/187-port-units: tickets 192 and 190 (the renderer
+API and the boot path/front-end groups). Their D106 keeps its number and the
+units' decision is D107; the playtest route carries both sides' reaches and
+mixes (17 now), the inventory is regenerated with the three new groups and the
+docs site rebuilt. Gates on the merged tree: build, `make -C port test`, the fast
+tier, `tests/test_units.sh`, and the five table-reading checks.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
