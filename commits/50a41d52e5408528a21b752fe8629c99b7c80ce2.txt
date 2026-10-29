@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 50a41d52e5408528a21b752fe8629c99b7c80ce2
+date: 2026-10-29T05:32:56+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+193: the tier table counts the checks the file runs
+The fast tier is 45 `run` calls and the slow tier 71 `run_slow` calls; the
+header said 41 and 64 before this ticket (it was already stale by two in the fast
+tier and six in the slow one), which made the report at the end of a run
+disagree with the table a reader trusts. The two new fast checks (the memory map
+and the tick) and the one slow check (the frame's cost) are in the table with
+their measured seconds.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
