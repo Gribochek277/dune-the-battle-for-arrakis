@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6f6491942c026b95e9211db0b122b715ad0578c0
+date: 2026-10-29T11:07:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the selection set's deferral is a decision with its design (D110)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
