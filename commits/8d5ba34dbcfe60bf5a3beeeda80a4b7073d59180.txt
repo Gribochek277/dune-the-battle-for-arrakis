@@ -1,0 +1,76 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8d5ba34dbcfe60bf5a3beeeda80a4b7073d59180
+date: 2026-10-29T11:02:18+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+188: the order machine is a group, and its transcription is generated
+The order machine, in C: the script interpreter `RunOrderScript` $00CBFC with
+its nineteen actions, the programs' function library `RunOrderScriptHelper`
+$000828, the 53 game actions the 64-entry table `$022750` names, the fifteen
+early-bank actions, the movement step `MoveUnit` $01BBD0 and the AI's group
+layer `RunAiSides` $018DF2 with its twelve routines. Six rows, one group,
+`orders`, `solo` with entry `seam` (D109), zero delegations: 4 384 addresses
+answered by the C, and a `dc.w` word inside a span answered by the machine's
+interpreter, which is what the guest's own pc would do (D41).
+
+Four thousand cases are not written by hand. `scripts/transpile_next.py` emits
+`port/next/order_*.c` from the verified disassembly and *imports* the
+translation's emitters, so a form the translation handles is a form the orders
+handle and the two cannot drift; `--check` is the gate that keeps the committed
+files the disassembly's. The generator was validated by regenerating ticket
+187's hand-written `next/units_order.c` and diffing it case for case: every
+charge, every call out and every boundary came out identical. What is not
+generated is the readable layer -- the contract, the order ids, the AI and the
+movement rules (`order_machine.h`), the entry's layout and the script's
+vocabulary (`order_machine_shared.h`), the chain and the port's own number
+(`order_machine.c`) -- and a change to a decision is a change to those files.
+
+The pair is byte-exact. The battle route (26 000 frames of the Atreides mission
+with no input), legacy against `next --replace-group orders`: picture, work RAM
+(sha256 e673bb0e), the VDP's write counters and DMA counts, the Z80's state, the
+YM2612 timeline, the clock (3 330 716 164 cycles) and the interpreted count
+(4 910 796) identical, and the translation smaller by exactly the 6 876 181
+instructions the C stood in for -- 450 472 dispatches (RunOrderScript 276 600,
+RunOrderScriptHelper 58 070, OrderActionTrap 40 177, OrderActionSetDelay 23 595,
+MoveUnit 29 385, RunAiSides 22 645). `--no-replace` is legacy byte for byte.
+
+The ticket's own instrument is new: `--order-log` writes one line per unit
+record whose order fields changed at a frame boundary, and
+`scripts/compare_order_traces.py` compares two runs as "the same order, on the
+same unit, at the same frame, with the same target". The two traces are
+identical line for line (4 938 lines) -- the end state cannot say that, because
+a unit that reached the same cell by another route has the same picture.
+`--order-patience 240` is the port's own number and the demonstration: it scales
+the delay every program asks through `OrderActionSetDelay`, and the comparator
+shows the same order on the same unit at a different frame. The cartridge has no
+aggression number to alter -- `AiScanForTarget` takes the nearest unit of its
+class and never compares a distance with a threshold -- and that finding is on
+the rules page rather than invented in the code.
+
+The AI's group layer is the one part no committed mission reaches (nothing
+creates a group; all seven records at `$FF789C` stay zero for the whole route),
+so it is declared unmeasured with that reason and its states are the constructed
+ones. The corpus's four per-instruction fixtures for this region are deleted
+with the shape they measured, as ticket 187 deleted the units'.
+
+Fixtures: `analysis/fixtures/orders/manifest.txt` banks four states of the
+route (the mission's first orders, the enemy's march, a harvester's harvest, the
+survivors) with the units' orders beside them, and
+`port/tests/test_order_machine.c` constructs the two situations the route cannot
+show (a three-word script through its own tables -- the decode, the dispatch,
+the action and the delay it writes -- and the trap stopping at a frame
+boundary). `tests/test_orders.sh` is the gate; the rules page gains §6b (the
+order machine's six rules, the ids and the movement rules M1-M6); D109 records
+the three decisions (generated transcription, the trace as the instrument, the
+port's own pacing number) and R4's bound now skips a generated file, which is
+what its own words said it was for.
+
+Gates: `make -C port test`, `scripts/build.sh`, the fast tier, this check.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
