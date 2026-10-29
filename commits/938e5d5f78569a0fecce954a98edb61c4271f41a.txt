@@ -1,0 +1,87 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 938e5d5f78569a0fecce954a98edb61c4271f41a
+date: 2026-10-29T05:21:24+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+193: the port owns its memory map, and a frame is the port's tick
+The map is declared once and rendered into the machine. docs/port-zones.json
+gained a "memory" section -- the regions of the 68000's address space, the
+memories behind the chip models and the bus, each with its base, length, write
+policy, the module that answers it and the modules that may touch it, with a
+reason -- and scripts/make_memory_map.py renders it into port/machine/mem_map.h
+(generated, committed, --check'ed). md68k_region() decodes through
+machine/mem_map.c's table instead of six #defines, and the state layer's three
+windows are the map's regions (GUEST_RAM_BASE *is* MD_MEM_WORK_RAM_BASE), so the
+number a region starts at lives in one place.
+
+The rule: a module reaches a region by name or not at all. tests/test_port_zones.py
+grew its sixth check -- a module that names a region's address, reaches its
+storage or calls the bus must be declared for the region, and one that assigns
+into it must be one of its writers; the report names the file, the line, the
+region and the region's own reason. tests/ and generated/ are exempt and the
+declaration says why; the generated header is exempt because it is the one place
+the numbers live. Seven controls provoke an undeclared write, an undeclared read,
+an undeclared port address, a bus call from the ported game, a stale recorded
+number and an overlapping map, and one requires that a declared read is NOT
+reported, so the rule cannot pass by reporting everything. The declaration records
+what it covers (measured: 11 regions, 109 module-region allowances, 3 for the
+ported game), so a slice that starts reaching memory changes a number and a reason
+together.
+
+The game's memory is named. port/game/video_memory.{c,h} is video RAM, colour
+memory and the scroll table as the game's own state -- a word at a byte address, a
+palette entry by index, a line of scroll, and the plane cell the guest's map
+routines compute (base + row * 128 + column * 2, once, with the layer's base asked
+of the chip's registers, never copied). No shadow and no queue: the memory is the
+state. The two modules that wrote vdp->vram[] by hand -- the wide band fill
+(next/mission_map_view_plane.c) and the map view's scroll blits
+(next/mission_map_view_camera.c) -- now call it. Ticket 192's deny rule left one
+hole: chips/vdp.h included machine/md68k.h for the md68k_cpu a control-port write
+takes, so a game module that included the chip could reach the register file. The
+header now forward-declares struct md68k_cpu, vdp.c includes the machine itself,
+and md68k_vdp_machine() gives the game's memory the chip without the CPU-facing
+header (D89's hole closed, D107).
+
+The frame is the port's tick. port/game/tick.{c,h}: one counter the app's frame
+loop advances through mda_machine_run_one() -- the one place both front ends and
+both arrangements step the machine -- with the period the port states (60 Hz,
+16 667 us), not one read back from the console. The machine's frame clock
+(128 006 cycles and a VBlank) stays because the paired subsystems are compared
+instruction by instruction: it is how the comparison build decides when to
+deliver a frame, not what a frame is. tests/test_tick.sh measures
+port_tick == frames on legacy, on the ported path and on --no-replace, and a state
+restored at frame 60 resuming at tick 60 (its run's own counter says 30). The
+snapshot needs no new section: while the guest sources the frames the tick and the
+state's frame are one number, so mda_state_load() sets the tick from it.
+
+The number this buys. tests/test_frame_cost.sh measures what a frame costs on each
+path in the player's build (make -C port headless, the translation at -O0): the
+marginal cost (a 1-frame run subtracted from a 900-frame one) of the child's CPU
+time, the faster of two runs, on the playtest recording. 8.12 ms on the port's
+path against 15.79 ms on the guest's: 1.94x the guest's frames per CPU second, at
+51 % of its per-frame cost. The record (analysis/frame-cost.json) names the binary
+because at -O1 the ported code costs the same and the guest's translation gets
+faster -- that harness is for the fidelity checks, not for this claim. The check
+is slow-tier (it needs the player's build) and fails when the port stops being
+cheaper or the number drifts on the machine that produced it; the dashboard
+renders it.
+
+Documentation: docs/port-architecture.md gains "The port's memory map" and "The
+port's own tick", D107 records the four decisions, CONTEXT.md the two new words,
+the game's and the port's module tables their new rows, and the site is
+regenerated -- the diagrams page carries the region table with who may touch each
+one and the dashboard the frame's cost per path.
+
+Checks: make -C port test (73 810 runtime checks, 0 failures), bash
+tests/run_all.sh (45 fast-tier checks, ALL CHECKS PASSED), tests/test_memory_map.sh
+and tests/test_tick.sh (with their controls), tests/test_frame_cost.sh --write,
+python3 scripts/build_docs.py --check, scripts/build.sh (byte-exact; the 42-byte
+header modification is the only difference from the dump).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
