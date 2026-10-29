@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1c1f7242829c03b1b0fd7bae52441703ee53882e
+date: 2026-10-29T07:16:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/187-port-units
+# Conflicts:
+#	docs/decisions.md
+#	docs/html/diagrams/app-structure.svg
+#	docs/html/diagrams/index.html
+#	docs/html/docs/decisions.html
+#	tests/run_all.sh
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
