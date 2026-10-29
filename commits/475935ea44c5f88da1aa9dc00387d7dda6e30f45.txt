@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 475935ea44c5f88da1aa9dc00387d7dda6e30f45
+date: 2026-10-29T07:51:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 187: 187-port-units
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
