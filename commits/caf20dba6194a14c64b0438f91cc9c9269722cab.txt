@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: caf20dba6194a14c64b0438f91cc9c9269722cab
+date: 2026-10-29T09:48:21+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+198: regenerate the site after the page's last numbers
+docs/saves.md's payload arithmetic (32 736 bytes after the image's header) and
+the scan's classification (3 117 data values, 87 immediates) were edited after
+the last build; the committed page and a fresh rebuild differ by ten bytes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
