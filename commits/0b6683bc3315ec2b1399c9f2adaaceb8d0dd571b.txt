@@ -1,0 +1,60 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0b6683bc3315ec2b1399c9f2adaaceb8d0dd571b
+date: 2026-10-30T06:19:04+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Ticket 199: the build a player runs is the port, and never falls back
+The played build and the reference build are now two binaries out of one
+tree. `make` gives `dune-port` and `headless-played` for playing, and
+`dune-port-compare`, `headless`, `headless-fast` and `headless-compare`
+for comparing. The flavour is a build constant (`next/flavor.c` is
+compiled twice), not a switch at runtime: a player's binary cannot be
+talked into running the guest's game, and `--engine legacy`,
+`--no-replace` and `--sound-engine z80` answer with the name of the
+binary that does have them.
+
+The played build selects `next` and every ported group on, and its
+default sound engine is the port's DSP mixer, so no playtest route has
+to disable a subsystem to run on it. The guest is still linked: five
+slices stop in the middle of themselves (title-screen 436 addresses,
+options-screen 116, mission-panels 118, and 56 panel delegations that
+only a mouse route sees) and 505 routines have never been claimed, so
+severing it would remove the game. Instead it is bounded: the machine
+has a "no ported implementation" fault, the replacement mechanism refuses
+a run whose selection leaves a ported row out, and both messages name
+the address, the group and the comparison binary that has no gate. D38
+is left alone -- it is a statement about comparing the two, and that is
+what the comparison build is for (D113).
+
+`port/next/guest_boundary.c` is generated from the committed inventory,
+address by address, and is the set the gate answers for;
+`scripts/guest_boundary.py --check` fails when it drifts from the
+inventory, and the selftest proves it matches the replacement table
+exactly. The inventory's route gained the mouse recording, which is what
+made the panels' debt legible.
+
+32 gates were the comparison with no reference named; they name one now,
+and `tests/test_gate_references.py` checks that every two-engine gate
+does, in both directions, and that the reference is never the played
+build. The window checks that need a selection run `dune-port-compare`.
+
+Measured on the atriades recording at 1920x1200, 900 frames, one core:
+the guest turns the ROM over in 6.22 ms a frame, the played build in
+2.65 ms -- 2.35x, and 13% quicker than the single build before it,
+because the gate is a binary search over the boundary instead of a walk
+of the rows, and the played build starts at the port's game rather than
+selecting into it. The comparison build costs 3.02 ms, 14% over the
+played one; that difference is the price of the second engine, and it is
+now on the dashboard next to the number that is not.
+
+The route ran on the played build with nothing off it and a mouse on the
+panel: the 4:3 board through every screen and all eight regions, then the
+same at 16:9 (tests/test_playtest_route.sh, the slow tier's window half).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
