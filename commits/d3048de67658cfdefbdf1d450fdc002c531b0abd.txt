@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d3048de67658cfdefbdf1d450fdc002c531b0abd
+date: 2026-10-30T22:32:23+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the un-sliced bands count the fixtures they already have (18 of 505)
+Eighteen of the 505 un-sliced routines already have a committed fixture in
+analysis/oracle/ -- the atriedes candidates ticket 186's corpus captured beside
+its own rows. Each new ticket now says how many of its band are measured, so
+the estimate is the C and the rows rather than a capture run per band.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
