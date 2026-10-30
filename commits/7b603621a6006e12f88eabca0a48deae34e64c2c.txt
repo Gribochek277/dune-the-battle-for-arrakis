@@ -1,0 +1,57 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7b603621a6006e12f88eabca0a48deae34e64c2c
+date: 2026-10-31T00:15:46+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+204: the un-sliced leaves are the port's C
+Ticket 204 takes the twenty-four routines of $000218-$0015AA that had no group:
+the error and `rte` stubs, the map cell's tile class and its shared tail, the
+fixed-point multiply and the two approximate distances, the seeded random pair,
+the VRAM/VSRAM clears, the backdrop and the two palette fades, the VSRAM scroll
+write and the sprite-record library. They become one group, `un-sliced-leaves`,
+paired, with zero delegations (191 rows in the table, 24 in the group).
+
+The group has two shapes, and each one is a measurement:
+
+* Eleven whole routines (span 0) -- the leaf pattern of ticket 182: one dispatch
+  runs the guest's routine to its `rts`, every instruction charged at its own
+  address, the leaf calls inlined (RandomInRange's RandomByte, sub_0009CE's
+  ApproxDistance).
+* Thirteen transcribed spans -- a VRAM fill's DMA trigger and status polls, the
+  VSRAM data-port writes' FIFO slots, the fades' per-step VBlank waits and the
+  four entry points into those bodies, sub_000F80's `dbf` copy (over 200 000
+  guest instructions in one recorded dispatch: a frame's work), and the three
+  sprite-record routines that mask the interrupt with `move #$2700,sr`, whose
+  handler the guest delivers *inside* the routine (the YM timeline caught it at
+  frame 1451: two timer registers stamped a frame later).
+
+Charging is the timeline, not the total: the first version summed
+md68k_instruction_cost() like the leaf helpers, the cycle count stayed right and
+the sampled sound drifted by a few LSB across 8 442 samples in 402 runs where
+ApproxDistance is called. Every instruction now goes through
+next_replacement_charge(), so the Z80 advances at the guest's instruction
+boundaries, and the mission pair's samples are identical.
+
+Proof: tests/test_un_sliced_leaves.sh (22 committed fixtures, each replayed
+against the C, the live guest and the fuzz; the 9 500-frame mission pair
+identical in picture/RAM/cycles/YM/samples/audio with the instruction count
+lower by exactly the 104 100 the C reports; the group-off control byte for byte;
+the 2 700-frame house-selection pair identical). The 10 400-frame playtest route
+is identical except its instruction count (123 798 fewer). ErrorStub and
+data_000220 have no fixture and are declared in tests/test_oracle.sh: the first
+is the cartridge's own infinite loop, the second is the shared `rte` whose
+recorded states agree but whose exception frame the fuzz mutates into a state the
+mechanism's interrupt-frame guard reads as a call's.
+
+The group's C is four files (the zone rule's 64 KiB bound): the whole routines,
+the clears, the records' spans and a shared header. D115 records the decisions;
+the D91 table has the group's row; the inventory, the guest boundary and the site
+are regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
