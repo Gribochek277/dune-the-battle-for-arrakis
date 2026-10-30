@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 51cbfb988bc7fcbaf5c4e30a03b3a5d076ce3184
+date: 2026-10-31T01:15:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+204: the dispatch-cost fixture's miss is an address no row owns
+tests/test_dispatch_cost.sh's miss probe was sub_001280's moveq, which
+ticket 204 made a row of the un-sliced leaves -- the fixture's own comment
+asks the case to move rather than the assertion, so it moves to sub_000A00's
+move.w #$7F00,d0 (translated, no row, inside the table's extent). The check
+passes with the whole 191-row table and its control build still fails on the
+linear scan (339% and 289%).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
