@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a1413d526441f9a6b96f518a9952a51d38962862
+date: 2026-10-30T20:14:21+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the corpus waits for the guest: 505 un-sliced routines become tickets (D114)
+Ticket 200 was ready in the table and not startable: the played build still
+executes the generated translation because the translation is the only
+implementation of most of the game. The measurement, from the committed
+inventory and the binaries ticket 199 landed:
+
+  * 505 routines have no group at all (29 522 guest instructions, ~25 000 of
+    them reached by the committed coverage evidence);
+  * three groups are paired with debt, not solo -- title-screen answers 258 of
+    789 addresses (436 delegated), options-screen 6 of 534 (116),
+    mission-panels 0 of 355 (118);
+  * the played build translates 37 051 instructions in a 60-frame boot and
+    23.0 M on the 10 400-frame route (D113). Deleting the corpus today would
+    not remove the guest; it would turn the title screen's intro into a hard
+    failure.
+
+So 200 is re-blocked on the work that removes the guest, and the work has
+owners: tickets 84, 90, 186 and 190 are reopened (their own criteria say zero
+delegations, the inventory says otherwise) and 204-211 own the un-sliced game
+in the ten address bands its routines fall into -- leaves, map renderer,
+panels, structures and the mission's run, map cells, mission flow, briefing
+and prelude, and the units' lifecycle with the four data tables the split
+currently counts as code.
+
+Each new ticket names its band, its counts and its reached share, and adds its
+addresses to the inventory, so scripts/guest_boundary.py and the
+zero-delegation gate cover them the moment they become rows. The ticket tables,
+the pipeline-input audit and the documentation gate are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
