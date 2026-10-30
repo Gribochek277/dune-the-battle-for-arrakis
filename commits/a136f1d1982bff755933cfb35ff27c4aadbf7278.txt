@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a136f1d1982bff755933cfb35ff27c4aadbf7278
+date: 2026-10-31T00:54:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+204: the playtest route reaches the un-sliced leaves, and the record says so
+analysis/playtest-route.json gains the group's single-selection mix (the
+20th) and its entry in 'reaches': the route enters the group's rows from its
+first frame (the shared `rte` stub returns from every VBlank) through the
+mission's tile class, distance and build panel. tests/test_playtest_route.sh:
+every check passed, the group's mix inside the route's gates on all ten steps.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
