@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9df6f7ff0f98f2c7d113d7eb475857801156dfd2
+date: 2026-11-01T01:10:00+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 213-mission-cursor-handback-fault: $003C78 is answered (D120)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
