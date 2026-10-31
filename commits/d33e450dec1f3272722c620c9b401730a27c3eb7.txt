@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d33e450dec1f3272722c620c9b401730a27c3eb7
+date: 2026-10-31T18:14:39+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 84-menu-screen-in-c: the options screen owes the guest nothing (D114/D117)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
