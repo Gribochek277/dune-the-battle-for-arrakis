@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 33682cfe6cf02863cb00bfb9cf687a5c9e84498b
+date: 2026-10-31T17:42:47+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 84: the options screen owes the guest nothing
+Ticket 84 was reopened by D114 because `options-screen` answered 6 of its 534
+addresses and handed 116 back on the committed route; its own criterion is that
+the guest's routine does not run in `next`. The debt is paid by transcribing the
+two spans under the engine, not by growing the host:
+
+  next/options_screen_setup.c     $010818-$01097B  core_options_screen_setup
+  next/options_screen_loop.c      $01097C-$010E1F  core_options_screen_loop
+  next/options_screen_teardown.c  $010E20-$010EDF  core_options_screen_teardown
+  next/options_screen_frame.c     $0115BE-$0115ED  core_options_screen_frame
+
+`scripts/transcribe_group.py` writes them from the generated translation
+(`--group options-screen`; `tests/test_structures.sh`'s `--check` is the gate on
+a hand edit), one label per guest instruction, `STEP` charged at its own address
+through next_replacement_charge() so the Z80 advances where the guest's
+instruction boundaries are, and one dispatch per instruction. The host in
+next/options_screen.c is asked first -- at `host.expect` and at the loop's head --
+so the screen is still the row list and the template, and the parts answer
+everything else: the setup, the teardown, the five helpers the host calls and
+the frame routine's body.
+
+The frame routine now *runs* instead of being emulated: the old host issued
+$0115BE's three calls itself and skipped the slide branch; the transcription
+runs the routine's own instructions at its two call sites ($01094C in the setup,
+$010DEE in the loop) and the host waits for the return. Three phases
+(PH_FRAME_BUILD/WAIT/UPLOAD) are gone with it.
+
+The group is `complete` (analysis/porting-stages.json `delegations: 0`, the
+table's `complete: 1`), so a hand-back from it is now the mechanism's fault. On
+the committed route (four recordings, 10 400 frames the longest) 120 of the
+group's 534 addresses are reached, 120 are answered, 0 handed back, no fault.
+The three screen recordings compare identical in picture, 64 KiB of work RAM,
+VDP writes, DMAs and the YM2612 timeline; cycles are exact on menu-options and
+menu-rows and 4 within the 8-cycle wait-loop bound on menu-handoff; 1 180, 4 721
+and 2 730 dispatches stand in for 456, 1 983 and 1 020 guest instructions the C
+did not have to run. tests/test_options_screen.sh grew the audit arm (0
+delegations, 0 delegated addresses, no fault) and tests/test_flag_groups.sh is
+the group-wide gate.
+
+Documentation: D117 records the choice (transcription under the engine, the loop
+region whole, paired rather than solo, with the measurement); docs/next-engine.md
+rewrites the OPTIONS section as the worked example the ticket asks for -- the
+guest routine, its C file and function, the state it reads and writes, the
+handoffs, the frames compared and the test that catches a drift; the site is
+regenerated; port-zones.json records the five new modules and the toucher count
+(157 -> 161, the parts charge through the machine's cycle model).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
