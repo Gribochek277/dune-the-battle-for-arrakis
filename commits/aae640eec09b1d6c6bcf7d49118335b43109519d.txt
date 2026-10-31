@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: aae640eec09b1d6c6bcf7d49118335b43109519d
+date: 2026-11-01T00:39:31+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 213: $003C78 is answered, and the wide check stops reading a stale display
+The played build's fault at $003C78 was one of the mission cursor's four
+`dc.w` forms (the assembler canonicalises them, so the generated translation
+has no case and the row handed the address back). Ticket 190's pass (D120)
+answers all four -- `$0033B6`, `$0033D8`, `$003C78`, `$003CA8` -- through the
+machine's own interpreter with their own charge, which is exactly what `legacy`
+runs, so `interpreted` stays equal and the class is closed: every group is
+complete, the inventory's owed column is 0 everywhere and the guest boundary's
+owed list is empty, so an address a scripted press can offer is either answered
+or the mechanism's fault.
+
+`tests/test_mission_wide.sh` now reaches its last assertion (the $003C78 fault
+used to stop it) and found a second defect that is not the fault's: three of its
+runs called `dune-port` without `--display-file`, so they read whatever
+`port/build/display.ini` an earlier run left beside the binary (world scale 9x on
+this machine), the wide picture's extra collapsed to 0 and the run's view limit
+was the guest's own 512. The three runs are pinned to the check's own
+defaults like the rest of the file; the wide limit reads 619 against the 4:3
+run's 512 (+107), and the held left scroll stops at the map's edge as claimed.
+
+tests/test_mission_wide.sh: ALL CHECKS PASSED (18m50 on this machine).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
