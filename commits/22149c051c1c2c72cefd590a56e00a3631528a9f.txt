@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 22149c051c1c2c72cefd590a56e00a3631528a9f
+date: 2026-10-31T14:17:38+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+209: the mission flow is the port's C
+Ticket 209 takes the seventy-seven routines of $010EE6-$013F08 that no group
+owned: the mission's *state machine*, as against ticket 207's run. The password
+screen and the text, key and prompt helpers it dispatches through; the lost and
+won checks and the twelve bit testers behind them; the clock's digits; the
+mission state's update and the end-of-mission dispatch; the record's reveal and
+conceal with the walk that repaints the map; RunMissionScript with its own
+helpers; and the unit/structure link's clearing. They become one group,
+`mission-flow`, paired, with zero delegations -- 268 rows in the table, 77 in
+the group.
+
+Every row is a transcribed span, one case per guest instruction, and the shape
+is the corpus's: a dispatch answers one instruction and leaves pc where the
+guest's instruction left it. Ticket 204's whole-routine rows are the leaf's
+shape (one dispatch to the rts, the callees inlined); this band is not leaves --
+its routines call each other and the groups below them, so a whole-routine shape
+would own the next tickets' C. The first version of the C was chunked (the
+structures group's emission) and it looked right -- picture, samples and YM
+timeline identical at 9 500 frames -- while work RAM diverged from frame 2 810
+inside the briefing and the random seed with it. The fixtures said why in one
+line: the corpus records one instruction per dispatch, so `exit pc` disagreed on
+every entry. Re-emitting each instruction as its own dispatch made the pair
+identical and the fixtures pass: the slice was written against the corpus.
+
+scripts/transcribe_group.py grew a second manifest, the mission-flow group, and
+a stepwise emission beside the chunked one; `--check` now covers both groups, and
+the eight part files are the band's own code segments with the two rows another
+group already owns (the options screen's sub_0115BE, the VDP library's
+UploadTextGlyphs) cut out between them. The one row whose entry is data is
+sub_010FA6: the password screen's 21-word jump table, whose code starts at
+$010FD0; the guest's own jmp computes past it and nothing executes the words.
+
+Proof: tests/test_mission_flow.sh (38 committed fixtures -- each replayed against
+the C, the live guest and the fuzz, with every unreached arm reported uncovered;
+the 9 500-frame mission pair identical in picture, work RAM, cycles, VDP
+counters, YM timeline, samples and audio with 2 758 056 dispatches, translated
+110 310 909 -> 107 981 367, steps and cycles the guest's exactly; the group-off
+control byte for byte; the catalog's mission checkpoints inside the run). The
+thirty-nine rows with no fixture are declared in tests/test_oracle.sh with the
+route that would settle each: the password screen (the OPTIONS screen's answer
+3), a mission played to its win and its loss, the HUD clock's tick, a side
+revealed, and the two rows that read the VDP's data port (sub_011854,
+seg_code_013D62), whose *live guest* diverges from the recording too.
+
+D116 records the decisions; the D91 table has the group's row; the inventory
+(481 -> 404 guest routines on the boundary), the boundary, the stage record and
+the site are regenerated. Two ticket-204 part files gained the contract block
+port-zones R3 asks for (they were the tree's only red zone gate at the base
+commit).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
