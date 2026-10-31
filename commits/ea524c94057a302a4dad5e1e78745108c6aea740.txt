@@ -1,0 +1,52 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ea524c94057a302a4dad5e1e78745108c6aea740
+date: 2026-10-31T19:10:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 90: the title screen's span has no hand-back
+Ticket 90 was reopened by D114 because `title-screen` answered 258 of its 789
+addresses and handed 436 back on the committed route -- 248 720 delegations in
+one recording -- the intro it deliberately left to the guest and the helpers
+after the selector. The same answer as D117's: transcribe them with
+`scripts/transcribe_group.py` under the screen the port already had.
+
+  next/title_screen_intro.c    $00CFCC-$00D335  core_title_intro    232 instructions
+  next/title_screen_helpers.c  $00D732-$00DA89  core_title_helpers  243 instructions
+
+They join the three hand-written parts (title_screen_core.c, title_cursor.c,
+title_selector.c), which stay hand-written because that is where the row list
+replaces the guest's own constants; together the five parts tile the span, so
+`next_title_screen` returns the part's charge and never the delegate -- a zero
+return is the mechanism's fault for a complete group (D114), not a hand-back.
+The generated parts charge through `STEP` (next/title_screen_shared.h), which
+records each instruction for the seam, so the Z80 advances at the guest's own
+instruction boundaries: the group's guest and C cycle totals are now equal.
+
+The group is `complete` (analysis/porting-stages.json `delegations: 0`, the
+table's `complete: 1`). On the committed route (four recordings, 10 400 frames
+the longest) 694 of the span's 789 addresses are reached, all answered, 0 handed
+back, no fault: 280 630 dispatches, guest and C cycles equal at 3 370 780. The
+2 700-frame house-selection pair is identical in picture, work RAM, machine
+steps, the translated drop (exactly the calls: 70 258), the interpreted count,
+the cycles (347 408 288), the audio and the YM2612 timeline; the one difference
+is the VDP writes the port's own fourth row costs (ticket 85), which the check
+requires. With the row taken out of the list the pair is byte for byte the
+cartridge again, 70 258 calls included, and the cursor wraps at the guest's own
+bottom stop. tests/test_title_screen.sh grew the zero-delegation audit arm;
+tests/test_flag_groups.sh (25m) is green and the committed inventory is this
+tree's.
+
+Documentation: D118 records the decision (two generated parts under the row
+list, the intro's exception retired, paired rather than solo, with the
+measurement); docs/next-engine.md's title-screen section is rewritten around the
+five parts and the new numbers; docs/game-architecture.md §8c stops calling the
+intro a hand-back; the site is regenerated; port-zones.json records the two new
+modules and the toucher count (161 -> 163).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
