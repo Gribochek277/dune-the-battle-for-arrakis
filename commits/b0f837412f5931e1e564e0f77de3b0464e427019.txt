@@ -1,0 +1,88 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b0f837412f5931e1e564e0f77de3b0464e427019
+date: 2026-10-31T14:36:57+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+212: UpdateMapViewport answers $0029AE, the call into its span's middle
+A player's `dune-port --engine next` session aborted with
+
+  replacement: UpdateMapViewport at $00297C: the replacement reported no cost;
+    the guest's routine always costs 68000 cycles, so 0 means it did not run
+  md68k: replacement state at $00297C (pc $0029AE, sr $2008, info $0)
+
+after a mouse session with a three-unit move order, a refused order, a cancel,
+clicks and a selection box.
+
+$0029AE is what the address is: `sub_0029AE`, the draw script's end -- the arm
+`UpdateMapViewport`'s own `beq.s $0029AE` at $00299A takes when the script's next
+source long is zero -- and it is a `bsr` target too. `RefreshMapFully` $002B82,
+the map teardown `$010E86` runs when a mission screen is left with a map up,
+reaches it with `bsr.w sub_0029AE` at $002B88, which pushes $002B8C and leaves
+the pc inside the row's own span. The span ($00297C-$002A95) covers the address;
+the dispatch had no case for it, so it returned 0 and the mechanism read the 0
+as "the C did not run". It is not a branch target the span should not own and
+not a delegate's business: it is the same state machine one address further in,
+entered with a call's frame, and the `rts` at $002A94 returns through it to
+$002B8C.
+
+The row now answers it as `resume == 2`, the epilogue and the repaint window the
+`beq` at $00299A would have run -- one code path, two ways in, no second body.
+
+The reproduction is in port/tests/test_mission_map_view.c (fast tier, `make -C
+port test`): the mission map's state at the teardown -- the overlay's node, the
+reveal still running with a unit on the row -- entered at $0029AE with $002B8C
+on the stack. Before the fix it printed the crash's own sentence and failed 16
+checks; after it the guest's own code and the row agree on every register, the
+flags, the 64 KiB of work RAM, the VDP's write counters and the 13 360 cycles.
+
+The rest of the span is swept, which is what the ticket asked for. The listing's
+call graph says the span has exactly six addresses the machine can hand the row
+to: the entry, $0029AE, and the returns of `jsr (GetUnitByIndex).w` at $002A54,
+`jsr (GetStructureByIndex).w` at $002A5A, `bsr.w PackMapRow` at $002A84 and
+`bsr.w UploadMapRow` at $002A88 ($002A58, $002A5E, $002A88, $002A8C). The one
+call out that is not a resume is $0029AA's `jmp (QueueDmaTransfer).w` -- a tail
+call pushes nothing -- and so are the three conditional branches out of the
+span. Each of the six is now a fixture case ("the span answers every start"):
+its own constructed state, the first step checked to be the row's dispatch the
+mechanism charged for, then the guest against the C. Removing one case from the
+dispatch makes that fixture fail with the same "no cost" sentence, so the check
+is not decorative. tests/test_mission_map_view.sh derives the same six from the
+committed listing (a new call into the span fails the gate until it is answered
+and listed) and, from the route's own `--flag-inventory` record, requires that
+the row delegated nothing and answered every address the dispatch offered it --
+$00297C on this route, the other five named as the fixtures' because no route
+reaches them.
+
+Checks run: `make -C port test` (142 131 + 14 629 + 728 + 252 + 146 + 769 + 98 +
+99 + 617 checks, 0 failures, and `diff_sweep: 41569 instruction addresses,
+translated and interpreted agree`); `tests/test_mission_map_view.sh` (the mission
+pair identical, the checkpoints 7 898 and 8 148 identical, `--no-replace`
+identical, and the new span section); `python3 tests/test_stages.py`;
+`bash tests/test_docs.sh`; `run_all.sh --only` for the stages, the docs site, the
+played build and the map view. The played build
+(`port/build/headless-played`, every group) over the full 10 400-frame playtest
+route: 0 faults, 84 186 669 dispatches. `analysis/flag-inventory.json` is
+byte-identical after a regeneration, so the dashboard does not move. The played window's own session checks are green too: the three-unit order and
+its arrival (`tests/test_group_orders.sh`), the selection box
+(`tests/test_selection_box.sh`) and the right button's cancel
+(`tests/test_mouse_buttons.py`). The first of them needed a one-word fix of its
+own, and it is in this commit because the ticket's session could not be run
+without it: its control build ran `make -C port play` after deleting `$PORT`,
+which here is `port/build/dune-port-compare` -- so the tab it then copied had
+never been relinked, and the check died at the `cp`. The control is the same
+arrangement as the real binary with the feature stubbed out (D36), so it is the
+same window target: `make -C port play-compare`.
+
+Docs: the module's file header and contract gain the second entry, the span's
+dispatch starts and how they are checked; docs/next-engine.md has the crash, the
+listing that reaches the address, the six-address table and the played route's
+numbers; docs/build-and-test.md's row for the map view check names the new
+section. The site is regenerated.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
