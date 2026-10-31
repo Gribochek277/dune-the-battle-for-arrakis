@@ -1,0 +1,39 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b90ca6bd02af3bb34c38ffe01da85ff478888c3d
+date: 2026-10-31T15:39:02+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+209: the map view's two fixture binaries link again, and the selection bound clears the table
+Two slow-tier checks were red before this ticket's port and have nothing to do
+with it; the first is a link failure, the second a bound the table outgrew.
+
+* `mission-wide-test` and `scroll-by-test` link `next/mission_map_view_plane.o`,
+  which since a previous ticket charges its instructions through
+  `next_replacement_charge()` and writes its band cells through the game zone's
+  `game_video_set_plane_cell`. Neither object was on the two targets, so both
+  binaries failed to link: the fixtures measure the picture the routine makes of
+  a frame, not a run, so the charge is stubbed beside the translation stub both
+  mains already carry (the machine's own cost model, no recorded step) and
+  `game/video_memory.o` is linked. Both binaries build, and
+  `tests/test_mission_scroll_by.sh` and `tests/test_mission_band.sh` pass again.
+
+* The played build's default selection is 265 implementation names now (the
+  mission flow's seventy-seven), past `HEADLESS_REPLACEMENT_MAX`,
+  `PLAY_REPLACEMENT_MAX` and `MDA_STATE_REPLACEMENTS_MAX`'s 256 -- the same
+  failure ticket 184 had at 64: the banner printed the selection and a snapshot
+  was refused with "the run's identity is longer than a state's fields". All
+  three bounds move to 384 together, which is the rule the three headers state.
+
+`tests/test_mission_wide.sh` still fails, at a fault that is not this ticket's:
+the played build has no body for $003C78, which the mission-cursor group owns
+and its C hands back, and the inventory's committed route never measured that
+delegation (the scripted press this check drives is not on it). The base commit
+fails there too, once the two binaries link.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
