@@ -1,0 +1,64 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 141512fcb41c67054cc000d22f2bee46f4abf57f
+date: 2026-10-31T21:44:27+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 186: the mission's panels answer their whole loops
+Ticket 186 was reopened by D114 because `mission-panels` answered none of its
+rows' instructions and handed 118 addresses back on the committed route: each
+panel owned its routine's range and answered only the entry and the instruction
+after `jsr (ReadPadDirection)`, where the pointer writes its decision. The same
+answer as D117's and D118's -- transcribe the loops, keep the port's part:
+
+  next/mission_panel_build.c       $017BAC-$017D86  core_panel_build       140 instructions
+  next/mission_panel_unit_order.c  $017D88-$018080  core_panel_unit_order  214 instructions
+
+`scripts/transcribe_group.py --group mission-panels` writes them (the --check in
+tests/test_structures.sh is the gate), one guest instruction per dispatch with
+STEP charged at its own address. next/mission_panel.c runs the pointer's two
+hooks ahead of the instruction they decide -- the entry forgets the pointer's
+edges, the pad read writes the decision into PadDirectionCode/PadPressed -- and
+then runs the part, so the instructions that follow read the decision exactly as
+they read the pad's; without a pointer both hooks do nothing and the loop is the
+cartridge's.
+
+The group is `complete` (analysis/porting-stages.json delegations: 0, the table's
+complete: 1): 62 059 dispatches and 118 of the two spans' 355 addresses on the
+committed route, all answered, 0 handed back, no fault, the guest's and the C's
+cycle totals equal at 775 948. `--replace-group mission-panels` against legacy on
+atriedes-mission.pad is identical in picture, work RAM, machine steps, cycles,
+audio and the YM2612 timeline; tests/test_mission_panels.sh (the window's pad vs
+pointer walk) is green, and so are the map view's own gate, the checkpoint
+catalog, the playtest route (19 of 19 groups measured) and the flag groups' gate.
+The panes stay `paired` rather than `solo` -- the solo gate wants per-address
+fixtures and a panel loop reads the pad and the pointer's latch -- so the map
+view's own group is the one the dashboard shows solo (D119 reads the ticket's
+sentence that way).
+
+Two defects found on the way, both fixed because this ticket is where they
+surface:
+
+* the played build faulted at $017CA0 before this: with the panels delegating,
+  its guest boundary refused a body inside a row that hands it back. The
+  transcription removes the hand-back and the fault with it.
+* tests/test_mission_panels.sh was not hermetic: its pointer script's pixels are
+  the default picture's, and a display.ini left in port/build/ by an earlier run
+  (ignored build artefact) moved the world under them. The run now pins
+  --display-file at a path that does not exist, the app's own defaults.
+* analysis/playtest-route.json had no single-group mix for mission-flow (ticket
+  209's group), so tests/test_playtest_route.sh refused the record before running
+  it; the mix and its reaches entry are added and it is green.
+
+Documentation: D119 records the decision; D91's classification table, the
+next-engine panels section, port-architecture.md, collecting-coverage.md and
+mission_panel.h's contract stop saying the panels hand their loops back; the
+site is regenerated; port-zones.json records the two new modules and the toucher
+count (163 -> 165).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
