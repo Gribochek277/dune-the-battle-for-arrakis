@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 50869a7a8892dd7c0c7c18adbf55ec03841ee7c4
+date: 2026-10-31T03:14:57+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+204: scripts/oracle_fixtures.sh runs again, and its set is the committed one
+The capture script had drifted from the corpus it defines, and
+tests/test_oracle_capture.sh (the slow half) could not pass:
+
+* two `--candidate` names the capture refuses now -- PostStructureCellsIfAny
+  and DamageUnit became the structure group's rows in ticket 189, and neither
+  is in analysis/oracle-candidates.txt any more;
+* seven files the captures still write but tests/test_oracle.sh declares
+  unmeasured, so the committed directory must not hold them: ticket 187's
+  movement tick and ticket 188's four order candidates (their proof is the
+  group's own route states and the whole-recording pair) and the three sound
+  rows that poll the Z80 (BeginSoundCommand, RequestZ80Bus, SoundPollReady).
+  They are withdrawn by name, as RunOrderScript and RunOptionsScreen already
+  were.
+
+The un-sliced leaves' two captures report a bound (FillVramWithZeros polls the
+VDP's DMA bit, so four entries are unstable) and the capture's exit status says
+so, so the section uses a `capture_leaves` wrapper with `|| true`, the shape
+the VDP library's and the sound group's sections already use.
+
+Measured: `scripts/oracle_fixtures.sh /tmp/oc5` writes 139 fixtures, the same
+file set as analysis/oracle and byte for byte identical to every committed one.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
