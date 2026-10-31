@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f70399a83e28b5773129c9f0af19778874b68ad1
+date: 2026-10-31T22:15:04+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 186-port-mapview: the mission's panels answer their whole loops (D114/D119)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
