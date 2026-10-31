@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 836af9bf8bf51f91b2842499fe70a5cd567aa76d
+date: 2026-10-31T23:10:50+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 190: every screen above the machine is the port's C
+Ticket 190 is the screens slice, and D114's plan closed it last: the front end and
+the boot path were already the port's. What kept it open was the rest of its first
+criterion -- every screen above the machine, and the mission's entry -- so this
+pass finishes the last three groups and the two un-sliced routines the ticket
+names by hand.
+
+  mission-cursor      complete: the four dc.w forms $0033B6/$0033D8/$003C78/$003CA8
+                      run through the machine's interpreter with their own charge
+                      (what legacy does, so `interpreted` stays equal) and the
+                      chain's fallback is gone. The played build's $003C78 fault
+                      (ticket 213) goes with them.
+  house-selection     complete, with its driver: RunMissionSetupScreen
+                      $015E66-$015F51 (54 instructions) is the group's second row
+                      (next/house_selection_driver.c, generated); its span stops
+                      at $015F52 where the routine's rts is and the table begins.
+  mission-entry       new group: RunMission $00B626-$00B789, 82 instructions as one
+                      generated part (next/mission_entry_loop.c) -- the mission's
+                      setup and the frame loop that runs its state, the routine
+                      GameEntry calls and never returns from until the mission ends.
+
+Twenty groups, 270 rows, and the inventory's owed column is 0 everywhere: 3 647 425
+selector dispatches, 183 516 cursor dispatches and 66 727 mission-entry dispatches
+on the committed route, guest and C cycle totals equal for each, no fault.
+scripts/guest_boundary.py now renders an empty owed list (every group complete) as
+a count constant, and tests/test_stages.py's capture control writes its hand-back
+into the throwaway tree because no module in this tree delegates any more.
+
+Gates: tests/test_house_selection.sh (5m32), tests/test_mission_cursor.sh (13m34),
+tests/test_played_build.sh, tests/test_playtest_route.sh (22 mixes, 4m40),
+tests/test_flag_groups.sh (11m16), stages/zones/docs/boundary/record.
+Documentation: D120, D91's table and counting paragraph, the next-engine screens
+section; the site is regenerated; port-zones.json records the six new modules and
+the toucher count (165 -> 167).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
