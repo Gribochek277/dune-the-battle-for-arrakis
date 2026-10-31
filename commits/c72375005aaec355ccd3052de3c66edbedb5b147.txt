@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c72375005aaec355ccd3052de3c66edbedb5b147
+date: 2026-10-31T15:41:22+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+209: the mission flow's header names what lies between its parts
+The band's rows do not tile $010EE6-$013F08: two other groups' rows cut into it
+and the rest is the mission's data. A reader who counts the rows against the
+range should not have to find out why from the replacement table.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
