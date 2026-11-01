@@ -1,0 +1,82 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 30e2c56a09a8b77dfcbe76134fb842b8aca0ca81
+date: 2026-11-01T18:53:11+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 206: the mission interface below the map is the port's C
+The other half of ticket 186's seam: the 79 routines of $004CBA-$006CCA that no
+group owned -- the starport's unit-order panel and its 4x3 grid cursor, the build
+panel's widget library and its two strip rows, the mission HUD's glyphs and
+counter, the unit spawn with the area effect its shared body applies, and the map
+object layer the spawn and the frame animate.
+
+  group `mission-interface`, paired, 79 rows, zero delegations
+  eight generated parts, one per run of the band's code between other groups' rows
+
+The band is three contiguous runs of un-owned code ($004CBA-$00518D,
+$0052D8-$005D05, $005F42-$006BB9) plus the one row between the record world's
+$006BBA and the structure subsystem's $006C6A, cut where the front-end driver's
+row ($00518E), the map view's ($00525C) and the sound group's eleven
+($005D06-$005F41) begin. A part's switch answers every instruction its range
+covers, so a range that spanned another group's row would answer that group's
+instructions in a file that does not own them. scripts/transcribe_group.py
+--group mission-interface writes them and --check keeps them the script's.
+
+The split was missing a region, and the guest proved it: the linear decode stopped
+at $006A06 in the routine $006906 that the object pass calls, and the mission
+recording faults there in the port's arrangement ("the replacement reported no
+cost"). $006A06-$006A5B is in disassembly/code-candidates.txt with that evidence,
+seg_code_006710 now runs to $006A6A, and 31 instructions that were invisible to
+the corpus are decoded and transcribed -- which is also why this ticket's reading
+of the inventory said 1 994 guest instructions where the band has 2 025.
+
+The measurement. playtest.pad (10 400 frames, the route that opens the panels) and
+atriedes-mission.pad (9 498) with the group on are byte-identical to legacy:
+picture (230 723 PNG bytes), the 64 KiB of work RAM, the machine's instruction
+count and cycles, the rendered audio and the YM2612 timeline. 92 310 dispatches on
+the playtest route, 730 of the band's 2 025 addresses answered, 0 handed back, no
+fault; 72 368 on the mission recording, where `translated` drops by exactly that
+(one dispatch, one guest instruction) and `interpreted` stays equal. The guest
+boundary drops from 343 to 264 un-sliced routines.
+
+Names: 22 curated names with their evidence (BuildUnitOrderTable,
+DrawUnitOrderRows, DrawUnitOrderRowIcon, GetPanelIconIndex, DrawPanelPrice, the
+seven UnitOrderCursor* entries and SlideUnitOrderCursor, ReleasePanelWidget,
+InitPanelSprites, HidePanelSprite, ShowPanelSprite, InitHudGlyphs,
+UploadHudGlyphs, UpdateHudCountdown, FreeSpriteNode). SpawnUnitOfType's evidence
+line is corrected: the body damages the units and the structure around the target
+cell before it creates the record.
+
+Fixtures: 41 of the 79 rows have a committed per-routine fixture
+(analysis/fixtures/mission-interface/manifest.txt with hashes) and
+tests/test_oracle.sh replays them against this C and the live guest (240 rows and
+15 candidates pass). The 38 without are declared there and in the group's test
+with the route that would settle each: the starport's panel never opens, the build
+panel's command branches never run, no unit is spawned, damaged or freed, no
+structure is destroyed and no mission ends. SetPanelStripRow's ticket-186
+candidate fixture is re-captured in the row's own shape, and the five names that
+became rows leave the candidate lists.
+
+The two front ends' selection arrays were sized 384 and the table's 405 distinct
+names overflowed them: the played build's banner read "405 implementations, 384
+rows" and a snapshot of the default selection would have been refused. Both
+bounds and the snapshot's move to 512, with the reason written beside them.
+
+Gates: tests/test_mission_interface.sh (new, 1m32: both pairs, the audit, the
+translation drop, the control, the fixture manifest), make -C port test,
+tests/test_oracle.sh, tests/test_playtest_route.sh (24 mixes),
+tests/test_flag_groups.sh (11m35), tests/test_docs.sh, tests/test_replace_
+selection.sh, tests/test_stages.py, tests/test_segment_split.py,
+tests/test_listing_resync.py, tests/test_per_line.sh, tests/test_dispatch_cost.sh.
+Documentation: D122, the next-engine section, D91's table, the notes' panel
+section (the widget bits, the 4x3 grid, the spawn's impact and the recovered
+region), port-zones.json (touchers 180 -> 188), the inventory, the stages record,
+the playtest route and the site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
