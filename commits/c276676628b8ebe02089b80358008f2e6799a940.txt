@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c276676628b8ebe02089b80358008f2e6799a940
+date: 2026-11-01T23:55:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 217: the sound's events, the voices and the stop
+The owner's second playtest: the voices were missing, the one sample that
+played stopped the track, the effects and the music did not mix, and some notes
+in the mission were not the cartridge's. The measurement is the ticket's first
+deliverable: the sound API's ids, the resolved set/song, the channel and the
+note, per event, on both paths from one recording.
+
+* scripts/compare_sound_events.py and `headless --sound-log`: the sound API's
+  play/stop command, the engine's play/stop/note/gate events and the Z80
+  driver's destination pool, one line each. The tool runs the transliterated
+  path (the C over the Z80 driver) and the port's engine over the same
+  recording, prints the event table and applies the WAV route floor. The
+  playtest route posts the same 15 commands and the mission the same 11; the
+  paired notes agree on channel and number within the frame boundary.
+* the kit gate is $16EB, which changes the sample player's mode; it is not a
+  stop. The engine's gate wrote $2B=0 and killed the DAC after three frames, so
+  the side-choice voice, the unit lines and the attack lines were silent. The
+  voice window of the playtest route moves from -37.5 dB to -15.1 dB against
+  the driver's -14.6 dB, and the sample now lasts its record.
+* next_audio_engine_stop cleared every sequence channel, so PlayMusic's
+  stop-then-play pair wiped the track it had just started. It now clears only
+  the matching song's channels and calls the pool pass, as $0C77/$0CD2 do. On
+  the battle route the stop at 7058 leaves 186 notes of the new track after it
+  (0 before).
+* the drum table's size is in its first sample offset: 31 records in the front
+  end's set and 5 in the mission's, not the extractor's 16. The front end's
+  voices 16-30 were filed as sample bytes and the mission's sample bytes as
+  records; 449 files now round-trip.
+* analysis/fixtures/audio/polyphony.events: music + two effects + the voice,
+  four overlapping commands, 90 notes, compared event for event.
+
+tests/test_sound_events.sh runs the A/B on the front end and the mission, the
+polyphony fixture, the voice length, the stop's notes and the negative control;
+docs/next-engine.md, docs/formats-music.md and docs/build-and-test.md carry the
+tables and the before/after.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
