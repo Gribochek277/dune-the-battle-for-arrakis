@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7641149c5384d3753e597425ffb3762e53574f66
+date: 2026-11-01T02:45:41+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 205: the un-sliced map renderer is the port's C
+The other side of ticket 186's seam: the 59 routines of $001DB8-$0030AC and
+$003648-$004976 that no group owned -- the boot's own helpers above the entry
+point, the terrain and tile-class lookups, the screen flags, the mission's entry
+and placement mode, the renderer's init and area draw, the bounds and on-screen
+tests, the per-cell tile draw and the strip blit, the structure panel's frame and
+init, and the unnamed routines between them.
+
+  group `map-renderer`, paired, 59 rows, zero delegations
+  thirteen generated parts, one per contiguous run of the band's code
+
+The parts are cut at every other group's row (the mission cursor's five, the
+selector, the map view's own), because a part's switch answers every instruction
+its range covers: a range that spanned another group's row would answer that
+group's instructions in a file that does not own them. scripts/transcribe_group.py
+--group map-renderer writes them and the existing --check keeps them the script's.
+
+The split's one blind spot is the machine's: the linear decode stopped inside
+seg_data_003698 and the branch at $003704 jumps into $003714 -- a copy loop
+(move.l d0,(a0)+ ... dbf d1,$003726) the listing does not carry. legacy and the
+played build run it through md68k_unimplemented(), so
+port/next/map_renderer_undecoded.c hands every even address of $003714-$003739 to
+the same interpreter with the same charge, and the pair compares `interpreted`
+(935 671 in both arrangements on the mission recording).
+
+The measurement, atriedes-mission.pad with the group on: byte-identical to legacy
+-- 111 223 375 instructions, 1 218 361 146 cycles, the picture (230 723 PNG
+bytes), the 64 KiB of work RAM, the audio and the YM2612 timeline. 310 695
+dispatches, 1 039 of the band's 1 822 addresses reached on the committed route,
+0 handed back, no fault. The guest boundary drops from 402 to 343 un-sliced
+routines.
+
+Fixtures: 40 of the 59 rows have a committed per-routine fixture
+(analysis/fixtures/map-renderer/manifest.txt with hashes) and tests/test_oracle.sh
+replays them against this C and the live guest (199 rows and 16 candidates pass).
+The 19 without are declared with their reasons there and in the group's test: a
+callee whose caller is itself a row's dispatch, a path no recording takes, a
+table the split named as a routine, and StepPaletteColour, whose fixture replays
+only with its caller in the same arrangement (26 of 512 entries carry the Z flag
+the VDP library's C leaves where the guest's translation does not -- ticket 183's
+flag parity, recorded as the one criterion this ticket leaves open).
+
+Gates: tests/test_map_renderer.sh (new, 1m48: the pair, the audit, the control,
+the interpreter parity, the fixture manifest), tests/test_oracle.sh,
+tests/test_playtest_route.sh (23 mixes), tests/test_flag_groups.sh (10m48),
+tests/test_fidelity.sh. scripts/oracle_fixtures.sh gained the band's capture and
+lost two stale candidates (RunMissionScript, now a mission-flow row; BlitMapStrip,
+now this group's row). Documentation: D121, the next-engine section, D91's table,
+the site and port-zones.json (touchers 167 -> 180).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
