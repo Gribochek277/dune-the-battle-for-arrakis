@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0501b4d19b9392d4e1b089b82415392691c24759
+date: 2026-11-01T04:17:38+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the two selftests that still expected a group to owe an address
+Every group is complete since ticket 190 (D120): the replacement report carries
+no complete=false, and the played build's boundary allows no address of a row.
+Both assertions stated the old truth; they now state the new one, and the rule
+they stood in for is still checked (a complete group's hand-back is a fault in
+test_replacement.c, and the un-sliced addresses are still allowed in
+test_played_contract.c).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com

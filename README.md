@@ -1,20 +1,23 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-01T01:50:07Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-10T07:37:37Z
 
 ---
 
 # Dune: The Battle for Arrakis — Mega Drive reverse-engineering workspace
 
 A reproducible rebuild of a user-supplied Sega Mega Drive cartridge from readable
-source, plus a native PC port that runs the game's own 68000 code. The same
-source produces the cartridge image and `port/build/dune-port`.
+source, plus a native PC port of the game. The same source produces the cartridge
+image and `port/build/dune-port`.
 
 **Status in one line:** the baseline header rebuilds the dump byte for byte, the
 modified build differs only in the header's own title and checksum, and the port
-plays the cartridge — every porting group is the port's own C, nine checkpoints
-are pixel for pixel the reference's, and the music is the port's own YM2612.
+plays the game — {{fact:c_routines}} of its {{fact:routines}} routines are the
+port's own C, {{fact:guest_routines}} are a declared guest remainder the final
+proof measures, {{fact:pixel_exact}} of {{fact:checkpoints}} checkpoints are
+pixel for pixel the reference's, and the music is the port's own YM2612 through
+the port's audio engine.
 
 ```
 original : rom/original/DUNETHEBATTLEFORARRAK.BIN  2097152 bytes  sha256 1f0f56cd…c7ec
@@ -32,7 +35,8 @@ scripts/build.sh
 make -C port play
 port/build/dune-port
 
-# verify everything: 126 checks, 47 of them needing no emulator and no display
+# verify everything: {{fact:gate_all}} checks, {{fact:gate_fast}} of them needing
+# no emulator and no display
 tests/run_all.sh
 tests/run_all.sh --tier all
 
@@ -43,19 +47,25 @@ HOME=$PWD/work/emu/home tools/blastem/blastem -b 900 -l build/dune.bin
 
 ## The port
 
-`make -C port play` builds one binary that boots the cartridge's own code,
-translated instruction by instruction (41 055 instruction addresses, no
-fallback), and answers it subsystem by subsystem with the port's C: 21 groups,
-329 rows, and no address handed back to the guest. What is still the guest's
-runs through the same translated engine, so the picture, the clock and the RAM
-stay the reference's.
+`make -C port play` builds one binary that boots the cartridge and runs its game
+logic as the port's C: {{fact:groups}} groups, {{fact:rows}} rows,
+{{fact:implementations}} implementations, and no address handed back to the
+guest. The machine has one execution path since ticket 200 — the interpreter —
+and the port's C is the replacement table consulted before it; the
+{{fact:guest_routines}} routines no row owns are the guest's, declared and
+counted (`analysis/final-proof.json`). The picture, the clock and the RAM are the
+reference's because the C leaves the state the guest's own instructions would
+have; the one measured exception is the played build's audio engine, whose
+timing moves the mission's state a frame apart
+(`docs/project-status.md`, "What is still the guest's").
 
 | what it does | the check that proves it |
 |---|---|
-| **draws the reference's picture** — nine committed checkpoints, from the title screen to the build panel | `bash tests/test_fidelity.sh`: 0 of 71 680 pixels differ on every one of the nine |
+| **draws the reference's picture** — {{fact:checkpoints}} committed checkpoints, from the title screen to the campaign credits | `bash tests/test_fidelity.sh`: 0 of 71 680 pixels differ on every one of the {{fact:pixel_exact}} |
 | **plays the cartridge's music**, through the port's own YM2612 and the game's own audio API | `bash tests/test_ym_log.sh`, `bash tests/test_audio_compare.sh` |
 | **runs at the cartridge's rate**: 59.92 guest frames a second, paced by the wall clock | `bash tests/test_pacing.sh` |
 | **costs less than the guest's own code**: 2.65 ms a frame against 6.22 ms with `--no-replace` | `bash tests/test_frame_cost.sh` |
+| **is measured against the cartridge on the whole route**: what is still the guest's, and the reference arrangement beside it | `bash tests/test_final_proof.sh` (`analysis/final-proof.json`) |
 
 `--renderer vk` draws the same scene on the GPU (0.84 ms a frame against the CPU
 path's 6.52 ms on this machine) where the Vulkan headers and `glslc` are
@@ -68,7 +78,7 @@ gamepad screens, the save file, and `--debug`.
 | path | contents |
 |---|---|
 | `src/` | the cartridge source: `main.asm`, hand-written `rom_head.asm` and `hardware.asm`, generated `segments.inc` |
-| `port/` | the native port: `machine/` (the 68000, the Z80, the frame clock), `chips/` (VDP, PSG, YM2612, audio), `output/` (the renderers), `next/` (the port's C), `app/`, `platform/`, `state/`, `generated/` (the translation), `tests/` |
+| `port/` | the native port: `machine/` (the 68000, the Z80, the frame clock), `chips/` (VDP, PSG, YM2612, audio), `output/` (the renderers), `next/` (the port's C), `app/`, `platform/`, `state/`, `tests/` |
 | `assets/` | the cartridge's content as editable files — graphics, music and the data tables, each with its generated manifest |
 | `disassembly/` | sega2asm split config, and the generated per-segment `.asm` (committed: it is what modifications are made in) |
 | `scripts/` | inspection, splitting, building, validation, comparison, diagnostics, and a Ghidra export script |
@@ -101,7 +111,7 @@ gamepad screens, the save file, and `--debug`.
   audio's tolerance.
 * [`docs/port-architecture.md`](docs/port-architecture.md) — the port's zones and
   the allowed include directions, and [`docs/next-engine.md`](docs/next-engine.md)
-  — the replacement seam, the dispatch's price and the translated engine.
+  — the replacement seam, the dispatch's price and the group's own C.
 * [`docs/game-architecture.md`](docs/game-architecture.md) — the game's own
   subsystems, from the boot to the mission's loop.
 * [`docs/display.md`](docs/display.md) — the window, the integer scales, the
@@ -119,6 +129,9 @@ gamepad screens, the save file, and `--debug`.
   language, and the three input devices with their files.
 * [`docs/goals.md`](docs/goals.md) — the two goals (playable PC binary; ROM to
   source + assets), their definitions of done and the roadmap
+* [`docs/modding.md`](docs/modding.md) — **three worked changes**: a gameplay, a
+  balance and a cosmetic change, each with the file that is edited and the check
+  that proves it took effect
 * [`docs/collecting-coverage.md`](docs/collecting-coverage.md) — how to play the game so the analysis grows
 * [`docs/environment.md`](docs/environment.md) — host, tool inventory, how the ROM was found
 * [`docs/rom-analysis.md`](docs/rom-analysis.md) — what the dump is, header, vectors, checksum
