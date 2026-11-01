@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f86ac96d40224e1d2737ead17ca0a24763e7803c
+date: 2026-11-01T04:54:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 216: named kinds — every unit, structure and terrain class as an entity with properties
+The research half and the port half of one ask: name the 28 unit and 18
+structure descriptor fields that are still unnamed (15 already have a reader
+in the committed listing), name the 32 unit kinds, 19 structure kinds and 16
+terrain class codes from the sprite/producer/sound evidence, move the 512-byte
+class table at $000268 out of the code segment, then let next read kinds
+instead of descriptor offsets. Carries the two findings it must settle first:
+D1's +$10 maximum does not predict the type-13 units in any committed capture,
+and the structure's +$14/+$16/+$38 are established in the notes yet still
+print as unnamed_* because the extractor only reads guest_state.h.
+
+Rows for docs/tasks/README.md and STATUS.md added by sync-ticket-tables.py.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
