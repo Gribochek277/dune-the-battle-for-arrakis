@@ -1,0 +1,73 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fcfece8d7215e0f3202c5304e905c7a01bfa40fb
+date: 2026-11-01T18:50:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 215: the gate is atomic, shared, parallel and scoped, and it is measured
+The owner's request was that the gates be faster, and the strategy is decided by
+numbers, in the order the seconds pay.
+
+Atomic. The flag inventory's rules are properties of the committed record, not of
+a route, so they are `tests/test_flag_inventory.py` (0.3 s, five negative
+controls: an address in two groups, a complete group owing a delegation, a
+disabled row, a group the stage record lacks, a routine with a group but the
+guest's state) and `tests/test_flag_groups.sh` keeps the part a fixture cannot
+prove. The claims that stay whole-run are named in docs/build-and-test.md with
+the reason: a picture, a chip timeline, a cycle count, a whole-run regeneration
+and "the played build finishes the route in a window".
+
+Shared. `tests/lib/gate_shared.sh` is the route-head cache: the harness's
+`--state-save` state at the frame a route's subtree begins (the Atreides
+mission's first entry, 7 686 of 9 500), keyed by the hashes of the binary, the
+ROM and the recording plus the selection and the frame. `tests/test_units.sh`
+(the three mission checkpoints), `tests/test_mission_layers.sh`,
+`tests/test_mission_credits.sh` and `tests/test_mission_turn.sh` start from one
+and run the tail; the last two keep their controls whole because the clock those
+runs accumulate is the control's subject. The limit is measured, not assumed:
+the mission head is byte-identical at 8 148 and 9 498, the battle route's is 4
+instructions and 2 cycles off at 8 600, so the units check keeps the battle
+route's banked states whole. `tests/test_shared_state.sh` proves the identity on
+a constructed route and the controls (another selection is another key, a
+damaged head is refused, `--shared off` builds its own). `tests/prepare.sh`
+builds every port target more than one check names, once (6 min 08 s cold
+instead of one build per check).
+
+Parallel. `tests/run_all.sh` schedules the slow tier in three groups: `run_slow`
+(the harness-only checks) at `--jobs` (12 on the 16-core host), `run_x` (the
+windowed-emulator and real-window checks) at 3, and `run_paced`/`run_build` alone
+after them (the wall-clock/audio measurements and the control builds that relink
+the binary every other check runs). Two concurrency defects the first parallel
+run found, fixed: `tests/gate-bin/make` serializes the checks' makes (they raced
+on build/build_identity.h.tmp), and the private X display range is :90-:129.
+
+Scoped. `tests/run_all.sh --scope [BASE]` runs the checks `scripts/gate_scope.py`
+selects from the diff -- the runner's own commands, the port's groups and an area
+table -- and `tests/test_gate_scope.py` holds the mapping to its claims (every
+check reachable, every group mapped, a targeted change targeted, a docs change
+not selecting a picture gate, an unclassified path selecting the fast tier).
+`bash tests/run_all.sh` with no argument is still the whole default tier.
+
+Measured on this machine (docs/build-and-test.md, "The gate's tiers", with every
+check's seconds rendered by scripts/gate_table.py from the run's own timings):
+the default tier 48 min 19 s -> 22 min 15 s, the slow tier about 3 h 19 min ->
+2 h 14 min, `--tier all` about 4 h 07 min -> 2 h 36 min; the slow tier's 343 min
+of check time ran in 134 min. The host was shared with another worker's gate for
+the after runs, so those seconds are upper bounds and the page says so.
+
+The slow tier also had failures that predate this ticket, and the run found them:
+tests/test_mission_edge_band.sh and test_mission_pointer_scroll.sh built `play`
+and copied `dune-port-compare` (since ticket 199 split the binaries), the edge
+band's control returned 0 where the mechanism now reads "the C did not run" and
+faults, scripts/game_rules.py read the work RAM from the end of the machine
+section that ticket 198's battery moved, tests/test_frame_clock.sh required the
+table's only interrupt-entered row after ticket 216 added a second, and
+tests/test_gamepad.py drove the played build with `--engine legacy`, which that
+build refuses. Each is fixed here with the reason beside it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
