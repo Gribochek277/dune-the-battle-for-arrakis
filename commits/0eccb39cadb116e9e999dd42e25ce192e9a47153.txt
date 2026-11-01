@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0eccb39cadb116e9e999dd42e25ce192e9a47153
+date: 2026-11-01T06:36:35+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the replacement table's map rows move to a fragment, and the readers follow
+The 59 map-renderer rows took port/next/replacement_table.c past the port's
+64 KiB hand-written bound (R4). They are data, so they move to
+replacement_table_map.inc, included inside the table array; scripts/porting_stages.py
+follows the include when it classifies rows, and tests/test_stages.py's throwaway
+tree copies the fragment so its controls see the same table.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
