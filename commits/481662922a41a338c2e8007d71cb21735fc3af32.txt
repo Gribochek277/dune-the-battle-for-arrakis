@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 481662922a41a338c2e8007d71cb21735fc3af32
+date: 2026-11-01T19:44:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/215-215-gate-strategy
+main moved after the ticket's review -- tickets 214 and 217 are merged and 206 is
+started -- so the `rebased` gate requires main to be an ancestor again. Since
+844a460e main's only change is the ticket bookkeeping under `docs/tasks/` (three
+files, no overlap with this branch), so the merge is clean: `git merge-base
+--is-ancestor main HEAD` holds afterwards, the docs site is current
+(`scripts/build_docs.py --check` passes -- `docs/tasks/` is not rendered), and no
+derived file this ticket regenerates is touched.
+
+The merged tree's first gate run found one flake the merge did not introduce:
+`tests/test_dispatch_cost.sh`'s restored-build run measured the miss at 166% of
+the translation against its 150% bound -- while the same, byte-identical binary
+measured 109% in the first run of the same check, 101-111% in three runs after
+it, and the control build's number is 452%. The reading was the host (shared
+with another worker's gate), not the build. The restored-build claim -- "the
+control did not poison the tree" -- is now made up to three times with every
+attempt's numbers printed; a tree that really carries the scan fails all three
+with the control's numbers. The check then passes three times in a row, and the
+whole default tier passes on this merge.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
