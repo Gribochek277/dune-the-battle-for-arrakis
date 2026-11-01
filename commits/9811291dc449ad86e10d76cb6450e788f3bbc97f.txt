@@ -1,0 +1,77 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9811291dc449ad86e10d76cb6450e788f3bbc97f
+date: 2026-11-01T14:39:06+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 214: the engine plays the driver's own stream, and the routes are its gate
+The owner heard the music as "some sounds, but not what the original was".
+The comparator agreed: on the front end's recording the engine's audio was a
+different arrangement -- FAIL (time shift), B delayed by 780 ms, window 17's
+dominant peak 330 Hz against the driver's 524 Hz, the envelopes correlating at
++0.056, 53 of 198 windows inside the tolerance -- while
+tests/test_audio_engine.sh stayed green, because its per-piece report was
+printed and not gated and its only route pair was a short one that passed.
+
+The cause, measured: the engine's register stream agreed with the driver's for
+116 writes and diverged at the 117th, where it wrote the same block one
+destination lower ($B0 against $B1). Reading the Z80 listing (the Ghidra
+listing of $08514A) against next/audio_engine.c found five differences, each
+one fixed against the driver's own code and measured on the harness pair
+(port/build/audio-engine --driver against --engine, mission song 0):
+
+* a length does not stop the stream read ($04BC): the note or opcode that
+  follows is handled in the same tick -- the one-tick lag every note had;
+* the FM pool is the driver's order 0,1,4,5,6,2 with the destination in the
+  entry's low three bits ($176C), not the pool index, which made the third note
+  take dest 2 and the fourth dest 3 (a channel that does not exist);
+* a destination that was in use is keyed off before it is reprogrammed
+  ($1425), so the envelope retriggers;
+* opcode 6C's two bytes are one 16-bit value: the low byte is the fractional
+  step and the high byte the whole-semitone offset ($1081), where the first
+  byte was being added as semitones -- 15 semitones sharp in the transposed
+  sections;
+* the frequency flush writes the destinations whose channel is dirty, set by
+  6C and the effects and cleared by the flush ($0F4F/$0F8F/$1073), not a
+  last-destination bookkeeping that never cleared.
+
+It also found what ticket 197 had left out: the per-frame PSG envelope mixer
+($0066, four channels of attack/decay/sustain/release on an 8-bit
+attenuation), the odd ladder ($115B is 64 words, not the 12 the asset file
+carries), the effect pass's own deltas ($0EA1) and the kit player ($130D): a
+drum record is twelve bytes, its bytes 1-5 a 24-bit offset from the drum table
+and its bytes 6-7 the sample's length, streamed to the YM2612's DAC every
+measured 726 68000 cycles. A sample written at the engine's frame boundary
+would be sample-and-held for a whole frame, so chips/sound.c grew
+md68k_sound_set_dac_stream(): a source hands the module one byte per period and
+the module applies it at the cycle it is due, inside its own interval loop.
+The comparison build never installs one, so legacy's audio is untouched.
+
+Measured after: on the harness pair all 5 950 YM2612 writes are identical in
+order and value and its audio passes at every threshold (envelope r +0.922, 40
+of 40 windows). The routes a player hears, at 6 dB / 100 cents / envelope 0.6 /
+local shift 20 ms: house-selection 167 of 201 windows within tolerance, every
+level window inside 6 dB, r +0.816; the mission 127 of 174, r +0.822. The
+per-piece report is 67 of 113 inside the tolerance, none silent (38 before).
+
+The gate: tests/test_audio_engine.sh now compares both routes. The level and
+the envelope are hard; the pitch is held to the floor the frame-grained model
+reaches (70% and 60%) because the engine's registers land at the VBlank where
+the driver's land at their own cycle -- a measured mean of 31 807 cycles in --
+and a tick's note can round to the frame before or after; with LFO-modulated
+voices the comparator's dominant peak then picks a different partial. The
+commit says so rather than weakening the level. The report keeps a floor too,
+and names the pieces outside it (most of them kit-using songs, where the
+harness's driver mode cannot pace the DAC: no 68000 ticks the Z80's frame flag,
+so the driver writes one byte a frame).
+
+Also: D110 in docs/decisions.md, the audio sections of docs/next-engine.md and
+docs/native-port.md, the dashboard's frame cost regenerated (2.62 ms on the
+port's path against 6.04 ms for the guest, ratio 2.31), the site rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
