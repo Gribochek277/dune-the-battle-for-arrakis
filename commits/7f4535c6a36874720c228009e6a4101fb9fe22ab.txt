@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7f4535c6a36874720c228009e6a4101fb9fe22ab
+date: 2026-11-01T03:26:34+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 215: the slow tier's measured costs and the strategy's order
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
