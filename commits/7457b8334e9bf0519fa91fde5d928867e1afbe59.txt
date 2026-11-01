@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7457b8334e9bf0519fa91fde5d928867e1afbe59
+date: 2026-11-01T03:25:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 214: the first measurement localises the engine's divergence to the voice program
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
