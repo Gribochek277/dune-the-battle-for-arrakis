@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 765374a436632ea9f3b6cc6324f74d1b3ad18aa6
+date: 2026-11-01T03:49:58+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+readme: the port, the current numbers, and the checks that prove them
+The status block still said the workspace was a byte-exact rebuild with one
+applied modification; the port, the checkpoints, the gate's size and the
+porting groups were not on the page at all.
+
+The quick start gains `make -C port play` and the two tiers, the layout gains
+`port/`, `assets/` and the three git-ignored trees, the documentation list gains
+the port's pages and the player's files (save, locale, keyboard, mouse, gamepad),
+and the requirements name SDL2 and the optional Vulkan headers.
+
+Every number was measured against this tree: 21 groups over 329 replacement rows
+with 0 delegations, nine checkpoints at 0 of 71 680 pixels each, 47 fast checks
+and 79 slow ones, 2.65 ms a frame against 6.22 ms with --no-replace, and the vk
+draw at 0.84 ms against the CPU path's 6.52 ms.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
