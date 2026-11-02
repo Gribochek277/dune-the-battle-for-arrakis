@@ -1,0 +1,124 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b0de438429cdce275d542506d47e3bb82a21793c
+date: 2026-11-02T06:51:35+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 207: the structure band and the mission's run are the port's C
+Ticket 189 took the structure subsystem's rules (seven rows) and ticket 206 the
+interface below the map; the band after both -- 84 routines of `$00749E-$00CB5E`
+that no group owned -- is this ticket. It is two subsystems' worth of code, and
+the split's boundaries say where each half belongs:
+
+  group `structures`, paired, 65 rows (58 new, 72 routines), zero delegations
+  group `mission-run`, paired, 26 rows, zero delegations
+
+The band extends `structures` because it is the same subsystem: the pass's
+per-record handlers (`sub_00749E`-`sub_007E14`, the table at `$FFFFD30C`'s
+arms), the production half with the session's unit command handler
+`seg_code_0089AA`, the placement `PlaceStructureOnMap` $008DCA with its scan
+`sub_009342`, the footprint test `TestStructurePlacement` $0094F6, every command
+(`ApplyStructureCommand` $009E10, `CancelStructureBuild` $00A35C and the seven
+helpers between them), and the map's own arithmetic and drawing (`CellDistance`
+$00AD4A, `JitterPosition` $00AE62, `DrawPaletteText` $00AFC2, the HUD pass
+`sub_00B0FA`, `RefreshMapSprite` $00B378). A second group would give one
+subsystem two stages (D91). The mission's run is its own: the three end screens,
+the campaign end's line walker and slides, `RunMissionUpdate` $00C172 with its
+four-way dispatch, `CreateMissionForce` $00C718, `StartNewMission` $00CA0A,
+`InitOrderEntry` $00CB3C and the helpers between them.
+
+Two dispatch shapes in one group. Ticket 189's seven parts are chunks (D103);
+the band and the run are stepwise, one guest instruction per dispatch, because
+the six fixtures the band inherits were recorded that way and a chunked dispatch
+answers a state the fixture never entered (D116's measurement). The manifest in
+scripts/transcribe_group.py carries the shape on the part, not the group, and
+the gate asserts the accounting either way: the machine's steps fall by exactly
+`guest_instructions - calls`, `translated` falls by the rows' guest instructions
+minus the dispatches the C hands to the interpreter (the jump tables' `dc.w`
+words), and `interpreted` is the same in both arrangements.
+
+The split had lost the band's tails, and the port's own run proved it. With the
+band's C on, the mission recording faults at `$008782`: the instruction before
+it falls through into a `seg_data_*` blob. Seven regions are code -- the tails of
+`sub_008222`, `sub_00874A`, `sub_0087A4`, `sub_0088C0`, `sub_00895E`,
+`sub_00B3B2` and `sub_00B4C0` -- and disassembly/code-candidates.txt carries the
+evidence for each (a fall-through, a branch target, or an address the run
+executed). Re-splitting merges seven segments into two; the old blobs were the
+routines' tails. The image stays the dump plus the header's 42 bytes and the
+other groups' transcriptions and fixtures do not move (tests/test_oracle.sh
+replays them all).
+
+A third entry kind for a row the guest enters with a branch. `$0087A4` and
+`$00B412` are rows the split names as routines, but the guest reaches them by a
+`bne`/`beq` and a fall-through from inside the routine that contains them, and
+the code between the call and the label uses the stack as scratch. The
+mechanism's call-shaped-frame check is right to refuse that state, so they carry
+`NEXT_ENTRY_JUMP`: the frame belongs to the enclosing caller and the only check
+is the 68000's even stack pointer. port/tests/test_frame_clock.c proves the kind
+accepts the state the call kind still refuses. The windowed run then found the
+same shape in ticket 206's unit-spawn body `sub_005FA0`, which a saved mission
+state reaches with the AI's reinforcement order -- the played build aborted on
+it, and the row now carries the same kind (its fragment says why).
+
+The measurement. tests/test_structures_band.sh: the mission and battle routes
+(9 498 and 26 000 frames) with the group on are byte-identical to legacy --
+picture (230 723 PNG bytes), the 64 KiB of work RAM, the YM2612 timeline, the
+audio and the clock -- with 462 291 and 8 752 551 dispatches, 1 593 and 1 882
+distinct addresses answered, 0 handed back, no fault, and the steps down by
+exactly the guest instructions the C stood in for. tests/test_mission_run.sh:
+66 695 dispatches, 1 130 addresses, the guest's step count exactly, translated
+66 695 fewer minus 890 interpreter dispatches. `--no-replace` is legacy byte for
+byte on both. The guest boundary drops from 264 un-sliced routines to 180.
+
+Fixtures: 61 of the 84 rows have a committed per-routine fixture (56 on the
+mission route, the battle route's three handlers and two cell helpers, the
+playtest route's briefing arm), and the other 23 are declared in
+tests/test_oracle.sh and in the groups' own tests with the route that would
+settle each. The oracle corpus was regenerated with scripts/oracle_fixtures.sh
+(the six inherited candidate fixtures are re-captured in their rows' shape, and
+RefreshUnitSprite, stale since ticket 189's script restructure, with them):
+tests/test_oracle_capture.sh regenerates all 352 fixtures byte for byte.
+
+What is still open, and why it is recorded rather than faked: no committed
+recording plays a mission to its win or its loss, so the three end screens have
+neither a fixture nor a banked picture, and the campaign end's credits are
+unentered with them. The acceptance's "the won/lost screens' pictures are the
+reference's" needs a recording that finishes a mission twice and a campaign
+played to its last mission; the rows are transcribed and the mechanism proves
+they are never entered wrongly until one exists.
+
+The table's own limits move with the table. Ticket 208's rows and this ticket's
+together take it to 24 groups and 551 rows, past the 512 the harness allocated
+for a selection and the snapshot allocated for a state's identity, so
+HEADLESS_REPLACEMENT_MAX, PLAY_REPLACEMENT_MAX and MDA_STATE_REPLACEMENTS_MAX go
+to 640 -- a capacity, not a claim: the default selection takes every row, and a
+state whose identity does not fit is refused, not truncated.
+
+Running the corpus's regeneration gate found a rule the corpus enforces and a
+list that had not kept up: oracle-capture refuses a name that is both a candidate
+and a row, because the two are measured in different shapes, and ticket 188
+registered RunOrderScript, RunOrderScriptHelper, MoveUnit, RunAiSides and
+OrderActionSetDelay as the orders group's rows and deleted their per-instruction
+fixtures without taking them out of analysis/oracle-candidates.txt or out of the
+battle route's capture stage. tests/test_oracle_capture.sh has failed on that
+since -- only the slow tier can see it. The five names and the stage go (the
+band's stage captures CellDistance and JitterPosition on that route now); no
+committed fixture moves, and tests/test_oracle.sh measures the same 346 rows and
+6 candidates. docs/build-and-test.md says the rule where the regeneration is
+described, and D124 records the finding.
+
+Gates: tests/test_structures_band.sh (new), tests/test_mission_run.sh (new),
+tests/test_oracle.sh, tests/test_structures.sh (its seven-row claim kept; the
+band's rows are reported beside them), tests/test_mission_interface.sh,
+tests/test_flag_groups.sh, tests/test_oracle_capture.sh, the fast tier (all
+checks) and the slow tier's affected checks. docs: D124, the next-engine
+section, the reverse-engineering notes, the build-and-test table, the port-zones
+declaration, the porting dashboard and the site (823 routines, 24 groups over
+551 rows, 121 guest routines at the boundary).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
