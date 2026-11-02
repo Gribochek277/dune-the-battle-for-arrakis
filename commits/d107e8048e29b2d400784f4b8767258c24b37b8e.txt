@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d107e8048e29b2d400784f4b8767258c24b37b8e
+date: 2026-11-02T04:52:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 208: 208-un-sliced-map-cells
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
