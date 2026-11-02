@@ -1,0 +1,56 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 95cf4dfc93ac0c81d19d211af714aeeb867fe817
+date: 2026-11-02T04:18:00+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 208: the un-sliced map cells: the angle, the reveal and the search
+The cell layer between ticket 186's view and ticket 185's records: the 59
+routines of $00E30A-$0107F0 that had no group. The group is `map-cells`,
+paired, 59 rows, zero delegations, ten generated parts.
+
+* the band. GetAngleBetweenPoints and DivideFixed; RedrawMapCellIfNeeded and
+  its two helpers; RevealMapArea with its walk; FindFreeAdjacentCell and the
+  two cell tests around it; RevealObjectAtCell and RevealCellEdges with the
+  four predicates behind them; CellStep; RunMissionIntro with its six
+  helpers; SetPaletteColour; SetCursorMode; and the five records helpers
+  between the record world's team-list rows.
+* the shape. Every row is a transcribed span (D41): one case per guest
+  instruction, STEP charged at its own address, a dispatch ending after that
+  instruction -- the corpus's span shape, so a fixture is a state the C is
+  entered in and the route's step count stays the guest's. Ten parts, cut at
+  every other group's row (units, records, guest text, VDP library, options
+  screen) and at the band's data segments.
+* the row that is data. seg_code_0104BC $0104BC-$0104D5 is the split's words,
+  not a routine; the row owns them so no guest body runs them unclaimed, and
+  its cases run the machine's interpreter as legacy does.
+* the measurement. On the inventory's route: 54 530 664 dispatches, 1 458 of
+  the band's 2 483 addresses answered, 0 handed back, 0 faults, guest
+  instructions and cycles exact. The mission pair (9 500 frames) and the
+  playtest pair (10 400) are identical in picture, work RAM, cycles, samples,
+  audio and the YM2612 timeline, with translated lower by exactly the
+  dispatches; the group-off control is legacy byte for byte. The guest
+  boundary drops from 264 to 205 routines.
+* the fixtures. 45 rows have a committed fixture (analysis/fixtures/map-cells/
+  manifest.txt, hashes included; captured on the mission, playtest and battle
+  routes); the 14 unmeasured are declared in tests/test_oracle.sh with the
+  route that would settle each. The four behaviours the ticket names have a
+  constructed case each in port/tests/test_map_cells.c: the angle's quadrants
+  and degenerate paths, the redraw's modes and frontier variant, the
+  free-cell search's open and edge cells, the reveal's 3x3 and single cell.
+* the intro's picture is the reference's: the pair at frame 7 550, where
+  RunMissionIntro draws the prelude map, is compared picture for picture.
+* the rules page catches up: V1's two writers, V2's frontier art and V3's
+  radius are the port's C now; docs/game-rules.md says so.
+
+scripts/transcribe_group.py grows the `map-cells` manifest, the replacement
+table its own .inc fragment (59 rows would pass the 64 KiB bound), and the
+stage record, the D91 table (D123), the dashboard, the site and the playtest
+route's mix the group.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
