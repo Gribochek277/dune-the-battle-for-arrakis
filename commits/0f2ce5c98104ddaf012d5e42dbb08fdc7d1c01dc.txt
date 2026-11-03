@@ -1,0 +1,70 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0f2ce5c98104ddaf012d5e42dbb08fdc7d1c01dc
+date: 2026-11-03T09:15:51+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 210: the briefing and the prelude are the port's C, in fifty-four rows
+The band between the mission's selection and the mission running is now one
+group: `briefing`, nine transcribed parts, fifty-four rows and 4 026 guest
+instruction addresses, paired with no delegation anywhere. `python3
+scripts/transcribe_group.py --group briefing` writes the parts and `--check`
+proves them against the listing; the rows go into the replacement table as
+`replacement_table_briefing.inc`, so the played build carries them like every
+other group's.
+
+The band is the guest's own prelude, the intro map animation and its picture
+upload, the mission load and the map-object refresh, the setup helpers and the
+number drawing, the briefing text's lines and pages, and the pad's input command
+layer. Fifty-four rows, not the ticket's fifty-five: `RunMissionSetupScreen`
+$015E66 is `house-selection`'s already (D120), and D124 records that. Every row
+is a span, not a whole routine, so the band's calls into other groups' C stay
+calls and the route's step count is the guest's.
+
+Measured on this branch. The mission route (9 500 frames, the recording that ends
+in the briefing's text) and the playtest route (10 400 frames) each run twice,
+legacy against `--engine next --replace-group briefing`: picture, work RAM, the
+VDP's write counters and DMA counts, the Z80's state, the YM2612 timeline and the
+cycle clock identical, and the translation smaller by exactly the instructions
+the C answers -- 262 899 dispatches and 262 193 instructions on the mission,
+289 749 and 289 043 on the playtest. The interpreter's count is the same on both
+sides, 706 words higher than it was before the group: the band's `dc.w` fallback
+words, which no engine executes. Twenty-five oracle fixtures, captured from the
+two routes, replay byte for byte. `scripts/guest_boundary.py` counts 151
+un-sliced routines where it counted 205: the band's rows are no longer owed.
+
+Twenty-nine rows have no fixture, and the ticket says what a claim that is not
+true does: `tests/test_oracle.sh` names each one and why, and `tests/
+test_briefing.sh` requires that the rows neither route calls are exactly that
+declared set, so the measurement and the declaration cannot drift apart. No
+committed recording plays a mission to its end, which is the one recording a
+later ticket should add.
+
+Two rows stop at a split edge and both are correct by omission, written in
+briefing.h and D124: $01504A's row ends at $01504B because the entry is owned and
+the tail bytes are guest-interpreted, and $01620A-$01623D is data no part owns.
+
+The table outgrew the bound that held it: 518 distinct implementation names do not
+fit a state's or a front end's 512, so MDA_STATE_REPLACEMENTS_MAX,
+HEADLESS_REPLACEMENT_MAX and PLAY_REPLACEMENT_MAX go to 640 -- a snapshot written
+by this build says so to a build that is not this one. One allowance in
+tests/test_sound_api.sh, because the transcribed $0158A8 reads the driver's stub
+table the way the guest does; the sound API is still the only body that runs the
+driver.
+
+Derived and documented: porting-stages.json, flag-inventory.json, port-zones.json
+(twelve modules and the test, the memory map's touchers 200 to 209),
+checkpoints.json (prelude-page at 4 600 and intro-map-animation at 7 550, both
+pixel-exact over 71 680 pixels against the emulator's own capture),
+playtest-route.json, the generated site, D124 and its D91 row, game-architecture's
+new 8e, next-engine's briefing section, the notes' measured section, and the
+slow check's row in build-and-test.md -- where the selftest's aggregate is
+corrected to the 143 555 checks it reports today, which had drifted from the
+figure ticket 189 left behind.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
