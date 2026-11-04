@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5c2d75e774cbb6ede7d4134be94a46fced8de7df
+date: 2026-11-04T17:29:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 220: the sweep's coverage of BCD, Scc and DBcc moves to the hand-built fixtures
+Ticket 48 left nineteen rows in `port/tests/test_translated.c` that each named a
+"real instruction in the cartridge", and every one of them sat in the ranges
+ticket 220 withdraws: the Scc family at $01F572-$01F5FA, DBGE at $01F5DA, BCHG
+D0,D1 at $01FAF2, the BCD forms at $01F8F6/$01FD8A/$01FF10/$02156A/$02200C/$02240C,
+DIVU.W (A7)+ at $01FEC4 and the three undefined encodings at $01F5D2/$01FEE8/$01F73E.
+Their opcode words -- $0141, $4801, $482E, $5CCE, $80DF, $52DA, $54C4, $55EA,
+$57D4, $5AE4, $5DF4, $5FDE, $C102, $C108, $8109, $890F, $5C0A, $510A, $0B7C --
+occur at no address the split claims as code anywhere in the cartridge, which
+says both things at once: the ranges are data, and the game contains no BCD
+arithmetic, no Scc and no register-to-register bit operation.
+
+They are now hand-assembled programs in `port/tests/fixtures/fixtures.asm`, pinned
+at $FF1500 and up, dual-path checked in `md68k-fixture-test` (728 checks -> 1260):
+the encodings are the same sixteen words, the operands sit below $FF4000 clear of
+the image and the stack, and the expectations are the PRM's. `boot: illegal
+encoding case reports the fault` keeps its fault, its opcode word and its pc, and
+now expects them from the interpreter instead of the switch, because the switch
+has no case at a withdrawn address; the illegal encoding as a *case* is proved at
+$FF1440, where $0B7C is installed by hand.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
