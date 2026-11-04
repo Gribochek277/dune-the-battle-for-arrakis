@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0427bccd984e72e6c32704e288bec3bd9d4cf02b
+date: 2026-11-04T05:46:49+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 210: 210-un-sliced-briefing-prelude
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
