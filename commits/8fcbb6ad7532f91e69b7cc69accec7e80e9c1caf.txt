@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8fcbb6ad7532f91e69b7cc69accec7e80e9c1caf
+date: 2026-11-04T05:41:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge main into ticket/210-un-sliced-briefing-prelude
+Ticket 207 landed on main while this branch was open, so the two bands meet
+here. 21 files conflicted; what the resolution says:
+
+* The table is one table: 25 groups and 605 rows, 602 distinct implementation
+  names. `NEXT_REPLACEMENT_GROUP_COUNT` was 24 on *both* sides (each added its
+  own group to a base of 23), so the union had to be recomputed, not taken:
+  `replacement_table.c` now includes the structures-band, the mission-run and
+  the briefing fragments, and the header's compile-time assertion is what proves
+  605.
+* The bound still holds: `HEADLESS_REPLACEMENT_MAX`, `PLAY_REPLACEMENT_MAX` and
+  `MDA_STATE_REPLACEMENTS_MAX` stay at 640, and both comments now tell the merged
+  truth -- 548 names from 207+208, 602 with this band -- instead of each branch's
+  half of it.
+* `scripts/transcribe_group.py` keeps both halves: the structures band's seven
+  parts with their `stepwise` fifth field and the `mission-run` group, and this
+  ticket's nine briefing parts, with `mission-run` and `briefing` both in
+  `STEPWISE_GROUPS`, `HEADERS`, `SHAPE_HEADERS` and `CONTRACT_HEADERS`.
+  `python3 scripts/transcribe_group.py --check` reproduces every part on disk.
+* The corpus cannot have a name twice: `RefreshMapSprite`, `CreateMissionForce`
+  and `StartNewMission` left the candidate list with 207, `LoadPreludeScreen` and
+  `RunIntroMapAnimation` with this ticket, and each is captured by its group's own
+  `--site` stage in its row's shape. `tests/test_oracle.sh`'s four lists are the
+  three-way union exactly -- 369 measured rows, 216 declared, 4 candidates
+  measured, 31 declared -- verified against base, 207 and this branch.
+* `analysis/flag-inventory.json`'s header is the merged tree's (`harness_rows
+  605`, `routines 823`, 25 groups summing to 605 rows); `port/next/guest_boundary.{c,h}`
+  is regenerated, not merged: 605 rows, 0 owed, 25 groups, and the guest boundary
+  is 67 un-sliced routines (121 with 207 alone; 205 before either band).
+* Two tickets both wrote a decision numbered D124. 207's merged first and keeps
+  the number; this ticket's is **D125**, and its section moves after D124. The
+  D91 group table, `docs/build-and-test.md`'s `tests/test_briefing.sh` row and
+  `docs/port-zones.json`'s note carry the renumbered reference.
+* The prose the merge makes false is corrected where it is a number, not a claim:
+  the campaign's measuring paragraph now says twenty-five groups and 67 routines
+  on the boundary; 207's "264 -> 180" (measured before ticket 208's cells landed)
+  and this branch's "205 -> 151" are restated as 205 -> 121 -> 67 with what each
+  branch measured in its own tree.
+* `docs/port-zones.json`: the toucher narrative runs 189 -> 200 (208), 200 -> 211
+  (207) and 211 -> 220 (210); `scripts/port_zones.py --summary` and
+  `tests/test_port_zones.py` report 220 touchers and 47 allowances, and the site
+  is regenerated (823 routines, 25 groups over 605 rows).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
