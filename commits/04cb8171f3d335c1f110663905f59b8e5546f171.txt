@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 04cb8171f3d335c1f110663905f59b8e5546f171
+date: 2026-11-05T00:43:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 211: the band's real size, and the finding that it is cold
+Ticket 220 left 54 + 5 routines and 3 793 instructions, not 67 and 9 211. And
+none of the ten coverage logs holds one address in the band, so the page's
+'3 428 executed' claim is withdrawn rather than repeated: the harness reports
+only replacement-row addresses, which is why 'exercised: no' on an ungrouped
+routine proves nothing either way. The band warms up when a structure finishes
+building and when the mission ends — tickets 219 and 218 are its evidence.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
