@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0082b5214d70bb8790f385058082f8a1ee20dd29
+date: 2026-11-05T00:36:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 220: the criteria carry the one full-tier failure instead of ticking around it
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
