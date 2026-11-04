@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e0c4c102856ed1cd1ac8bd841b501dc3a6e252bd
+date: 2026-11-04T05:49:39+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+status: tickets 207 and 210 done, and their open items become tickets 218 and 219
+207 merged as 6a484341, 210 as 0427bccd. Both rows now say what landed and
+what the workers recorded as open rather than faked:
+
+* 207: the three end screens have no recording and no banked picture, 19 band
+  rows and 4 mission-run rows have no fixture.
+* 210: 29 briefing rows have no fixture, all of them behind `RunBriefingScreen`,
+  which no committed recording enters.
+
+The two declarations are one fact seen from two bands -- no committed recording
+plays a mission to its win, to its loss, or the campaign to its last mission --
+so they become one ticket (218) for the recordings and the screens and fixtures
+behind them, including ticket 209's win/loss/clock/password debt, and a second
+(219) for the twenty declared rows a mission end does not explain: the build
+that completes, the build that is cancelled, the factory's timer, the structure
+kinds the recorded missions never build, and the four dispatch arms.
+
+Ticket 211 gains the number its next step runs into: the merged table is 25
+groups over 605 rows and 602 names against a capacity of 640, and the three
+MAX constants plus the header's two counts are where a bigger band has to be
+raised. `scripts/sync-ticket-tables.py` wrote the STATUS and README rows from
+the two new files.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
