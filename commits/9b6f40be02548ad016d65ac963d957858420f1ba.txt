@@ -1,0 +1,24 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9b6f40be02548ad016d65ac963d957858420f1ba
+date: 2026-11-04T17:41:49+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 220: a build prunes the pages its inputs stopped claiming
+Withdrawing the unit band's tables from the routine universe left seven routine
+pages behind in the committed site -- UnitPointerTable, UnitByCellPointerTable,
+UnitCountersBySide, StructureCountersBySide, OrderDispatchTable and the two
+addresses the tables were named by -- because build_docs.py only ever wrote pages
+and never removed one. `scripts/build_docs.py --check` had reported each by name
+("a file the generator does not produce"), which is the right complaint and the
+wrong place to fix it: the fix is that the generator owns the whole tree, so a
+build now unlinks what it did not write and says how many it removed. The names
+still have pages, under names/, because they remain curated names -- 59 of them
+are not code, and now the count means what it says.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
