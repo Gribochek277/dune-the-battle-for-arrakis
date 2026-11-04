@@ -1,0 +1,52 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3bb914a68d47756fcf76032faf46a173e439807f
+date: 2026-11-04T15:44:03+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 220: the unit band's tail is tables, and the split stops claiming them as code
+`FUN_0001dd90` enters at $01DD90 and reports a body ending at $022EB9: 21 KB of
+Ghidra recursive descent that ran off the end of that routine through every table
+behind it. The merged interval $01620A-$021866 is what that artifact contributes,
+and the 68000 sweep then decodes pointer bytes into instructions: four curated
+names that had always been tables (`UnitPointerTable`, `UnitByCellPointerTable`,
+`StructureCountersBySide`, `UnitCountersBySide`) carried 5 040 "instructions", and
+`OrderDispatchTable` 490 more.
+
+`analysis/data-tables.txt` is the reviewed input that withdraws the claim, and
+`scripts/make_segments.py --data-tables` is the mechanism: it cuts the listed
+ranges out of the merged code intervals so those bytes get a `data_*` segment, and
+it refuses a range an executed address or a vector target falls inside. A curated
+name is not accepted as proof of code (SeedFunctions seeds a Ghidra function at
+every name's own address, which is how a table became a "routine"): the splitter
+reports the 18 entry points a withdrawal overrides instead.
+
+Measured basis for the three ranges, 12 342 bytes:
+  * zero executed addresses in $01F45A-$022530 in any of the ten coverage logs;
+  * no Ghidra function entry in the plain inventory, and no entry point;
+  * no jsr/jmp/bsr/bra/dbra in any committed source targets an address inside a
+    range from outside it (tests/test_segment_split.py now checks that);
+  * 2 784 of 5 293 words decoded as instructions there, 218 of them the decode of
+    a $0000 word, against 3 598 instructions to 58 dc.w in the band's real code;
+  * the bytes are the shapes the names claim and the readers use: the 129-long
+    UnitArray ladder at $01F6E4, the five-RAM-pointer counter arrays at $01F8E8 and
+    $01F8FC, the eight cell-neighbour deltas at $021976 ($FFC0 $FFC1 $0001 $0041
+    $0040 $003F $FFFF $FFBF = -64, -63, +1, +65, +64, +63, -1, -65) read by
+    ClearUnitFromMapCells at $01C95C-$01C968, the 16-word table at $01F910
+    RevealCellEdges maps a neighbour mask through, the fourteen 12-byte order
+    records at $022098 whose handler words are $C117, $C11C, $C124..., and the
+    16-byte entries at $02243A that LoadScreenResource indexes with lsl.w #4.
+
+Numbers before -> after: code bytes 139 048 -> 126 706 (6.63% -> 6.04%); code
+segments 86 -> 85 with 90 data and 17 source; instruction addresses 41 055 ->
+39 008 (transpiled 100%, 0 fallbacks, sweep agrees); the unit band $01C2EA-$022530
+goes from 67 routines and 9 211 instructions to 63 and 4 191. The built image is
+unchanged: still the dump plus the header's 42 bytes, verify_listing reports 4
+mismatching lines all inside $000000-$0001FF, and `make -C port test` is green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
