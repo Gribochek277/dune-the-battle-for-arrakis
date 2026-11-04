@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 12d41591aac72017982dd66e2a56b503ec1d66b2
+date: 2026-11-05T01:10:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 221: the presentation check measures the host and then judges the port
+`tests/test_presentation.sh` asked for 120 wall-clock picture slots a second and
+refused anything outside 108..126 presents/s, which is a statement about the
+desktop's background load wearing the port's clothes: four runs on one tree gave
+58.1, 95.3, 103.6 and a pass, and ticket 220's full tier went red on it while the
+fast tier stayed green.
+
+The check now asks the host what it can do before it asks the port to prove
+anything. Case 0 runs 120 frames at `--present-rate 1000` and takes the
+presented/s as this host's drawing ceiling; case 1 keeps the load-independent
+half — the ~600 slots (presented + dropped) the 120 Hz schedule owes, which is
+where a regression to one-picture-per-guest-frame still dies, since that run has
+300 slots and not 600 — and compares the *filled* slots against the measured
+ceiling: at least 85 % of it, or the 120 Hz asked for, whichever is smaller. The
+ceiling is printed in the run and repeated in the OK line, so a slow number says
+who could not keep up.
+
+A window that moves has to be proved to still have edges, so one invented report
+(100 pictures/s from a full 600-slot schedule) is run through the same code twice:
+against a 200/s ceiling it is refused, naming the ceiling it was measured against,
+and against a 110/s ceiling it is accepted. The two controls that already existed
+— the 299-frame run and the report with half the pictures — are untouched and
+still fail by name. Cost: ~21 s → ~24 s.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
