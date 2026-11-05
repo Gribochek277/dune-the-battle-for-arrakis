@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 272e654efccacdeb670b51cecc6f46f7c5fae8b1
+date: 2026-11-05T05:33:49+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+211 and 219: the band's coldness is measured on the engine, not inferred
+Replaying atriedes-mission.pad in dune-port with work-RAM dumps holds UnitCount
+at 30 and StructureCount at 4 at frames 7 700, 8 600 and 9 600, with
+SelectedRecord 0 the whole way: the committed recording watches the mission and
+never asks for a build. That replaces the coverage-log inference on 211's page
+with a reading, and it gives 219 its acceptance numbers -- a route whose dumps
+show 31 units and 5 structures, with both frames recorded.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
