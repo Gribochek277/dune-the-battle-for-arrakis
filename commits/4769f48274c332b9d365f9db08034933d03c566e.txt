@@ -1,0 +1,51 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4769f48274c332b9d365f9db08034933d03c566e
+date: 2026-11-05T23:04:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219: the build's own state, constructed — fifteen rows the pad cannot reach
+Tickets 207 and 210 left 52 rows declared rather than faked; ticket 218 takes
+the 32 a mission played to its end explains. These 20 are the rest, and fifteen
+of them are the structure band's command, production, placement and per-kind
+handlers: no ending, win or loss, makes a factory's timer complete, cancels a
+build or places the queue the yard creates.
+
+What the pad can reach was measured, not inferred. The mission recording opens
+the build panel (RunStructurePanel runs, $FFFFBF8E fills with EXIT/FIX/STOP and
+two items, ApplyStructureCommand answers), and adding 'down' then 'A' to its own
+recording makes the yard queue a build (slot 125, credits 990 -> 975, the yard's
++$6 word 0x8010 -> 0xA010, +$3 = 125). The queue is placed by a map click whose
+footprint fits; a 48-cell scripted walk of the explored island entered the
+placement and failed the footprint test everywhere, and the failure path freed
+the queue. That is the state the mechanism refuses: a route would have to play a
+whole mission's economy, and it would still not reach the handlers for kinds the
+mission's script never places.
+
+So the state is constructed, in port/tests/test_structures.c: the guest's own
+code runs from the record the game would have, then the whole `structures` group
+runs as the port's C from the same bytes, and every register, the 64 KiB of work
+RAM, the VDP's write counters and the clock are compared. Each case names the
+rows it must have entered and fails when the C never answered one: the build's
+cancel and the panel's helpers behind it, a build's last payment (the progress
+byte reaching zero), a completed placement's scan, the placement guard's other
+arm, a factory's production half and its queue handler, and one record per kind
+for the six per-record handlers (the one that waits in a helper is compared
+instruction for instruction instead).
+
+The split stays the review: tests/test_oracle.sh gains CONSTRUCTED beside
+MEASURED and UNMEASURED and refuses a constructed row that has a fixture or
+whose named case is not in the test; tests/test_structures_band.sh and the
+structures manifest carry the same fifteen, and 39 + 15 + 4 is the band's 58.
+The four left are the campaign end (ticket 218). sub_00C69E keeps its
+declaration with the state named: its arm creates an AI group and no mission's
+script makes a group record, so no pad on a recorded route presents it.
+
+docs/decisions.md D126 records the decision and the measurement behind it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
