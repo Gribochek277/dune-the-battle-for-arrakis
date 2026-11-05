@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2570a5dea957020af295fc9f8aa2f61e0fd07623
+date: 2026-11-05T05:07:39+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 221: the full tier is green — 136 checks, the presentation window measured at 24.0 s against a 158.4 pictures/s host
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
