@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 72840f416bfa65c87e708a6bee92480a001f4141
+date: 2026-11-06T00:18:08+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219: the handler case says what it did, not what the ticket guessed
+The seven per-record handlers are not one per kind: each takes any record and
+branches on the kind it is handed. The case's comment, the site's decision page
+and the manifest now say what the run proves -- a record of a kind the recorded
+missions never build, the dispatch count printed beside it so a state that took
+only the early return is visible -- instead of 'one record per kind'.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
