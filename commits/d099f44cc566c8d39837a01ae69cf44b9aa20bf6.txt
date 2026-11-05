@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d099f44cc566c8d39837a01ae69cf44b9aa20bf6
+date: 2026-11-05T05:09:41+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: why 211/218/219 are the queue and what each one's first step is
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
