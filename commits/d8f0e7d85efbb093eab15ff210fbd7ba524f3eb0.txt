@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d8f0e7d85efbb093eab15ff210fbd7ba524f3eb0
+date: 2026-11-05T23:34:21+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219: the production case keeps no unused row list
+The three production rows are checked by address in the loop, so the names list
+the case carried was dead; drop it. The fast tier passes again (ALL CHECKS
+PASSED).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
