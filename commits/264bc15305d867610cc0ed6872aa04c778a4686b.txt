@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 264bc15305d867610cc0ed6872aa04c778a4686b
+date: 2026-11-06T20:57:56+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224 stacks on ticket 218's win route: the recording, the fixtures and the declarations it measured are this ticket's evidence
+Ticket 218's branch (ticket/218-mission-end-recordings) is the route this ticket
+measures: analysis/recordings/fremen-won.pad, the 24 fixtures it enters, the
+mission-won checkpoint and D127's record of the sub_01699A refusal. Ticket 224
+cannot settle that refusal without the recording, and main does not have it yet,
+so the branch is merged here and 224's own work builds on it.
+
+The three conflicts are the merge of 218's measurements with ticket 219's
+constructed rows: the mission run is 23 measured, one constructed (sub_00C69E)
+and two declared (the lost screen and the campaign's end, ticket 223); the
+briefing band's declared list keeps 218's five post-mission/level-select
+measurements and 219's three constructed arms.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
