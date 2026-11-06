@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7fa07d0d5adba5b9987d21198a712c75212e964d
+date: 2026-11-06T09:13:21+02:00
+author: agent <agent@localhost>
+branches: main
+
+message:
+ticket 218: the win route in the catalogue, and the every-group walk's named exclusion
+Ticket 222's catalogue gate requires every committed recording to have a line:
+fremen-won.pad gets one, with the two marks it is the evidence for (entry 33 000,
+RunMissionWonScreen's window, and 35 000, the end's prelude page and the
+briefing behind it).
+
+Ticket 222 also put D126 in main, so this branch's decision becomes D127 and
+ticket 224's reference to it is corrected.
+
+tests/test_flag_groups.sh walks every group with every checkpoint's recording.
+The new route cannot be walked with every group on: it enters the briefing's
+sub_01699A by a branch at its own entry, the row's part answers nothing, and the
+mechanism refuses the run at entry 16 541 with 'reported no cost' (D127, ticket
+224 owns the fix). The walk now names that exclusion instead of dropping the
+route: it runs the route with every group on, requires exactly that refusal at
+exactly that row, fails if the run ever completes (the exclusion has rotted) or
+refuses for another reason, and leaves mission-won out of the two-selection
+picture comparison by name -- its own gate is the fidelity check against the
+reference. The control selection, the title-screen/briefing-text controls and
+the picture comparison for every other checkpoint are untouched.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
