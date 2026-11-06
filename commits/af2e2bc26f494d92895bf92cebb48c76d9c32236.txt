@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: af2e2bc26f494d92895bf92cebb48c76d9c32236
+date: 2026-11-06T05:43:22+02:00
+author: agent <agent@localhost>
+branches: main
+
+message:
+ticket 218: a mission played to its end, through the game's own level select
+The screens a mission ends on were the one thing every committed recording
+stopped short of, and the two largest declared gaps (tickets 207's end screens
+and 210's post-mission briefing) waited on them. This ticket found the way in
+in the cartridge: the front end's OPTIONS screen has an ENTER PASSWORD row and
+RunPasswordScreen is a level select, not a save game -- fourteen codes, each a
+(house, mission) pair, and the house is the mission table while the mission
+number is the script index.
+
+analysis/recordings/fremen-won.pad takes the code HOMELANDER (house 3, mission
+2 -- mission table 4's second script), A through the introduction pages, and
+then no input at all while the mission runs itself to the branch
+RunMissionWonScreen draws; its window says "Defeat", and the end's prelude
+page and the post-mission briefing follow it. The pad is silent through the
+mission for a measured reason: a press every 400 entries put the port's and the
+emulator's mission clocks a few entries apart, the fight went differently and
+the two sides reached the window at different entries (3.03 % of the picture
+at 25 000); with the pad silent from 8 600 the checkpoint at 33 000 is
+pixel-identical to the reference (0 of 71 680, scripts/fidelity.sh).
+
+The route measures 24 rows that were declared unmeasured: RunMissionWonScreen,
+fifteen of the briefing's post-mission band (RunBriefingScreen, DrawBriefingPage,
+the number drawing and the setup helpers) and eight of the mission flow's level
+select (RunPasswordScreen, its table reader, the grid's reader and setter and
+the four rows the answer goes through). sub_016664 is captured and withdrawn --
+its loop reads the VDP's data port, so the live guest diverges from the recorded
+states too. The three groups' manifests, tests and the unreached lists are
+updated, the lost screen and the campaign end keep their declarations with what
+this route showed about each, and docs/game-rules.md W5's open question (which
+branch advances the campaign) is answered: the field-8 one.
+
+scripts/fidelity.py and scripts/replay-recording.py now pass the instruction
+budget the routes' tests pass: a 33 000-entry checkpoint is 408 million
+instructions and the harness default (200 million) made the port look stalled
+against the reference.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
