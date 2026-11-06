@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e091edd7e6dfb6587a36f687014400a10c8f110e
+date: 2026-11-06T07:16:02+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219: the per-kind arm and the briefing's declaration are on the page
+Two documentation edits the acceptance criteria ask for:
+
+  * the kinds that would create a record the handlers are handed: the yard's
+    handler at $0183A4 sets the production bit and +$55 = 100 and hands the
+    chosen kind to ApplyStructureCommand $009E10, whose structure arm allocates
+    it -- so a route would need a mission whose yard panel offers a kind its
+    script does not place, and no recorded mission is one. The structures
+    manifest and D126 say so.
+  * tests/test_briefing.sh's summary line now names both declarations
+    (UNMEASURED and CONSTRUCTED), because the union is what its check holds the
+    unreached rows to.
+
+tests/test_oracle_capture.sh regenerates the corpus byte for byte (375
+fixtures), and the three group checks pass after the edits.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
