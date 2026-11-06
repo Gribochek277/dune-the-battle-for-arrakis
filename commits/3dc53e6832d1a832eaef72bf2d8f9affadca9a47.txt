@@ -1,0 +1,46 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3dc53e6832d1a832eaef72bf2d8f9affadca9a47
+date: 2026-11-06T23:02:40+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224: the switch table was not a routine -- the split withdraws it, the row takes the case bodies, and a branch entry is answered with the guest's instruction
+Measured on analysis/recordings/fremen-won.pad at entry 16 541: the guest is at
+$0169A8 with d0=$0E (the offset it read from the table at $01699A), d4 the map
+cell, d5 the tile class and a7 in sub_0168FE's own frame, and the instruction
+there is movea.l $FFFFC064,a1 (six bytes, 16 cycles). $01699A is the switch's
+seven-word offset table -- read by move.w/jmp ($01699A,pc,d0.w) at $016992/
+$016996 and guarded to 0..6 -- and the sweep had decoded it as instructions,
+with ori.w #$2278,(a4)+ at $0169A6 swallowing the first case body's first word.
+
+So the fix is the split's: $01699A-$0169A7 goes to analysis/data-tables.txt with
+the evidence, seg_code_0169A8 begins at the real first instruction, sub_0168FE's
+row takes the whole Ghidra body ($0168FE-$016AB5) and sub_01699A leaves the
+replacement table (604 rows, the band 53). The generated translation, the
+briefing part and the guest boundary are regenerated; the image is the dump.
+
+The mechanism keeps its four entry kinds and refuses zero cost as before, but the
+line now names the address the guest reached, how far into the span, and the kind
+('entered by a call'), and port/tests/test_replacement.c proves both the answered
+span entry and the named refusal, for all four kinds. There is deliberately no
+sentinel for a legitimate zero: the guest's entry costs 16 cycles.
+
+The win route enters three of the briefing's rows the other routes did not
+(sub_0168FE, sub_016AB6, sub_016AE8): their fixtures are captured from it in
+oracle_fixtures.sh's ended-mission stage, the manifest carries their hashes, and
+they move from UNMEASURED to MEASURED (43 of 53). The four rows the route does
+not enter keep their declaration, which says what it showed. make_symbols.py
+drops a code name whose address the split gave to data and refuses a container
+name for a code segment that begins inside a routine, so the routine index cannot
+inherit the phantom. tests/test_flag_groups.sh walks the full catalogue again:
+the 218 exclusion, its rot-check and the 'left out by name' note are gone, and
+mission-won is back in the two-selection comparison.
+
+ticket 224, D128.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
