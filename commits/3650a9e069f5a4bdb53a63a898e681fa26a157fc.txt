@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3650a9e069f5a4bdb53a63a898e681fa26a157fc
+date: 2026-11-07T00:47:45+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224: the structure diagram carries the mechanism's two test files
+docs/port-zones.json gained test_replacement_rows.c/.h and the shared header, and
+the diagram is generated from it: python3 scripts/build_docs.py.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
