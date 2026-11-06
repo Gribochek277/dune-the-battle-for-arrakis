@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1bf7bd226c8c9ba1135d248612f4bf35689f3661
+date: 2026-11-06T20:52:57+02:00
+author: agent <agent@localhost>
+branches: main
+
+message:
+ticket 218: the win as the slice's evidence, and the scope narrowed to it
+The ticket is narrowed to the win, and the criteria it does not meet now name
+their owners: docs/tasks/218-mission-end-recordings.md says what the win route
+did (fremen-won.pad, the mission-won checkpoint at entry 33 000, the 24 fixtures
+the route enters, the level select it found) and moves the rest to ticket 223
+(the lost screen and the campaign's end, with the field-8 condition each needs)
+and ticket 224 (sub_01699A's refusal). No unmet criterion is ticked.
+
+tests/test_flag_groups.sh is green without hiding the fault: the every-group walk
+names its exclusion (fremen-won.pad is refused at sub_01699A with 'reported no
+cost'), requires exactly that refusal at exactly that row, fails if the run ever
+completes or refuses elsewhere, and leaves mission-won out of the two-selection
+picture comparison by name -- its own gate is the fidelity check. The walk now
+passes the instruction budget the long-route checks pass, which is what the
+--no-replace side needed (400 million instructions for 33 000 entries; the
+default 200 million read as a stall).
+
+tests/test_scene_checkpoints.py gets the same budget: the GL and Vulkan readback
+checks render every catalogued checkpoint through the harness, and the new one is
+33 000 entries. Re-run: tests/test_scene_gl.py, 12 checkpoints, mission-won
+identical (exit 0).
+
+D127 records the exclusion and the budget, and the ticket 222 catalogue line for
+fremen-won.pad is in analysis/recordings/catalogue.txt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
