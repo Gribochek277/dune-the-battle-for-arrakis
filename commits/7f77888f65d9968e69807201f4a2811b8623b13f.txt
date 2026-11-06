@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7f77888f65d9968e69807201f4a2811b8623b13f
+date: 2026-11-06T06:51:30+02:00
+author: agent <agent@localhost>
+branches: main
+
+message:
+ticket 218: the ended mission's frame kinds, and what the mechanism refuses
+The Fremen route enters rows of the structure pass, the map cells, the panel map
+and the mission run by *branch* -- the pass's jump tables and the mission's arms
+land inside those rows -- so the six bytes at a7 are the caller's frame and the
+C's call-shaped check refuses each one in turn. D124 answered the same state for
+$0087A4 and $00B412: the row's kind is part of its contract, and a row the
+guest enters with a branch is NEXT_ENTRY_JUMP. 37 rows across the five fragments
+carry it now, each with the reason next to it; the rows the routes still enter by
+call keep the check.
+
+One fault stays open and is recorded in D126: the route enters sub_01699A (the
+briefing's preview windows) at its own entry and the row's part answers no cost,
+which the mechanism refuses by name. tests/test_flag_groups.sh's all-groups walk
+of the catalog is where that is visible; the mission run, structures band, map
+cells, mission flow, briefing, oracle, docs and the mission-won checkpoint's
+fidelity are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
