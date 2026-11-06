@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 123e85779ecb70acd8faed6f89a7102c72302c39
+date: 2026-11-06T18:04:25+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219 merges main: the rows still open name their owners, and the criteria say what was met
+Main moved while this branch was open (ticket 222's pointer format and its build
+route, then tickets 223 and 224), so this is a merge of main rather than a
+rebase, with both sides' intent kept: 222's code, catalogue tool and recording
+stand beside this ticket's constructed states, and the four campaign-end rows
+plus the lost screen now name ticket 223, the won screen ticket 218's
+fremen-won.pad, and sub_01699A's branch entry ticket 224 -- in
+tests/test_structures_band.sh, tests/test_mission_run.sh,
+tests/test_oracle.sh and analysis/fixtures/structures/manifest.txt.
+
+The ticket page's criteria are now answered rather than bare: four are ticked
+with the evidence and the command that produces it (the CONSTRUCTED list and its
+nineteen states, the cancel/complete/scan/guard cases, the per-kind handlers and
+the arm that would create their records, and the 39+15+4 / 22+1+3 splits), and
+the fifth stays unticked with exactly what is left in it -- the full gate at the
+tip. Ticket 222's route is measured in the text: 9 600 entries, 463 515
+dispatches, no fault, zero dispatches for all fifteen.
+
+D126 and the structures manifest carry the same reading so the next ticket finds
+it on a page and not in a commit message.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
