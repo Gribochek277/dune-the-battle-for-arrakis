@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e8353fff4609a9908aa8b228a3068d204449a69d
+date: 2026-11-06T07:36:13+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 219: ticket 222's build route was measured against the fifteen, and it enters none
+While this ticket was open, ticket 222 gave the recording language a pointer and
+committed analysis/recordings/atriedes-build.pad -- the click on the build
+panel's fourth cell that the pad alone could not make. It is the route this
+ticket went looking for, so it was held against the fifteen constructed rows:
+
+  headless-fast --engine next --replace-group structures --flag-inventory
+  --replay-input analysis/recordings/atriedes-build.pad, 9 600 entries
+
+answers zero dispatches for all fifteen (463 515 dispatches in the run, no
+fault). The click queues a build -- StructureCount $FFFFD318 4 -> 5 at entry
+8 403, ApplyStructureCommand $009E10 and AllocateStructure $006BBA reached -- and
+that queue is still never placed, because placement is the click on a fitting
+footprint, not on the panel. D126 and the structures manifest carry the reading
+and the command, so the next person can repeat it rather than take it on trust.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
