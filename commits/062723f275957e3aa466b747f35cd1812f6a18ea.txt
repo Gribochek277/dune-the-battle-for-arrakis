@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 062723f275957e3aa466b747f35cd1812f6a18ea
+date: 2026-11-06T05:25:45+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 222: the criteria carry the measurement, and the input's rows get their page
+The six criteria tick with the numbers behind them: the format's determinism (the
+same file twice is the same 64 KiB), the build route's two entries — the
+`StructureCount` 4 -> 5 write on entry 8 402 and the `UnitCount` 30 -> 31 write on
+8 702, with the hover's own effect at 8 345 — the round trip measured on three
+witnesses (65 536 bytes of work RAM, 65 768 bytes of VDP dump and 12 422 866
+samples identical between the window's session and the harness's replay of the
+file it wrote), the pad-only control that moves neither counter, and the cost.
+
+`port/README.md` was 26 bytes inside the zone gate's 64 KiB bound (R4) and this
+ticket's module row pushed it over. Tickets 136, 193 and 203 all answered that
+bound the same way — move the responsibility to its own file, do not trim the
+prose — so the input rows and the paragraphs about the keyboard, the gamepad, the
+scripted input and the recording language are `port/README-input.md` now, which
+also carries the pointer's half: what the format is, what a replay pins (the
+entry number, the mouse map's meaning) and what it does not (the window's band),
+the report and the refusals, the routes and their catalogue, and where each half
+is proved. `port/README.md` keeps a row and a pointer and is 64 589 B — 947 B
+inside the bound and 921 B smaller than before the ticket, so the split buys
+headroom rather than spending it. `docs/port-architecture.md`, "The bounds these
+tickets fixed", records the third split and that `app/run_play.c` stays the
+largest hand-written file. The site is regenerated for the criteria and that
+sentence.
+
+Checks: python3 tests/test_port_zones.py (largest 64 589 B, controls pass),
+python3 scripts/build_docs.py --check (current), bash tests/test_docs.sh,
+python3 tests/test_gate_scope.py, python3 tests/test_pipeline_inputs.py (10/10
+controls), python3 scripts/recording_catalogue.py --check, bash
+tests/test_recording.sh, bash tests/test_mission_mouse.sh, bash
+tests/test_mission_panels.sh, and tests/run_all.sh's fast tier (see the report).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
