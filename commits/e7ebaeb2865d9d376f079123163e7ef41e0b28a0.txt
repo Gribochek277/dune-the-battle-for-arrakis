@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e7ebaeb2865d9d376f079123163e7ef41e0b28a0
+date: 2026-11-06T06:09:08+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 222: the eight recordings replay identically to the code before the ticket
+The criterion is "the existing recordings replay byte-for-byte as before", and a
+claim is not a measurement. The `headless-fast` the main checkout built on 5
+November (before this branch existed) and the branch's own binary each replay the
+eight recordings from the boot to 120 entries past their last input, on the same
+cartridge image, and the two runs agree on all five witnesses the criterion
+names -- the guest's instruction count, its cycle count, the 64 KiB of work RAM
+at the last entry, the VDP dump and the WAV -- for all eight. The table of what
+each run reached is in the ticket page's "What the slice measured".
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
