@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 25d99fdd4cb55c1e817caed69c0339f25422a61e
+date: 2026-11-06T09:44:18+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge branch 'main' into ticket/219-build-route-and-declared-arms
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
