@@ -1,0 +1,99 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: efe787806f3989dcdb72498e313b394974782ba2
+date: 2026-11-06T04:46:22+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 222: the recording language carries a pointer, and a route clicks the build panel
+Tickets 219 and 218 both need an input script that clicks the mission's order
+panel, and `sega-decom-pad-recording/1` could only express gamepad buttons:
+`analysis/recordings/atriedes-mission.pad` defined `FRAME:BUTTON[:HOLD]` and not
+one of the nine committed recordings held a pointer event. So the choice was a
+person playing the game or a route that could not be written.
+
+The format grows a second kind of line, and the pad's half does not move:
+
+    8340:pointer:40,90:none     # the hand is at guest picture pixel (40,90)
+    8350:pointer:40,90:left     # ... and the left button goes down there
+    8370:pointer:40,90:none     # ... and comes up
+
+`FRAME:pointer:X,Y[:BUTTONS]` is the hand's **guest picture pixel** -- the unit
+the mission's per-cell tables ($084142, $0841D2), the port's row bands and
+`game/pointer_state.h` already speak -- and the buttons held from that entry on,
+by the mouse backend's own names, so the app's mouse map gives them their meaning
+exactly as it does a hand's. The frame is the entry the front end polled at, and
+the harness applies it at the same point, so a recording replays frame for frame
+with no off-by-one and the replayed pointer is a function of the entry number:
+the same file twice leaves the same 64 KiB, and the host's mouse is not even
+opened. A click nothing took -- the panel not up yet, the pixel not on it -- is
+reported with its entry instead of being dropped quietly, a line past the run's
+end is reported too, and a line outside the format is refused with its number
+(the lines must also name increasing entries: a state from an earlier entry
+after a later one is a state replayed before the state that replaced it).
+
+What the pointer does *not* carry is the window: the border band a hand at the
+window's edge scrolls the camera with, and the nearest pixel of a point on a bar.
+A route is written in the guest's pixels, so a replay answers "no band" and a
+route that has to scroll the map uses the pad's lines, which are exact; the
+window is only ever the recording side's business. D126 is the decision.
+
+`--record-input` now writes both halves: one pointer line per change of the
+hand's state, starting at the first move or press, so a run nobody moves a mouse
+in writes no pointer line at all -- the header comment was deliberately left
+alone and a pad route's recording is still byte for byte the file it was
+(`tests/test_recording.sh` case 1 re-records and diffs it). A played pointer
+session round-trips, and the mouse gate proves it on three witnesses rather than
+trusting the writer: the window's own session, the harness's replay of the file
+it wrote, and the same work RAM, VDP dump and WAV from both.
+
+The measurement the format exists for is `analysis/recordings/atriedes-build.pad`:
+the Atreides route plus three pointer lines that click the build menu's fourth
+cell (structure type 1) at entry 8 350. `StructureCount` `$FFFFD318` goes 4 -> 5
+at entry 8 403 ($006C5E, the increment of the structure the click built, with
+`$006BBA AllocateStructure` and `$009E10 ApplyStructureCommand` reached) and
+`UnitCount` `$FFFFC892` 30 -> 31 at entry 8 703 (`$01974E CreateUnit`, with
+`$01D6EC DeployUnitFromStructure` and `$01C2EA CreateUnitFromType` reached) --
+ticket 219's reading, now a file the gate replays instead of a person playing.
+With the three pointer lines removed neither counter moves for the whole run,
+which is what makes the click the cause. The deployed unit is killed eleven
+entries later (the mission's battle has started by then), which is why the
+reading is a pair of entries: a route whose inputs depend on where the AI put
+things still needs a playthrough, and `--record-input` writes the pointer half
+of one.
+
+New and moved code:
+
+* `app/input_script.{c,h}` -- the parser, the writer and the schedule a replay
+  reads the frame's pointer from, with `platform/mouse_names.c` as the half of
+  the mouse backend that has no SDL in it (the harness links it);
+* `app/pointer_input.{c,h}` -- the one hand-off from a frame's pointer to the
+  port's screens and the mission's profile, now made by both front ends (the
+  window used to do it in `run_play.c`), plus the tally of the clicks delivered
+  against the clicks the screens, the cursor and a panel took;
+* `app/app.c` -- a run with a replayed pointer runs the input block with no host
+  at all, and `on_input_report` hands the devices' own report to the recorder;
+* `platform/mouse.c` -- a run's first poll is never a move (it has no previous
+  position to differ from), which is what lets the writer start at the first
+  move;
+* `analysis/recordings/catalogue.txt` and `scripts/recording_catalogue.py` -- one
+  line per committed recording with its digest and the frames it is the evidence
+  for, checked so a recording and its claim cannot drift apart.
+
+The gates: `tests/test_recording.sh` gains the written route (the two counters,
+the same file twice, the pad-only control, the blind click, the malformed and
+backwards lines, the catalogue and its negative controls);
+`tests/test_mission_mouse.sh` gains the played session (the panel's own cursor
+and item words, the click's build, and the RAM/VDP/WAV round trip);
+`tests/test_mission_panels.sh`'s "no mouse button becomes a pad button" now reads
+the pad half of a file that has two, with `--no-mouse` as the control that writes
+no pointer line. `docs/build-and-test.md` ("The recording language: a pad and a
+pointer"), `docs/collecting-coverage.md` (authoring one, and what still needs a
+person), `docs/mouse.md` and `docs/decisions.md` (D126) are the pages; the site
+is rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
