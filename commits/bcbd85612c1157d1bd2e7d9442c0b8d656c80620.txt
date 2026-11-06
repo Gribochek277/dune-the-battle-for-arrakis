@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bcbd85612c1157d1bd2e7d9442c0b8d656c80620
+date: 2026-11-06T07:09:44+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: this run works the evidence path first — 222, 219, 218
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
