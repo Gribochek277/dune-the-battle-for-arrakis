@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fddf71a4eb00f6d8ce8988fe1f9afe9af4211d83
+date: 2026-11-07T15:35:51+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 225: the page says whose server a display number is
+The allocation lock stops this gate's checks racing each other; the ownership
+test (the Xvfb this process started must still be alive) is what stops a number
+another process started from being read as ours. The concurrency paragraph
+names it, and docs/html is rebuilt from it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
