@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 740fe5e29223f2c519c86165c0890a915e225565
+date: 2026-11-07T03:45:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 211: the band is warm — 222's route moves both counters, and the control says the click is the cause
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
