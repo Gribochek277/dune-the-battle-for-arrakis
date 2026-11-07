@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8d9ebdecd43a1e0310515c401f9459d587158c63
+date: 2026-11-07T19:28:32+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: the state corpus's one red row is the emulator's channel, and the log says so
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
