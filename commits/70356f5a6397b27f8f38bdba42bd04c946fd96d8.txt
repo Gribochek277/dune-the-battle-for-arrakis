@@ -1,0 +1,62 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 70356f5a6397b27f8f38bdba42bd04c946fd96d8
+date: 2026-11-08T01:58:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 223: the lost screen and the campaign's end, through the game's own level select
+Ticket 218's route ends a mission on the field-7 mask; the field-8 mask's
+window and the campaign's end had no committed route, so `RunMissionLostScreen`,
+`RunGameEndScreen`, the structures band's campaign-end rows and the credits had
+no fixture and their pictures were not banked. The way in was the level select,
+and it is bigger than its page said: `data_083D38` has 48 entries, not fourteen
+-- 40 campaign codes (five houses x missions 2-9, so missions 5-9 are one code
+away, not a fight away) and 8 cheat codes whose second word is a dispatch code
+into the password screen's jump table rather than a house. Two of the cheat arms
+are the routes:
+
+  * `analysis/recordings/mission-lost.pad`: `NPFRAHSXOE`, the credits arm, writes
+    125000 into the current side's credits; the Atreides mission-1 script's lose
+    mask is bit 2, the credit target (`sub_012090`, 990 against 1000, and an
+    award clamps to `$FFFFC054` = 1000), so the next end check answers "lost" and
+    the cartridge's "Victory!" window (resource $0B) is drawn.
+  * `analysis/recordings/campaign-end.pad`: `JMSRVZNMPX`, the campaign-end arm,
+    writes `$FFFFC050 = 9` and `$FFFFC04C = 10` and returns "a match", so
+    `LoadMission` takes its mission > 9 path into `RunGameEndScreen` -- the end
+    card and the credits, without nine hand-played losses.
+
+What this moves from UNMEASURED to MEASURED, with fixtures from the two routes'
+stage in scripts/oracle_fixtures.sh: `RunMissionLostScreen` and
+`RunGameEndScreen` (mission-run), `sub_00AEF0`, `DrawPaletteText` and
+`sub_00B040` (structures), `sub_005B30`/`sub_005CDC` (mission-interface, the
+result screen's frame and slide), `sub_015C98` (briefing, the lost branch's
+setup helper) and `sub_00FD5A`/`sub_00FD80` (map-cells, the end card's clears).
+`sub_00B2C2` stays declared with what the route showed: it is not the credits --
+its only caller is `$0187F6` under a record's `+$6` bit 14.
+
+Checkpoints `mission-lost` (13 404), `campaign-end` (12 200) and
+`campaign-credits` (12 800), each 0 of 71 680 pixels against the reference. The
+lost window's four window-tile sets cycle every eleven entries and the two sides'
+mission clocks are two entries apart on that route, so the checkpoint sits in the
+nine-entry stretch both cycles share -- measured by capturing the reference at
+13 391..13 415 and comparing.
+
+`tests/test_campaign_end.sh` (new, slow tier) replays both recordings on the port
+and requires the routines' addresses in the address log, with a negative control
+per route (one d-pad press of the code turned around) that must reach neither,
+the store's frames, and the cached reference pictures' 0-pixel comparison.
+
+Also: main's `tests/test_briefing.sh` was committed with three conflict blocks
+from ticket 224's merge of ticket 225's bookkeeping, so it died at line 17 with a
+shell syntax error; the resolution keeps the ticket-225 side, completes the
+`read`/provenance body it needed, adds `mission-lost.pad` to its OTHER_ROUTES and
+keeps the invariant. `docs/formats-missions.md` ("The level select"),
+`docs/game-rules.md` W5/W6, `docs/collecting-coverage.md`, `docs/next-engine.md`
+and D129 are the pages.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
