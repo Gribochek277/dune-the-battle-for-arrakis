@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 00febc91c318b4eef1946ffbf1487f7840660394
+date: 2026-11-07T03:04:45+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224: the walk's second find -- the mission interface's $006A60 tail was cut in half by the split
+With the briefing table fixed, the every-group walk of fremen-won.pad reached the
+next lost tail: sub_015CB6 plants $006A68 as a return address (move.l
+#$00006A68,(a7) at $015D46) and the guest resumes at $006A6C, which the split
+called data (a 34-byte interval at $006A6A), so the row's part had no case and
+the mechanism refused with the address named. The tail is code -- addq.l
+#1,($FFFFC594).w and the rest, ending with jmp ($1360).w at $006A88 -- and its
+first word is the operand of the jsr at $006A68, which the split's boundary cut
+in half. The region goes to disassembly/code-candidates.txt (the port's run
+executed $006A6C), it merges into seg_code_006710, and seg_data_006A6A and
+seg_code_006A8C as a separate segment are gone; seg_code_006A8C stays a row (a
+call target) and the listing decodes jsr (UploadSpriteTable).w whole.
+
+Regenerated: the listing, the translation, the mission-interface part, the flag
+inventory, the guest boundary and the site. tests/test_mission_interface.sh's
+declaration for seg_code_006A8C now says the win route does enter it (18 calls),
+which is what the walk showed; the fixture waits on that recording's own pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
