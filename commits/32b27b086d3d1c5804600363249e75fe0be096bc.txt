@@ -1,0 +1,56 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 32b27b086d3d1c5804600363249e75fe0be096bc
+date: 2026-11-08T01:59:44+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 226: the frame boundary cannot fall inside a dispatch, and the two rows it did
+Ticket 224's every-group walk parted from the guest at frame 6 051 of
+`fremen-won.pad` and named ticket 226. Measured: it is not a pair of groups but
+a row's dispatch shape against the frame clock's delivery. The VBlank is
+delivered at the next `md68k_step()` boundary, and a replacement dispatch that
+answers several guest instructions is *one* step -- so a boundary that falls
+inside such a row is held off until the row ends. At frame 6 051 the guest is
+interrupted at `$001FF4` (`GetFrameCounter`'s `rts`) with a7 `$FFFF0E`; the port
+was interrupted at its caller's next instruction 16 cycles later, the Z80's
+VBlank pulse went with it, and the driver's phase drift reached work RAM at
+frame 6 080 (`ReadController`, the pad's protocol, once a frame) and 8 769 (the
+mission map view's chunk rows).
+
+The frame clock's two rows answer one guest instruction per dispatch now, one
+case per guest instruction, each charged at its own address: `GetFrameCounter`
+(two instructions) and `ReadController` (the pad's protocol, 33/47
+instructions). `ReadController` was the first replacement (ticket 83) and
+answered its whole protocol in one lump; its fixture is re-captured per
+instruction. The every-group run is the guest's again at frame 6 051.
+
+`scripts/group_divergence.py` is the measurement, `tests/test_group_boundary.sh`
+the gate: the guest and every transcribed group alone (and all together) to frame
+6 051, requiring no selection to part and naming the first differing work-RAM
+byte and the row the VBlank was taken inside when one does, with `--whole NAME`
+(the harness's new diagnostic) answering `GetFrameCounter` as one dispatch again
+as the control -- measured: `$FFFF0E`, `GetFrameCounter`, 16 cycles, exactly
+ticket 224's state. The rule that would have hidden the rest at the mechanism
+level (a dispatch near the boundary handed to the guest's own code) was measured
+and rejected: it takes a third of the instruction stream out of the port's C,
+which is what the porting dashboard counts (D129).
+
+What is not closed, and is declared in the walk's FINDINGS entry: the rows that
+still answer several guest instructions per dispatch (the mission map view's
+chunk rows and the 44 whole routines of the records, the leaf helpers and the
+un-sliced leaves) can still contain the boundary -- they part at 7 248 in the
+clock, 8 769 in work RAM and 10 532 in the picture. Each becomes a span, which is
+the shape that cannot straddle.
+
+Also found, and named in the case's comment: the generated translation's `moveq`
+sets N and Z and leaves V and C, where the 68000 clears them (the state corpus
+caught it as soon as the row became a span); the C follows the reference until
+the emitter is fixed, because fixing it re-captures every fixture taken from the
+translation.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
