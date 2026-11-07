@@ -1,0 +1,89 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b7702efb20e2a4c48f1d106e41b30c2da4ca6030
+date: 2026-11-07T19:39:06+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 211: the un-sliced units' lifecycle is the port's C, twelve curated rows at a time
+The bands `$019502-$0198AC` and `$01C2EA-$022530` were the last unit code
+the guest still ran: a record created from a type, the sprite refresh, the
+clear from the map's cells, the conversion, the two handles, the deployment
+out of a structure, the dead record's release, the record's own free, and
+the three helpers the bands carry with them (the number's format, the byte
+fill and the screen resource's load). Twelve curated rows, 930 instructions
+between them, one transcribed span each (D41) written by
+`scripts/transcribe_group.py`, in a new `unit-lifecycle` group: 616 rows and
+26 groups in the replacement table, 0 delegations.
+
+**The data question the ticket opened with was already answered.** Ticket
+220 found the four "routines" the first page counted -- `UnitCountersBySide`,
+`OrderDispatchTable`, `UnitPointerTable` and `StructureCountersBySide` -- are
+tables, gave them a data segment, and kept the rebuild byte-exact
+(`analysis/data-tables.txt`). The bands are therefore 59 routines and 3 854
+instructions, of which this ticket takes the twelve the names file curates
+(930) and leaves the 47 anonymous ones the guest's: nobody has measured an
+entry condition for them, and a row is a claim about an entry. The two
+addresses the ticket asked about are measured and are not the lifecycle:
+`$01EC90` is `sub_01EC44`'s inner loop label (its only `bsr` is read out of
+the digit table at `$01EC22`) and `$01F364` is the second random generator,
+called only by `sub_01F248`'s polling loop.
+
+**The split cuts one routine in two.** The routine universe cuts
+`CreateUnitFromType` at `RefreshUnitSprite`'s entry, and the create path's
+tail lives after the sprite leaf's `rts`: the two rows own
+`$01C2EA-$01C48D` and `$01C48E-$01C535`, the create part's `bra.w $01C52A`
+is a `pc` write the sprite part answers, and neither row overlaps the other.
+
+What proves it (`tests/test_unit_lifecycle.sh`, about five minutes):
+
+* the build route (`analysis/recordings/atriedes-build.pad`, ticket 222):
+  the click builds a structure at entry 8 403 (`StructureCount` `$FFFFD318`
+  4 -> 5, `$006BBA AllocateStructure`) and a unit deploys at 8 703
+  (`UnitCount` `$FFFFC892` 30 -> 31) through `$01D6EC DeployUnitFromStructure`
+  and `$01C2EA CreateUnitFromType`; the three states are banked in
+  `analysis/fixtures/unit-lifecycle/manifest.txt` and the group's run is
+  their bytes (work RAM, raw VDP dump, picture, `RandomSeed`).
+* the pair on the route's own committed selection (`--replace-group
+  mission-panels`, because the click is the port's feature and the guest has
+  no mouse): 12 244 dispatches, picture, work RAM, the VDP dump, the YM2612
+  timeline and the samples identical, `instructions` 103 446 351 and `cycles`
+  1 129 012 967 the route's exactly, `interpreted` equal, and `translated`
+  lower by 12 229 -- the 15 differences are the five `dc.w` words the C
+  answers and the machine interprets in both arrangements.
+* the mission route at entry 7 898: 5 768 dispatches and a 5 767-instruction
+  drop, so the ticket's "the played build's translated count on the mission
+  route" is measured on the route the inventory counts.
+* `--no-replace` and `legacy` are byte for byte the same; the playtest route
+  is identical on both, and its group-alone mix is inside the playtest gate's
+  steps.
+* eleven of the twelve rows have a committed per-instruction fixture (eight
+  from the mission route, three -- the free, the target and the release --
+  from the battle route, which is the only one that kills or frees a record).
+  `ConvertUnit` has none and must not: its only caller is the order action at
+  `$005BF0`, which no committed route runs, so `tests/test_oracle.sh` declares
+  it CONSTRUCTED and `port/tests/test_unit_lifecycle.c` runs it (plus the
+  target's mirror and refusal, the selected death and the creation from an
+  empty array) against the guest from the same bytes.
+* the guest boundary drops from 60 un-sliced routines to 48;
+  `scripts/guest_boundary.py --check` passes and `tests/test_flag_groups.sh`
+  reports the group as the inventory does.
+
+The dashboard is regenerated (`analysis/flag-inventory.json`, 23 086
+dispatches, 443 of the 930 addresses answered, 0 owed), the stage record and
+the playtest route name the group, `docs/next-engine.md` has the band's page
+and `docs/game-rules.md` a new §6c read off this code (C2, C3 and U7 now say
+so too), and the site is rebuilt.
+
+Two capacity notes: `port/next/replacement_table.c` was 202 bytes under the
+64 KiB hand-written bound, so the rows live in
+`replacement_table_unit_lifecycle.inc` (as the map cells', the briefing's and
+the structure band's do) and the Makefile takes the parts through the same
+`$(wildcard ...)` idiom `GAME_SRC` already uses -- the explicit list would
+have passed the bound the zone rule enforces.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
