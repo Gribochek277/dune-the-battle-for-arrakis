@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a82a2ff7093b73362abea128e58ec86f32f0e88b
+date: 2026-11-07T18:54:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 224: 224-briefing-row-cost-refusal
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
