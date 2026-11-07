@@ -1,0 +1,78 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8eb8663be7c5a4f268581289755616fcdfd4f30e
+date: 2026-11-07T05:09:25+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 225: the full tier's bookkeeping failures, and the display race under it
+Merging 218, 219 and 222 left `tests/run_all.sh --tier all` red in checks none of
+the three owned. Each failure is an assertion that stayed behind, and each fix
+keeps the assertion and says what changed and which ticket changed it.
+
+tests/test_briefing.sh (218). Ticket 218's win route measured fifteen briefing
+rows on `analysis/recordings/fremen-won.pad` -- `RunBriefingScreen`, the pages it
+draws and `DrawNumber` are entered only after a mission is decided -- and moved
+them from UNMEASURED to MEASURED, so this check's own routes (the mission and the
+playtest route) no longer run them and the old bookkeeping had only two states:
+"this route runs it" and "a declaration has it". A row now has three, read from
+the evidence rather than typed twice: this check's routes run it; its fixture's
+own header names another committed route and the frames (the fixture format
+carries `recording <path>, frames <first>..<last>`); or tests/test_oracle.sh
+declares it. The other routes are a table with what each one reaches, so a
+fixture that names a route nobody reviewed fails loudly instead of scrolling by;
+and the check refuses a row that is both declared and measured elsewhere, a
+fixture from its own routes whose row the routes have stopped running, and a row
+whose fixture says another route now that this route runs it. 25 rows run here,
+15 measured on the win route, 14 declared: the band's 54.
+
+tests/test_structures.sh (219). Ticket 219 added seven constructed cases to
+port/tests/test_structures.c, taking its fixtures from three to ten, and the
+count written in the check stayed at three. The count is derived from the C file
+now (`test_run("structures: ...`), so a case added moves the number with it while
+a case that stops running is still a failure. run_all.sh's declaration comment
+says the same ten.
+
+tests/test_mission_run.sh (218). The note that took `RunMissionWonScreen` out of
+the unmeasured dict left a second closing brace behind it, so the heredoc died
+with a SyntaxError before its first assertion -- a red row that asserted nothing.
+
+tests/test_mission_click.sh, tests/test_selection_box.sh, tests/test_group_orders.sh,
+tests/test_mouse.sh (222). The recording language grew a pointer half
+(`FRAME:pointer:X,Y:BUTTONS`), and four checks compared the whole recorded file
+against the replay's button timeline. The claim each makes is "no mouse button
+became a pad button", which is a claim about the pad half, so the comparison is
+on the button timeline now and the message says which half; the pointer half is
+asserted too (the runs that move the hand have it, `--no-mouse` has none). The
+group-orders and mouse checks were not in the ticket's list because the full-tier
+run that wrote it was interrupted before the build-class checks ran; they fail the
+same way and are fixed the same way.
+
+tests/test_recording.sh (the one failure under the tier's concurrency). The
+private X display's allocation was not atomic: an X server answers only once its
+Xvfb has come up, so two checks starting together both saw a number free and both
+asked Xvfb for it; one Xvfb lost, and the loser's probe could then see the
+winner's server and call it its own, so two or three checks shared a display and
+their xdotool keys went to the wrong window. Measured with the gate's own shape --
+three concurrent starts, displays held three seconds, six rounds -- four rounds
+failed with "Xvfb :90 exited immediately" and every survivor reported ":90". That
+is this check's keyboard session dying at 93.9 s inside the tier and passing
+alone. The probe and the start are one fcntl.flock critical section now, and a
+number Xvfb refuses is the next candidate instead of a failure, so a stale
+/tmp/.X<n>-lock cannot take the gate down either. After the fix the same
+measurement gives three distinct displays and no failures, and
+tests/test_recording.sh passes twice in a row.
+
+docs/build-and-test.md records the third concurrency defect and the measurement;
+docs/html is rebuilt from it.
+
+Standalone: test_briefing.sh, test_structures.sh, test_mission_run.sh,
+test_mission_click.sh, test_selection_box.sh, test_group_orders.sh, test_mouse.sh
+and test_recording.sh (twice) pass. The full tier follows in the next commit if
+it moves the page's timings.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
