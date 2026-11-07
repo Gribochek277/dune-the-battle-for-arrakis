@@ -1,0 +1,31 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cfad968ac3ae5f2d9b63ab2e4fc868d1dd50f394
+date: 2026-11-07T14:49:35+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224: the walk runs the win route with every group, and names the divergence it found
+The every-group run of fremen-won.pad completes -- the sub_01699A refusal is
+gone and ticket 218's exclusion, its rot-check and its 'left out by name' note
+are deleted. mission-won is back in the two-selection picture comparison, and it
+does not match: the pair leaves the guest's state at frame 6 051 (work RAM and
+the clock; the picture shows it from 10 437).
+
+That is measured down to 'not the port's own screens' and 'not one group': with
+title-screen and options-screen out of the selection the pair still diverges, and
+each of the other 23 groups alone is identical to the guest through frame 10 500.
+So it is an interaction between transcribed groups that only this route reaches
+(the longest committed mission route, 26 000 frames, passes its checkpoint), and
+the walk now carries it in a FINDINGS list that REQUIRES it to differ: fixing the
+interaction makes the walk fail until the name leaves the list, so the finding
+cannot rot into a silent pass. D128 records it with the follow-up.
+
+tests/test_oracle.sh: the three preview-window rows are measured
+(sub_0168FE, sub_016AB6, sub_016AE8), sub_01699A is no longer a row.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
