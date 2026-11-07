@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2ab9cc0c076590c8b9c54f31c880cf2246d02c71
+date: 2026-11-07T15:25:40+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 225: an answered display is only ours while our Xvfb is alive
+The allocation lock closes the race between this gate's checks, but a process
+that does not take the lock (another worktree's gate, a stale server starting
+late) can still put a live server on a number our own Xvfb just lost -- and the
+winner's probe would then call it ours, which is the shared-display state the
+lock exists to prevent. The ownership test is our own process: the loop now only
+claims a display while the Xvfb it started is still running, and a number whose
+server is somebody else's goes on to the next candidate. Re-measured with the
+same three-concurrent-starts probe (six rounds, other gates' displays already
+on :90): three distinct displays every round, no failures.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
