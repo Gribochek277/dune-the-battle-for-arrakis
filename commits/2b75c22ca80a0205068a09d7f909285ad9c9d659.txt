@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2b75c22ca80a0205068a09d7f909285ad9c9d659
+date: 2026-11-07T18:19:40+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 224: the criteria say what was proved, and the finding it could not fix has an owner
+The every-group walk completes and its bookkeeping holds; what it found -- two
+groups that are each exact alone and diverge together on fremen-won.pad -- is
+ticket 226's, carried in the walk's FINDINGS list that fails if the divergence
+stops, so it cannot rot into a silent pass. sub_01699A itself was a table, not a
+row: the split withdrew it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
