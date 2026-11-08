@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 863d805d46d2ad9bf6734ca4136fa3452923f157
+date: 2026-11-08T19:15:12+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge main into ticket/216-named-kinds
+Main carries ticket 227 (the unit-band group, 36 of the 48 anonymous routines
+as rows, the guest boundary 48 -> 12 un-sliced) and the Makefile glob fix: a
+source glob written without $(wildcard ...) produced an object literally named
+unit_band*.o, so a clean build failed to link while a stale build directory
+passed. The merge is a merge, not a rebase, so 227's history stays.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
