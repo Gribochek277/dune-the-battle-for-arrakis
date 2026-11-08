@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0beb928e94c3125b9d1dcd6bcf8ae6a40735157c
+date: 2026-11-08T16:56:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 227: the criteria carry what the address logs proved
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
