@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 85c6ced99501c16a67a8301856f9b03ea37189c1
+date: 2026-11-08T08:40:05+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 200: the machine has one execution path and the corpus leaves the build
+`port/generated/` is deleted: 88 files, 162 275 lines, 9.5 MB of one `case` per
+68000 instruction, committed since ticket 74 and linked into ten binaries. It
+was not faster than the interpreter once the interpreter was compiled at the
+same -O2 (33 s against 37 s on the 9 500-frame mission route) and it could only
+ever prove the guest ran; the port's C is the game now, and the evidence it
+produced is banked under `analysis/` (D130).
+
+The machine is left with one path. `md68k_translated_step()`,
+`md68k_set_translation()`, `md68k_translation_enabled()`, `MD68K_FALLBACK` and
+the `translated` counter are gone; `md68k_step()` charges the instruction's cost
+and hands it to `md68k_unimplemented()`, which is the decoder and executor that
+used to be the fallback. `interpreted + replaced = steps` is the whole
+instruction mix, which is a statement the gates can check. The function keeps
+its ticket-45 name because the port's C and its transcribed parts call it where
+they hand a `dc.w` word back; its header says so.
+
+The suite stops building generated code: `md68k-sweep` (39 008 addresses through
+both paths), the build-time transpile of `tests/fixtures/fixtures.asm`, and
+`test_translated.c`'s second run all go. `test_translated.c` becomes
+`test_instructions.c`: the same real-ROM instructions and PRM expectations, run
+through the machine's one path. The fixture counts fall (728 -> 324, 143 555 ->
+142 412) because the duplicated runs are gone, not because a statement was
+dropped.
+
+`port/generated/` is git-ignored, `make -C port translation` still writes it
+from the committed disassembly in two seconds, and
+`scripts/transcribe_group.py --check` regenerates it when a check needs it.
+
+The moveq fix the removal exposed, the re-recorded fixtures and the gates' new
+arithmetic are the next two commits.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
