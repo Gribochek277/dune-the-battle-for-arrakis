@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 27ee98ed7b3ee21ce359215634f93591fdb3a1fb
+date: 2026-11-08T07:29:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 227: the unit band's entries are measured, and thirty-six of them are rows
+The band's 47 anonymous routines were left the guest's by ticket 211 because no
+committed route entered them. This takes them the other way round: the address
+log of every committed recording says which of the band's entries a route starts
+a block at, and thirty-six of the forty-eight are entered. They are the new
+`unit-band` group -- eighteen transcribed parts, one dispatch per guest
+instruction, zero delegations -- with a per-instruction fixture each (the battle
+route for thirty-five, the campaign's end for `sub_01ED66`) and a pair on the
+mission (9 500 frames) and battle (26 000) routes.
+
+The twelve nobody enters stay the guest's and are a checked list in
+tests/test_oracle.sh (UNSLICED) with the entry condition nobody has measured and
+the route that would measure each. `sub_01DF7C` is the second largest of the
+band and is the list's strongest entry: no caller in the listing, no block start
+in its body on any route, and the only address executed in its range is
+`$01E200`, which is `sub_01DD90`'s own shared tail. The guest boundary drops
+from 48 un-sliced routines to 12.
+
+The generator gained one expression for the band: a `jmp (d16,pc,Dn.l)`, the
+number library's jump into its own copy and divide arms.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
