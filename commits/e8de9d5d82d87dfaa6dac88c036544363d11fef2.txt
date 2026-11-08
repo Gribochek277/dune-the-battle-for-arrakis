@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e8de9d5d82d87dfaa6dac88c036544363d11fef2
+date: 2026-11-08T15:09:21+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+data: compare_roms reports the balance change's six bytes and no other body run
+The ticket's proof that a balance change is local is scripts/compare_roms.py,
+not only the test's own diff. The scratch build's header carries the project's
+42 known modification bytes, so the check drops the runs below $000200 and
+requires the body's runs to be the three edited fields (six bytes).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
