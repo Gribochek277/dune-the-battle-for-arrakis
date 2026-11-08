@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 066a103e3629a22158bb149b759c731c8a09bef1
+date: 2026-11-08T08:40:30+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 200: the gates read the interpreter's count, and the documents say what replaced the corpus
+Every gate that asserted "the translation ran fewer instructions" now asserts
+the same amount about the interpreter, which is the machine's one path: the
+dropped count is still exactly the guest instructions the C answered, and the
+disabled/`--no-replace` control is still `legacy` byte for byte. The comparator
+(`scripts/compare_engine_runs.py`) reads the same arithmetic from
+`interpreted`; `dispatch-cost` measures the dispatch against the interpreter's
+per-instruction price; `tests/test_played_build.sh` stops asking for a field
+that no longer exists.
+
+The documents say what replaced it. `docs/port-architecture.md` drops the
+`generated` zone (nine zones now, and the structure diagram is regenerated from
+the declaration), `docs/native-port.md` replaces "The generated translation"
+with "The translation is a reading, not a build" -- the measurements, the MOVEQ
+finding, how to regenerate it and what reads it -- and `docs/disassembly.md`
+files `port/generated/` as ignored, regenerable input. `docs/decisions.md` D130
+records the decision, the dependency list with a command per row, the
+regeneration run and what the slow tier can no longer check. The ticket file
+carries the same list as its evidence.
+
+`python3 scripts/build_docs.py` and `bash tests/test_docs.sh` are green; the
+fast tier is 52 of 52 (`ALL CHECKS PASSED`), and the slow tier is green with
+`tests/test_oracle_capture.sh` reproducing the 419 fixtures byte for byte.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
