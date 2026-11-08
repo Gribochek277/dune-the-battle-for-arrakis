@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cd83361f5d17266ac6f6126936bf131982a70110
+date: 2026-11-08T19:46:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 200: 200-retire-oracle
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
