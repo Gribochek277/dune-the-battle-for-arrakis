@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 100ac38261de5e7c0743e80469317df5138531af
+date: 2026-11-08T08:07:27+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the curated-name count includes the terrain class constants
+The site's stats page counts all 446 curated names; tests/test_docs.sh's grep
+only counted the address lines (430) and then required the check's own count to
+match. Ticket 216 added 16 Name = #XX lines, so the two counts are one number
+again.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
