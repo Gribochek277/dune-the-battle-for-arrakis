@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e2f300e1decf035ad1793d7c7e0af2edbb78b755
+date: 2026-11-08T21:05:35+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+216: tick what was met, and record the slow tier's one pre-existing failure
+Six criteria are met and ticked; the docs/dashboard part of the seventh is
+split out and ticked. The gate-tier line is not ticked: the fast tier is green,
+the slow tier ran 245 min with one failure (the pointer scroll's screen-speed
+check), and that check reproduces at the merge base aaba18f1 in a clean
+worktree, so it is not this ticket's -- the line names the module that owns it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
