@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 01e9f507f569a0cf07f787ea34c888ac389a7dad
+date: 2026-11-08T17:54:32+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 200: a check's window is the one SDL keeps, not the first one it makes
+The slow tier's windowed checks began failing with `xdotool windowfocus
+did not take on window 0x40002f: BadWindow`, and the cause is SDL's, not the
+checks': `mdp_window_open` creates the X window with `SDL_CreateWindow` and then
+`SDL_CreateRenderer(ACCELERATED)`, which on the X11 driver picks the OpenGL
+driver -- and `SDL_GL_CreateContext` recreates a window that was not made with
+`SDL_WINDOW_OPENGL`. Measured on this tree: the first window appears at 1.07 s,
+is gone at 1.12 s, and the window the run keeps appears at 1.87 s. A check that
+searched and then focused caught the first one.
+
+The harness fix is `scripts/xfocus.find_window()`: a window is "up" only when two
+searches `stable` seconds apart agree on the id and the window still has a
+geometry, and a pid filter is a preference rather than a requirement (SDL sets
+WM_PID late, so ANDing `--pid` with the name hid the window the saves check was
+waiting for). The checks that found a window by hand -- the input map, the mouse
+buttons, the gamepad, the keyboard taps, the saves, the display settings, the
+mission band and `scripts/record_session.py` -- now ask it.
+
+`tests/test_unit_lifecycle.sh`'s playtest-route block is the last one that read
+`interpreted` as a signal rather than a count: it now requires the drop and
+bounds it by what the rows say they stood in for, like the other group checks.
+
+Verified on this tree: input map, mouse buttons, saves, units, orders,
+structures, unit lifecycle and map renderer all pass; the fast tier is green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
