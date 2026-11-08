@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: c0678dba6422fa47b35d1f45e1bdaf21f78a0c4d
+date: 2026-11-08T03:37:50+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 226 merges main: 211's unit-lifecycle group and 223's end routes, and both sides' decisions
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
