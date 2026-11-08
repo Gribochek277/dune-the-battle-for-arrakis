@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0047b39c1222a76b7c0f04094f32ba3c601b08f4
+date: 2026-11-08T03:06:36+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Merge ticket 223: 223-mission-lost-and-campaign-end
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
