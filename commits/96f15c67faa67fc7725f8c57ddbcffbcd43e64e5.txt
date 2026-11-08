@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 96f15c67faa67fc7725f8c57ddbcffbcd43e64e5
+date: 2026-11-08T08:01:33+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 227: the group's own fragment, the raised state bound and the route's mix
+Four things the first green run of the suite found, each a consequence of the
+band's thirty-six rows:
+
+* `replacement_table.c` reached R4's 64 KiB bound with the group and its rows in
+  it, so the two unit bands' group entries moved to
+  `replacement_table_unit_groups.inc` (the same fragment rule the rows follow) and
+  `replacement_table_unit_band.inc` carries the band's rows.
+  `scripts/porting_stages.py`'s group reader now follows a fragment the way its
+  row reader already did, so D91's record still sees where the entries are
+  written. `port/Makefile` was 36 bytes under the bound too: the band's parts are
+  listed as `next/unit_band*.c`, which make expands.
+* the table's 652 rows and 649 distinct names outgrew the snapshot's 640, so the
+  `next` arrangement's state was refused with "the run's identity is longer than
+  a state's fields" (tests/test_shared_state.sh's head caught it, and
+  tests/test_tick.sh's save). `MDA_STATE_REPLACEMENTS_MAX`,
+  `HEADLESS_REPLACEMENT_MAX` and `PLAY_REPLACEMENT_MAX` move to 768 together, as
+  their comments require; the three comments carry this ticket's count.
+* the playtest route's record needed the group's mix and its `reaches` entry
+  (29 mixes now), because the route enters 1 307 of the band's 2 366 addresses.
+* the structure diagram's unresolved-include legend moves from 11 to 12: the
+  band's rows and its group are fragments beside the table, like the seven
+  fragments already there.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
