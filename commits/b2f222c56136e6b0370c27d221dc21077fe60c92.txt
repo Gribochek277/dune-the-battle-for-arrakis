@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b2f222c56136e6b0370c27d221dc21077fe60c92
+date: 2026-11-08T18:19:15+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 200: the house selection's comparator message is the interpreter's
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
