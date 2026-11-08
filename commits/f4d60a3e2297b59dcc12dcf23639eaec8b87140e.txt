@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f4d60a3e2297b59dcc12dcf23639eaec8b87140e
+date: 2026-11-08T04:05:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 226: the criteria carry the mechanism and the rows it did not close
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
