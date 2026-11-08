@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 170ff328514b5b34511dcefc3f756ab07773e274
+date: 2026-11-08T22:14:07+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+216: the site and the fixtures rebuilt from the field registry and the kind names
+The regeneration the ticket's last commit describes, committed so the tree is
+clean: docs/html rebuilt from the new descriptor-field registry, the kind names
+and the terrain classes; analysis/fixtures/*/manifest.txt re-captured against
+the names; AGENTS.md, CONTEXT.md and README.md carry the registry's location and
+the naming rule; .gitignore ignores what the generators write.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
