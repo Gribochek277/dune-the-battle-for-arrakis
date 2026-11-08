@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f729953b227346f3bb896c29ed6c6b252db9c4c0
+date: 2026-11-08T16:58:05+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+Revert "Merge ticket 227: 227-un-sliced-units-anonymous"
+This reverts commit b8fdb4abc0249d8476b8dc5e651ed6c579228b5a, reversing
+changes made to 1f4bb59c9fb6861e46dd06431a5459c02e4151d7.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
