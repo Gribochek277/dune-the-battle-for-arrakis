@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d51190b815c950caa3a98bc525d34453636dd126
+date: 2026-11-09T05:25:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+regenerate the two transcribed files whose comments now carry ticket 216's kind names
+`mission_flow_script.c` and `order_actions_2.c` differ from what their
+generators write in two comment lines each: `lea (data_0833F6).l,a0` is now
+`lea (Refinery).l,a0` and `data_0835F4` is `SpiceSilo`, because ticket 216
+gave the structure kinds the cartridge's own names and the generator reads the
+listing. The code is byte-identical; the staleness check is right to refuse a
+comment that no longer matches its source.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
