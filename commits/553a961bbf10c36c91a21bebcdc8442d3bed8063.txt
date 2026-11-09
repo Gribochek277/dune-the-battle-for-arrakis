@@ -1,0 +1,50 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 553a961bbf10c36c91a21bebcdc8442d3bed8063
+date: 2026-11-09T03:17:00+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+201: the unit band is wired in, and the final proof is re-measured on it
+`main` restored ticket 227's sources (e7434bdc) but not their wiring: the
+replacement table was still 616 rows / 26 groups, the inventory still 48 guest
+routines, and the 36 fixtures and the table fragments were absent, so the
+eighteen parts linked as dead code. This completes it from the branch's own
+work: the table's group and row fragments, the three replacement bounds (768),
+`analysis/fixtures/unit-band/manifest.txt`'s hashes and the 36 re-captured
+fixtures, the inventory (`27 groups, 652 rows, 803 C routines, 12 guest`), the
+guest boundary, the playtest route's mix and reach, the porting stage, the zone
+declaration, the oracle's UNSLICED list and the gate registration.
+
+The parts are regenerated from the current disassembly, so ticket 200's MOVEQ
+fix is in them; the fixtures are re-captured from the current guest (the ones
+in the first merge recorded the old corpus's flags), and `tests/test_unit_band.sh`
+is updated for the one-path machine: `interpreted` is the guest's count, and the
+drop is `calls` minus the `dc.w` words both arrangements interpret.
+
+The final proof on the wired tree (`bash tests/test_final_proof.sh`, 201 s):
+
+* 118 949 702 steps: 118 637 575 the C's, **1 029 634** the interpreter's
+  (down 171 966 from the 1 201 600 before the band was wired);
+* 6 221 VDP writes from 28 sites in the split's gaps (unchanged: the band was
+  never where the hardware writes came from), from code no row covers;
+* 25 block starts outside every row: 1 in a guest routine's range -- $01E200,
+  which the band's manifest calls sub_01DD90's shared tail -- and 24 in the
+  gaps; no committed route enters any of the twelve routines' entries;
+* 0 Z80 instructions; 1 333 822 563 cycles;
+* the route's banked steps: the played build 6 of 10, the reference arrangement
+  (next + z80) 10 of 10, the per-frame state first differing at 7 313 (the
+  port engine's timing, unchanged).
+
+The documents carry the restored numbers: the status page's "what is still the
+guest's" is now the twelve un-sliced routines, the split's gaps and the engine's
+timing; the final proof's table, the goals' epic states, the architecture's
+played-build section, the recipe's oracle note, the limitations and D132/D133
+are regenerated and the site is rebuilt. The fast tier ends ALL CHECKS PASSED;
+the full tier is the closing run.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
