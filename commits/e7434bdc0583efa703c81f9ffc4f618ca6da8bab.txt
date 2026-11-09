@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e7434bdc0583efa703c81f9ffc4f618ca6da8bab
+date: 2026-11-09T02:16:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+restore ticket 227: the unit-band group was reverted out of main and never came back
+The first merge of 227 failed its post-merge check (a source glob written without
+$(wildcard ...) made a clean build produce an object named `unit_band*.o`) and
+the orchestrator reverted it. The branch then merged main — which by then carried
+that revert — so git resolved delete-versus-unchanged in the deletion's favour
+and the second merge brought back only the Makefile line: the eighteen parts, the
+header, the table fragment, the fixtures manifest and the gate were in no ref at
+all, and `next/unit_band*.c` matched nothing.
+
+Restored from b8fdb4ab, the first merge commit, which is an ancestor of main
+through the revert; the Makefile glob is the fixed one and the gate is registered
+in tests/run_all.sh. A clean build links 19 unit_band objects and the boundary
+check reads the group again.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
