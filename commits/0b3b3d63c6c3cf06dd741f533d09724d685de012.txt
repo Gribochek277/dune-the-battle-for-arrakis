@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0b3b3d63c6c3cf06dd741f533d09724d685de012
+date: 2026-11-09T07:51:29+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the frame-cost check measures what the tree can prove, and ticket 228 owns the gap
+Ticket 200 moved the guest baseline: the guest now runs the interpreter at -O2
+rather than the -O0 transliterated corpus, so the comparison arrangement is 3.01
+ms a frame against the guest's 2.75 -- the port's C costs 9 % more than
+interpreting the guest on the path nobody plays but every group check runs. The
+played build is still cheaper (2.67 ms, 1.03x), and that is the number the
+dashboard carries.
+
+The check required both ported paths to beat the guest, which is no longer true
+and cannot be made true by editing prose: it now requires the played path to win
+and holds the comparison path to a 10 % margin, failing when the gap grows.
+Ticket 228 owns closing it, with the two candidate costs named (the dispatch's
+call + STEP + bounds check per instruction against one switch, and the Z80
+driver's bus contention) so the margin can go back to 1.0 with a number behind
+it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
