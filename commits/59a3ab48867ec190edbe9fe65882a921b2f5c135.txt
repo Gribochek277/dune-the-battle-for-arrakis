@@ -1,0 +1,55 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 59a3ab48867ec190edbe9fe65882a921b2f5c135
+date: 2026-11-10T01:55:36+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+228: every row records its guest's instructions, and a dispatch advances the sound and the Z80 once
+The comparison arrangement cost 3.01 ms a frame against the guest's 2.75 --
+9 % slower than interpreting the cartridge, on the path nobody plays but every
+group check runs. Measured before anything was changed, none of the gap was the
+Z80 driver's bus contention: the harness's own clock reports 368 Z80-window
+accesses (2 944 cycles against the frame's 128 006) on both paths, to the
+access. The mechanism's own lookup is +0.21 ms a frame with nothing replaced
+(legacy against --no-replace), paid by both paths.
+
+What it was: the seam advanced the sound renderer and the Z80 once per recorded
+guest instruction and then advanced both again at the end of the step, and 2.4 %
+of the dispatches (73 000 in 250 frames) reported more cost than they recorded,
+so the fallback charged the remainder one 68000 cycle at a time -- 800 496 extra
+advances, 40 instruction slots of every guest instruction of the frame.
+
+What changed:
+
+* the twenty-five files that charged the bare cost model move to
+  next_replacement_charge() (1 393 sites), so their rows record their steps and
+  the per-cycle fallback never runs on a committed route. Charging the remainder
+  as one step instead was measured and rejected: it moves the refresh phase
+  against the Z80's bus charges (two cycles over 9 500 frames of the leaf
+  helpers' route, and the timeline after them).
+* md68k_step() asks the body whether the arrangement already advanced the clock,
+  so an instruction's sound step and Z80 run are paid once.
+* next_replacement_call is the CPU and the address: its frame point, clock and
+  pad fields were filled with four calls per guest instruction and no row read
+  one. The refusals build their sentences out of the hot frame, the lookup
+  answers the row's table index with the row and remembers the last answer, and
+  the dispatch's hot path is one inline.
+
+The record is guest 2.61 ms, comparison 2.52 and played 2.23 on this machine:
+the comparison build draws 1.04x the guest's frames per CPU second and the
+played one 1.17x. The check measures the guest and the comparison in paired
+rounds with the order alternated, keeping the fastest run of eight a path,
+because they are now within a few percent and one sample measures the host; the
+comparison margin is 1.0 again. Work RAM, picture, counters, sound and the Z80
+timeline are identical to the build before this ticket on the comparison and
+played runs, and the engine equivalence pair still holds.
+
+D134 in docs/decisions.md is the record; docs/port-architecture.md and D130's
+number now read from the record through {{fact:...}} instead of retyping it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
