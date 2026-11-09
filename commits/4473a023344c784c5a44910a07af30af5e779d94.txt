@@ -1,0 +1,40 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4473a023344c784c5a44910a07af30af5e779d94
+date: 2026-11-09T02:18:44+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+201: the documents are the ported game's, and the numbers are generated
+The status, goals, architecture, recipe and limitations pages now describe the
+game the tree runs, not the transpiler plan it grew from:
+
+* `docs/project-status.md` and `docs/goals.md` are rewritten around the played
+  build, the final proof's measurement and the three pieces still the guest's
+  (the unit band, the split's gaps that write the VDP, the port audio engine's
+  timing), each with its owner;
+* `docs/modding.md` walks the three worked changes the epic asked for -- a
+  gameplay change (the pointer's pace), a balance change (a unit's named rows)
+  and a cosmetic one (the locale's `uk` section) -- with the file and the check
+  for each; `tests/test_modding.sh` holds the page to the tree and has a control
+  page that points at a disassembly segment, which it must refuse;
+* `docs/port-architecture.md`, `docs/native-port.md`, `docs/next-engine.md`,
+  `docs/build-and-test.md`, `README.md` and `AGENTS.md` are corrected where they
+  still described the two-path era or the old counts, and `docs/decisions.md`
+  gains D132: the final proof publishes the remainder instead of claiming zero;
+* a number on a page is written `{{fact:KEY}}`; `scripts/build_docs.py --facts`
+  prints every key with the command that produces it and the renderer fills it
+  from the same measurements the site's pages are built from. The counts that
+  drifted (the routines, the names, the gate, the checkpoints, the route, the
+  final proof) can no longer be retyped.
+
+Also: the oracle runner's stale-fixture message says the guest's code changed
+rather than the transliterated code (ticket 200's machine has no such thing),
+and `tests/run_all.sh` registers the final proof (slow) and the modding check
+(fast).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
