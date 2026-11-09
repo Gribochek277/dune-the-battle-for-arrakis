@@ -1,0 +1,66 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 25c9a9d0c015c55ebfa39ff59184991d2612ea0b
+date: 2026-11-09T02:03:47+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+201: the final proof measures the guest remainder, and the route says what it is
+The instrumented run of the whole playtest route on the played build, and the
+record of what it still runs. `analysis/final-proof.json` is written by
+`scripts/final_proof.py --write` from a `headless-played` run with an address
+log, the route's steps and a WAV; `tests/test_final_proof.sh` regenerates it and
+fails when the committed record is not this tree's.
+
+The measurement, on the 10 400-frame route:
+
+  118 949 702 steps: 118 464 491 the port's C, 1 201 600 the interpreter's
+  1 333 822 563 68000 cycles charged to the timeline
+  1 201 600 guest instructions in 33 of the inventory's 48 un-sliced routines
+  279 block starts outside every row: 255 in those routines, 24 in code no row
+  covers (the rows' out-of-span continuations and the split's gaps)
+  6 221 guest hardware writes from 28 sites: the VDP ports, all of them in
+  three regions the row table does not cover ($013C44-$013D58, $015020-$01505E,
+  $00371C-$003734 -- the mission flow's briefing writer, the prelude's and the
+  placement cursor's tail; `scripts/scan_code_likeness.py` scores
+  $013C40-$013CCF code-like)
+  0 Z80 instructions: the played build's sound path is the port engine (197)
+  6 of 10 route steps inside the banked gates; the comparison build with the
+  Z80 engine is inside all 10
+
+So the epic's "zero guest addresses, zero hardware accesses" is not this tree's
+number, and the record says so instead of the prose. The 1 201 600 are the unit
+band's forty-eight routines; ticket 227's `unit-band` group (which the status
+table records as merged) is not in this tree -- `git show --stat 6b171457` is
+`port/Makefile | 1 +`, and neither 6b171457 nor main has `port/next/unit_band.c`
+or the fixtures, while main's inventory has 26 groups and 48 guest routines.
+That merge is the ticket that would take thirty-six of them; the six gaps above
+are the coverage ticket that would take the hardware writes.
+
+The played build's gated steps: the port audio engine is the played path
+(ticket 197), and its timing moves the mission's work a frame or a few cycles
+apart from the cartridge's driver from frame 7313 (the first per-frame
+difference against the same selection on the Z80): the mission, hud,
+build-panel and options steps are not the baseline's. The reference arrangement
+(next + z80) is. The record carries both, and the page names the engine's
+timing as the owner.
+
+Beside the proof:
+
+* the machine counts the guest's own hardware accesses (md68k_guest_accesses(),
+  the distinct sites included), in `port.guest` of the state dump -- an access
+  the interpreter made, not one the port's C made through the same bus;
+* `scripts/build_docs.py --facts` prints the generated numbers a document may
+  write as {{fact:KEY}}, from the same model the site's pages are built from;
+* `tests/test_mission_pointer_scroll.sh` is updated to ticket 222's poll
+  semantics (a run's first poll is never a move, and a poll is applied to the
+  next guest frame): every script now establishes the pointer at poll 1 and
+  moves it at poll 2, and the rate/corner/control cases measure the frames the
+  run's own band report says are in the band. The pre-existing slow-tier
+  failure this check has carried since 222 is that stale script, not the pace.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
