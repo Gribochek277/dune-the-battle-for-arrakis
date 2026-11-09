@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 609607adf7a3fd492bdad6d85ea367648f3a8468
+date: 2026-11-09T03:48:02+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+201: the criteria carry the measurement the tree can prove
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
