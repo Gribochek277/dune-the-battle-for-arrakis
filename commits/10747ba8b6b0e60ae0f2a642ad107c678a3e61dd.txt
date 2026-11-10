@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 10747ba8b6b0e60ae0f2a642ad107c678a3e61dd
+date: 2026-11-10T05:47:54+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the house selection's control is a perturbed run, because ticket 228 removed the drift it caught
+The check's negative control ran the identical pair through a Z80 counter bound
+of 1 and required a refusal: the drift used to be 128 cycles, so a bound of 1
+had to fail. Ticket 228 made the seam advance the sound and the Z80 once per
+dispatch and made every row record its guest's instructions, so the same pair's
+counters are now equal (+0) and a bound of 1 correctly accepts them -- the
+control was asserting the bug it had been written to catch.
+
+The control is now built the other way round: a deliberately perturbed next run
+must be rejected at the same bound of 128 the identical pair passes, and the
+refusal has to say what differed. That still fails if --z80-counter-drift waives
+everything, and it also fails if the comparator stops reading the counters at
+all.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
