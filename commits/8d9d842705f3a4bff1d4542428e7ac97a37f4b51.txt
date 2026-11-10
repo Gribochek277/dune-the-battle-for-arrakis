@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8d9d842705f3a4bff1d4542428e7ac97a37f4b51
+date: 2026-11-10T02:12:13+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+228: the criteria carry the measured margin
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
