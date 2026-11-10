@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b27cbc6571b28e17fceb5629c4afa53fd94c8e74
+date: 2026-11-10T06:09:24+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+orchestrator: the tier's last red row was a control asserting the bug 228 fixed
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
