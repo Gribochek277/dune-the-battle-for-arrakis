@@ -1,0 +1,37 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a786a8e32cbd7912a6b2e81f8b9d06d0c1b6da86
+date: 2026-11-12T21:57:14+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+the overlay layer tracks its writes: a dragged box no longer smears
+The owner's playtest of ticket 230's first build: dragging the selection box left
+every intermediate rectangle on the screen. The layer had the machinery for it --
+`begin()` clears the previous picture's rectangles and the upload carries them --
+but nothing told it what was drawn: `app/pointer.c`, `app/selection_overlay.c` and
+`app/backdrop.c` draw into the layer's `md_draw_target` and describe nothing, so
+`previous` stayed empty, nothing was erased, and the empty upload list made the
+presenter send the *whole* layer, now holding every box the drag had drawn.
+
+`md_draw_target` grew an opt-in bounds tracker (one comparison per write; the
+picture's own target leaves it off) and the layer turns it on: `begin()` starts the
+box empty, a picture's writes accumulate it, and `end()` marks it as the current
+picture's rectangle. An explicit `md_overlay_layer_mark()` is still accepted and
+just makes the upload tighter; a caller that marks nothing gets a correct one.
+
+Evidence: `port/tests/test_draw_target.c` (the box holds every write, refused
+writes add nothing, a new picture starts empty) and `port/tests/test_overlay.c`
+(a shape drawn without a mark is uploaded and erased the next picture) are the new
+units, and `tests/test_present_gpu.sh` grew the window case that is the smear
+itself: a mouse script walks the port's arrow across sixty frames and the two
+presenters must write the same PNG at the end. With the tracking turned off the
+case fails, which is the control; the same comparison on the owner's box route
+(`--frames 7900`, the mission's drag) is identical now and differed by 7 954
+pixels before.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
