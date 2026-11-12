@@ -1,0 +1,92 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 075493352a87aece0d9a4de1eff2d4186e862051
+date: 2026-11-12T10:53:09+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 229: the played audio path allocates its own voices, and the owner's playtest pass
+The owner's third playtest: on the mission map, while building and ordering
+units, the music kept playing and every sound effect stopped. The measurement
+found the driver's limit copied into the port, and the fix became the first
+slice of the played path's own audio.
+
+The class, not the instance. `$03CC`, the sample player's tail, writes `$2B = 0`
+*and* `$03DC-$03E8`, which frees the kit's shared destination (`$1788` flags
+`$C6`). The reference engine copied the first only, so the destination kept the
+last voice's total level and `$181C` refused every quieter voice after it: 104
+unit lines lost on `atriedes-battle.pad` over 12 000 frames, with no FM drop at
+all. Fixed in the reference engine too (`tests/test_sound_events.sh`'s
+sample-end section; the polyphony fixture grew to 95 notes and its header states
+the new destination map). The played path then stops paying for the driver's
+pools: `--sound-engine modern` (`next/audio_engine_modern.c`) allocates twelve FM
+voices over **two** YM2612 instances and eight sample voices, the oldest voice
+stolen when all are busy, the samples streamed by the sound module's software
+source. Three instances (18 voices) measured 2.752 ms a frame against the guest's
+2.541 and failed `tests/test_frame_cost.sh`, so the count is two (2.429 against
+2.519, ratio 1.04, `analysis/frame-cost.json` regenerated);
+`analysis/final-proof.json` names the path (`"sound_engine": "modern"`) and the
+route still reports zero Z80 instructions. The reference engine
+(`--sound-engine port`, the driver's model) and the Z80 driver stay the evidence.
+`tests/test_audio_modern.sh` is the played path's own check: the score's multiset
+(the kit's is at least the reference's, 361 against 313), the two-kit-song
+fixture where the reference plays one note, the voices, the SOUND TEST's 46
+entries through both engines, and the reference's counts as each control.
+
+D136, the owner's sound-test pass, is the same session's second half and five
+defects rather than a mix problem: the kit's rate is the record's Timer A nibble
+(`53 267 / n` Hz, not one average 756-cycle rate), a fixed destination-2 voice
+was silent (the level bytes and the timbre program are keyed to destination 2),
+the played sample was three times too loud, the PSG pools were not reset on a
+fresh note, the SOUND TEST stopped the music rather than the previous sample, and
+its wrap was two `dc.w` words the transcription refused. D137 is TURBULENCE:
+channel 3's effect 3 has flag bit 6 and restarts at every note (the F-NUM runs
+off the ladder to `$3CBF` without it), the wrapped 8-bit note is clamped the way
+the driver clamps it, and the modern path had lost the PSG gate pass.
+`tests/test_audio_modern.sh` compares all 641 of the song's channel-3 F-NUM
+words in order.
+
+D138 and D139 are the mouse. The mission's pair is the genre's: the **left**
+button selects and the **right** commands (the pad and the keyboard keep the
+cartridge's `A`/`B`), a left click on open ground is the deselect and delivers no
+`A`, and the four defects the change carried -- the cancel read before the pan
+and the box, the pad's `B` leaving the port's set standing, a dead member and a
+guest clear staying in the set, and a group order copy that knew only a move and
+an attack -- are fixed with it. A **building** is placed with the left button and
+cancelled with the right: in the ready state the right press is the cartridge's
+own `B` (`$01781E`), in the placement mode it is the port's cancel (the yard's
+`+$3`, its marker, `$FFFFC578`, the mode and the `$0030FA` handler back), and the
+left press places **at the hand's cell** (`$FFFFC248` written from the hand
+first). The pointer's record is the cell's corner: 16 pixels up-left of the hand
+under `$0030FA`, the hand itself under `$003AA6`, so the arrow stands on the
+game's square. `tests/test_mission_placement.sh` is the new window check;
+`tests/test_mission_click.sh`, `tests/test_selection_box.sh`,
+`tests/test_group_orders.sh` and `tests/test_mouse_buttons.py` keep the edited
+assertions (the change is the point, not a regression).
+
+The buttons' cases outgrew `port/tests/test_mission_mouse.c` (65 952 B against
+R4's 65 536), and the bound's rule is to split by responsibility: the mission
+both suites start from is `port/tests/test_mission_fixture.{c,h}`, the gestures
+are `test_mission_mouse.c`, the buttons' contexts are `test_mission_buttons.c`,
+and the selftest registers `mission_buttons` beside `mission_mouse`. The zone
+declaration, the structure diagram and the docs' measured-shapes table follow.
+
+The pages are D135-D139, `docs/formats-music.md`, `docs/native-port.md` ("Audio,
+slice 5"), `docs/next-engine.md`, `docs/port-architecture.md`, `docs/mouse.md`
+("The building's placement, and the record's 16 pixels"),
+`docs/project-status.md` and the dashboard; the site is rebuilt.
+`analysis/recordings/sound-test-wrap.pad` is the SOUND TEST's wrap route, in the
+catalogue with what it shows.
+
+Checks: `tests/run_all.sh` (fast tier -- all 53) with the slow and extra checks
+this touches run by hand: `test_audio_modern.sh` (new, slow), `test_audio_engine.sh`,
+`test_sound_events.sh`, `test_options_screen.sh`, `test_play_audio.sh`,
+`test_played_build.sh`, `test_mission_placement.sh` (new, extra),
+`test_mission_click.sh`, `test_mission_mouse.sh`, `test_selection_box.sh`,
+`test_group_orders.sh`, `tests/test_mouse_buttons.py` and `make -C port test`.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
