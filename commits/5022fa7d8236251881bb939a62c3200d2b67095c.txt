@@ -1,0 +1,92 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5022fa7d8236251881bb939a62c3200d2b67095c
+date: 2026-11-12T19:18:37+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+ticket 230: the window presents on the GPU, and fullscreen is the default
+The owner's fullscreen playtest stuttered, and the measurement says why: 600
+guest frames at 1920x1200 through the surface path, **207 pictures presented and
+394 of the 60 Hz schedule's slots dropped**, at ~30 ms a picture -- ~20 ms of CPU
+rasterization of the 2.3 M-pixel target and ~10 ms of `SDL_UpdateTexture` of a
+6.9 MB RGB24 surface (a standalone SDL measurement: 10.4 ms for RGB24 against
+4.8 for XRGB8888). The guest kept 59.9 frames a second throughout, so the game was
+on time and its picture was not: a schedule that is late draws the *current* state
+(the alpha clamps to 256), so the blend was silently off and the pictures arrived
+in bursts of one every two or three vblanks.
+
+D140: the window presents on the GPU. `md_renderer` grew the third optional half
+-- `can_present_to_host`, `present_to_host(estimator, alpha, overlay, art)` and
+`read_presented(surface)` (the one readback, for `--screenshot`/F12 and for the
+comparison this path is held to) -- and the GL backend draws the scene's composite,
+the front end's overlay layer and the wide backdrop's art straight into the
+window's own framebuffer, then swaps. The host is still the platform's: a GL
+window (`mdp_window_open_gl_target`, `mdp_window_gl_host`) hands the backend a
+symbol lookup, a make-current, a `begin_frame` and a `swap`; the hidden context of
+ticket 121 keeps its own host for the readback comparison. The y flip is a uniform
+(the window's first row is its bottom one), and the art's feather is
+`app/backdrop.c`'s ordered dither ported to the present shader. `--presenter
+gpu|surface` names the path, `gpu` is the default, and `surface` is every run
+before this one, kept so the two can be compared on one machine; a renderer that
+draws into a surface (scene, software, vk) makes `gpu` a preference, and a host
+with no GL window falls back with the reason printed once -- the rule
+`--renderer gl` has had since ticket 121. A state file still names the renderer
+that drew it, so a run resuming a surface-written state names `--renderer scene`
+(the four window checks that hit this were edited, not deleted).
+
+Measured on the host's balanced state (1.8 GHz), same recording and target: the
+surface path presents **560 of 600** at ~16.5 ms a picture (9.8 raster + 5.3
+upload), the GPU presenter **599 of 600**, the whole picture costing **1.7 ms**
+with the swap's wait taken out. At the 800 MHz low-power cap the playtest ran
+under it is 207 of 600 against 592.
+
+D141: a run with no `display.ini` starts **fullscreen on the display's drawable**,
+with the automatic scales and aspect (the wide world on the mission, 4:3
+elsewhere); `--no-fullscreen` is the flag that keeps a window. The 27 windowed
+checks that never named a mode got the flag, and the ones that test the default
+(`test_display_settings.sh`'s first case and section 10, `test_display_file.c`)
+assert the new one.
+
+D142: the front end's shapes are one **draw target** (`output/draw_target.h`: a
+view over three- or four-byte pixels with five primitives) and one **overlay
+layer** (`output/overlay.h`: transparent except where a shape wrote, uploaded by
+the rectangles the last two pictures touched). `pointer.c`, `selection_overlay.c`
+and `backdrop.c` draw through it, so the surface path and the GPU path share one
+implementation; the art is the present shader's on the GPU path, which is why a
+still screen uploads nothing. The seat is `app/play_presenter.{c,h}` -- the pair,
+the fallback and the report -- which is also the split R4 asked for (`run_play.c`
+was 68 096 B and `render_scene_gl.c` 66 805 B over the 65 536 bound; the GL
+backend's seam object is `render_scene_gl_seam.c` now).
+
+Evidence: `tests/test_present_gpu.sh` (extra tier, SKIP without a GL 3.3 core
+context) -- `port/build/present-gl-test` compares the present pass' pixels with
+the CPU picture for the frame matrix, an overlay layer and the bars at interface
+scale 1 and 2, with a control that hands the pass no overlay and no art and must
+fail; the window's two presenters write the same PNG for one frame (with the
+port's arrow on); a host with no GL window runs the surface path and exits zero.
+`port/tests/test_draw_target.c` and `test_overlay.c` are the new units;
+`tests/test_scene_gl.py`'s window half names `--presenter surface`, which is the
+path its readback comparison belongs to.
+
+The pages: D140-D142, `docs/native-port.md` ("The window's GPU presenter"),
+`docs/display.md` (the defaults), `docs/port-architecture.md` (the seam and the
+presenter), `docs/build-and-test.md` (the new check and fixture), and
+`docs/project-status.md`; the site is rebuilt. `tests/run_all.sh` (fast tier) is
+green, and the slow and extra checks this touches were run by hand:
+`test_present_gpu.sh`, `test_scene_gl.py`, `test_display_settings.sh`,
+`test_renderer_default.sh`, `test_state_file.sh`, `test_debug_session.sh`,
+`test_playtest_route.sh`, `test_mission_overlay.sh`, `test_mission_wide.sh`,
+`test_mission_mouse.sh`, `test_selection_box.sh`, `test_group_orders.sh`,
+`test_mission_click.sh`, `test_mission_panels.sh`, `test_mission_placement.sh`,
+`test_mission_edge_band.sh`, `test_mission_band*.sh`, `test_mission_pointer_scroll.sh`,
+`test_wide_backdrop_window.sh`, `test_saves.sh`, `test_mouse.sh`,
+`test_engine_equivalence.sh`, `test_play_audio.sh`, `test_played_build.sh`,
+`test_recording.sh`, `test_replace_selection.sh`, `test_shell.sh`,
+`test_display_window.sh`, `test_presentation.sh` and `make -C port test`.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
