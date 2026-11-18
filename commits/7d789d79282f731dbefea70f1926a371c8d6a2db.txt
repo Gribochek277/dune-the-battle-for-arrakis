@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7d789d79282f731dbefea70f1926a371c8d6a2db
+date: 2026-11-19T00:22:01+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the site for D143, the PC+index finding and the harvester guard
+Regenerated with scripts/build_docs.py: the three commits before this one
+changed the markdown the site renders and the port's structure the diagrams are
+measured from. `build_docs.py --check` is green.
+
+Co-authored-by: pi <pi@localhost>
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
