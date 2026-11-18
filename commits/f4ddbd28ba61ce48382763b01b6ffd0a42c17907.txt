@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f4ddbd28ba61ce48382763b01b6ffd0a42c17907
+date: 2026-11-19T00:20:11+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+PC+index operands read the address the cartridge reads
+The owner's screenshot from the third mission: the playfield became squares and
+artifacts the moment a sandworm ate a unit, the sprite layer and the HUD intact;
+leaving the build screen repaired most of it and left two sprite fragments.
+
+The cause is one part that dropped a displacement. The cartridge has 141
+`(d16,PC,Xn)` source operands -- jump and length tables -- and the listing prints
+the *resolved* base: the extension word's address plus the brief extension
+word's signed displacement. `LoadViewportDescriptor`'s size-table lookup
+(`$00528A`) is the one that matters here: `d8(PC,d1.w)` with a displacement of
+-80 reads `$00523C`, and the part read `$00528C` instead -- the routine's own
+body, whose word `$6712` the DMA queue used as a transfer length. 26 386 words
+for a frame whose cell says 256: the worm's animation frame written across V-RAM
+from `$DD20`, wrapped through `$0000`, and the map's tile block destroyed.
+
+The part now reads the base the guest reads. `tests/test_pc_indexed_operands.py`
+pairs every such instruction with its part by address and requires the body to
+name the base (127 of the 138 are in the parts; the rest are still the guest's),
+and its `--control` plants the defect back in memory and requires the check to
+name it. `tests/vram_watch.py` is the measurement the report needed: two saved
+states diffed as V-RAM against the mission's plan. Both are in `run_all.sh`;
+docs/native-port.md and docs/reverse-engineering-notes.md record the finding.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
