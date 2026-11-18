@@ -1,0 +1,46 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fed429c6e8da602bbeb9f18476352c17174a0068
+date: 2026-11-19T00:20:37+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+D143: WASD scrolls the camera and leaves the cursor
+The owner's playtest, with a hand on the mouse and the other on `WASD`: pressing
+a direction walked the selection box. The cartridge's d-pad has that shape on
+purpose -- the pad moves the view, the box settles into the guest's dead zone --
+but the port writes the hand's pixel into the guest's cursor record on every
+resting frame (tickets 127, 147), and a key that then dragged the box was
+fighting the hand. The owner's rule is the device's: with a pointer in the run
+`WASD` scrolls the camera and nothing else, the arrows stay the cartridge's
+d-pad, and a run with no pointer at all keeps the cartridge's behaviour on
+`WASD` too.
+
+- `app/input_map.c` gives `W`/`A`/`S`/`D` a second row (`MDA_FUNCTION_SCROLL`,
+  one axis a key in the pad's own bits); `mda_input.scroll` collects it and the
+  front end hands it to the mission with the pointer's frame.
+- The camera's pace is the PORT SETTINGS `SCROLL` row (SLOW / NORMAL / FAST, 4,
+  8, 12 *screen* pixels a guest frame, divided by the map's scale) with
+  `--scroll` and the display file's `scroll` key behind it: one camera, one
+  pace, whether the hand rests in the border or a key is held.
+- The row is saved like the display's values; `app/state_file.c` carries it
+  through a loaded state and refuses a stale one.
+
+The tests: `tests/test_mission_key_scroll.sh` holds a real `X` on the Atreides
+mission and requires the camera to move by the pace while the cursor's record
+`$FFFFBF12` does not move, with the arrow key and `--no-mouse` as the
+cartridge's own control and `--scroll slow/fast` as the row's;
+`port/tests/test_input_map.c`, `test_settings_screen.c` and
+`test_replacement_rows.c` hold the second row, the settings screen's new row and
+the frame with the guest; `test_display_*` and `test_port_settings_screen.sh`
+read the row's words out of the VDP. `run_all.sh` runs them.
+
+docs: D143 in docs/decisions.md, the row in docs/display.md, the keys in
+docs/keyboard.md and docs/mouse.md, the hand's row in docs/next-engine.md, and
+docs/port-architecture.md's key paragraph.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
