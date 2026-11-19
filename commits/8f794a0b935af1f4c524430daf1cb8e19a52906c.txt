@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 8f794a0b935af1f4c524430daf1cb8e19a52906c
+date: 2026-11-19T09:39:23+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+terminology: the check names the word it looks for, and D144 says so
+The check reads every tracked text file, and it is one: the comment that says
+which word is retired and the grep that looks for it tripped the check after
+the file was committed. It is now the fourth place the word is allowed to be
+named, and the site is rebuilt for D144's sentence.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
