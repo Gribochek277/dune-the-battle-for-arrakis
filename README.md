@@ -1,7 +1,7 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-18T22:22:47Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-20T02:10:53Z
 
 ---
 
@@ -14,7 +14,7 @@ image and `port/build/dune-port`.
 **Status in one line:** the baseline header rebuilds the dump byte for byte, the
 modified build differs only in the header's own title and checksum, and the port
 plays the game — {{fact:c_routines}} of its {{fact:routines}} routines are the
-port's own C, {{fact:guest_routines}} are a declared guest remainder the final
+port's own C, {{fact:cartridge_routines}} are a declared cartridge remainder the final
 proof measures, {{fact:pixel_exact}} of {{fact:checkpoints}} checkpoints are
 pixel for pixel the reference's, and the music is the port's own YM2612 through
 the port's audio engine.
@@ -50,22 +50,22 @@ HOME=$PWD/work/emu/home tools/blastem/blastem -b 900 -l build/dune.bin
 `make -C port play` builds one binary that boots the cartridge and runs its game
 logic as the port's C: {{fact:groups}} groups, {{fact:rows}} rows,
 {{fact:implementations}} implementations, and no address handed back to the
-guest. The machine has one execution path since ticket 200 — the interpreter —
+cartridge. The machine has one execution path since ticket 200 — the interpreter —
 and the port's C is the replacement table consulted before it; the
-{{fact:guest_routines}} routines no row owns are the guest's, declared and
+{{fact:cartridge_routines}} routines no row owns are the cartridge's, declared and
 counted (`analysis/final-proof.json`). The picture, the clock and the RAM are the
-reference's because the C leaves the state the guest's own instructions would
+reference's because the C leaves the state the cartridge's own instructions would
 have; the one measured exception is the played build's audio engine, whose
 timing moves the mission's state a frame apart
-(`docs/project-status.md`, "What is still the guest's").
+(`docs/project-status.md`, "What is still the cartridge's").
 
 | what it does | the check that proves it |
 |---|---|
 | **draws the reference's picture** — {{fact:checkpoints}} committed checkpoints, from the title screen to the campaign credits | `bash tests/test_fidelity.sh`: 0 of 71 680 pixels differ on every one of the {{fact:pixel_exact}} |
 | **plays the cartridge's music**, through the port's own YM2612 and the game's own audio API | `bash tests/test_ym_log.sh`, `bash tests/test_audio_compare.sh` |
-| **runs at the cartridge's rate**: 59.92 guest frames a second, paced by the wall clock | `bash tests/test_pacing.sh` |
-| **costs less than the guest's own code**: 2.65 ms a frame against 6.22 ms with `--no-replace` | `bash tests/test_frame_cost.sh` |
-| **is measured against the cartridge on the whole route**: what is still the guest's, and the reference arrangement beside it | `bash tests/test_final_proof.sh` (`analysis/final-proof.json`) |
+| **runs at the cartridge's rate**: 59.92 cartridge frames a second, paced by the wall clock | `bash tests/test_pacing.sh` |
+| **costs less than the cartridge's own code**: 2.65 ms a frame against 6.22 ms with `--no-replace` | `bash tests/test_frame_cost.sh` |
+| **is measured against the cartridge on the whole route**: what is still the cartridge's, and the reference arrangement beside it | `bash tests/test_final_proof.sh` (`analysis/final-proof.json`) |
 
 `--renderer vk` draws the same scene on the GPU (0.84 ms a frame against the CPU
 path's 6.52 ms on this machine) where the Vulkan headers and `glslc` are

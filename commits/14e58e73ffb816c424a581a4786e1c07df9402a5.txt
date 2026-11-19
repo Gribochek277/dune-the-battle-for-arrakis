@@ -1,0 +1,51 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 14e58e73ffb816c424a581a4786e1c07df9402a5
+date: 2026-11-19T09:00:57+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+D144: the word is cartridge; guest is retired
+The project names three poles -- machine, cartridge, port. `guest` was
+borrowed from emulator terminology where it means the emulated *machine*;
+here it named the *program*, so it duplicated the machine/port axis and
+leaked into names that were never about code (`guest_x`, `guest_scale`,
+`guest_picture`, `the live guest`).
+
+The mapping, the reasons and the senses are D144, and the glossary's
+`CONTEXT.md` now defines the three poles and carries the retired word.
+Enforcement is `tests/test_terminology.sh` (fast tier): `guest` outside
+the glossary, D144 and the ticket archive fails the gate, and so does a
+tracked path that still carries it.
+
+  * code: `guest_*` / `GUEST_*` -> `cartridge_*` / `CARTRIDGE_*`;
+    `guest_state`, `guest_text`, `guest_boundary` files renamed; the
+    generated boundary's enum and API follow.
+  * geometry: `guest_x/y`, `guest_scale`, `guest_picture`,
+    `md_scene_guest_*`, `uGuest`, `md_layout_guest_*`,
+    `..._cartridge_pixel_is_interface` -> `picture` and friends; the
+    live oracle is `the live interpreter`.
+  * data: the inventory's row state and group (`cartridge-text`), the
+    final proof's and frame cost's keys, the documentation's facts.
+  * the ticket archive (`docs/tasks/`, 625 occurrences) is rewritten in
+    the same words; git history keeps the old ones by construction.
+  * `analysis/flag-inventory.json` and `port/next/cartridge_boundary.*`
+    regenerated. The final proof and the frame cost were not re-run:
+    only their keys moved, the numbers are the untouched measurement;
+    the slow tier re-measures both. The recordings' comments changed,
+    so their catalogue digests and the route record's digest moved with
+    them, and `test_playtest_route.sh` still says the record is the
+    tree's.
+
+`tests/test_gate_scope.py` now allows a diff that touches the whole tree
+(the answer is every check) and keeps its negative control as a
+single-path scope (`gate_scope.py --paths`), which must be a strict
+subset.
+
+tests/run_all.sh --tier fast: ALL CHECKS PASSED
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
