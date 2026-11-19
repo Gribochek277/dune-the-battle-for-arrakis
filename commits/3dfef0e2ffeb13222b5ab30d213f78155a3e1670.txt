@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3dfef0e2ffeb13222b5ab30d213f78155a3e1670
+date: 2026-11-19T09:41:59+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+terminology: the check is in the gate, and the facts count it
+tests/run_all.sh gains the fast-tier check (149 checks, 56 in the fast tier), and
+the site is rebuilt for the two pages that print those counts.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
