@@ -1,0 +1,41 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e08a56fa9a9817677feceaaaaab99ddeb86dd295
+date: 2026-11-20T18:36:02+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D151, the game-function pattern, and the clock and the scatter corrected
+* docs/decisions.md, D151: the pattern the leaf helpers set for the next group
+  -- a game function in port/game/, the state layer's routine view, an adapter
+  row that marshals, calls, writes back and prices, and the price as a walk of
+  the cartridge's path -- with what proves it, what it cost and what was hard
+  (the write-back is most of an adapter; a double read is visible through the
+  bus; the type byte is not bounded; the flags are the interpreter's; price by
+  kind).
+* docs/next-engine.md, "The group as game functions (D151)": the routine-to-
+  function table and the recipe in four steps; the slice's earlier text says
+  what it was.
+* port/README-game.md: the game's logic and the adapter, and the five modules'
+  rows. port/README-next.md: the adapter row and next/routine_cost.h.
+* docs/port-architecture.md: the state layer's routine view replaces the
+  "pointer is not a field" fallback, and the ported game's zone has its first
+  slice.
+* CONTEXT.md: game function, adapter, transcription, the routine view.
+* Two findings the rewrite made, corrected where they were written:
+  SplitFramesToClock divides by the frames in a *minute* (3000 on a 50 Hz
+  console, where IO_PCBVER bit 6 is set; 3600 at 60 Hz) into hours and the
+  minutes past them -- analysis/symbol-names.txt had "minutes and seconds" with
+  the regions swapped, and the notes "per second"; and ScatterPosition's tables
+  are a bearing's cosine (data_022242, the y half, negated) and sine
+  (data_022142, the x half) with bearing 0 up the map -- the name table had "two
+  RandomByte draws", which are its callers'. The notes' delta formula said
+  "/ 2"; it is (byte * radius + $40) >> 7.
+
+The generated site (docs/html/) is rebuilt by the integrator after the merge.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
