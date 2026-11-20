@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3e0998926eb592287b4fe3abc4447f5cb7c22024
+date: 2026-11-20T17:52:27+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+run_headless: the same session, steps and one close for the harness
+main() is a harness_session, eight bring-up steps, settle/write/summary
+functions for the exit and harness_close(). Every JSON, log, dump and summary
+line is unchanged; the exits that returned with the traces and frames still open
+now close them (D148).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
