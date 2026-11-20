@@ -1,0 +1,45 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d149f19f1123fd157b5b82d5f3c808272d9e72a6
+date: 2026-11-20T20:03:58+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D150: the played build pays the 68000 for the driver it no longer runs
+The played build runs no Z80, and its state left the reference arrangement's
+(next with the Z80 driver) from frame 7 313 of the playtest route, inside 6 of
+the 10 banked steps. Replaying the reference's own 513 633 bus charges, at the
+machine cycles they were made, and its answers to the 68000's sound-RAM reads
+into the played build made the two identical on every frame of the route: the
+driver's copies through its bank window (8 cycles of 68000 each) and its answer
+to the DMA routines' handshake ($1B20/$1B21) are the whole difference.
+
+next/audio_driver_bus.c is the model of that footprint, installed as the
+machine's Z80 stand-in wherever the port's engine is the sound path. The
+sequencer tells it, in the driver's order, what the driver would have copied --
+a song's 2 + 49 bytes, a voice's 2 + 39, an effect's 2 + 32, a drum's 12-byte
+record and its sample's 128-byte halves, a stream's 16-byte window on a miss
+-- and the model charges each byte where the driver would have, paced by the
+driver's own work between copies (T-states and hook calls per piece, measured
+on the reference) and by the DAC hook's Timer A waits while a sample plays. It
+keeps the driver's three destination pools as bookkeeping (the reference
+pool's helpers, exported as next_audio_pool_*), each channel's voice slot (the
+driver keeps the last voice from song to song; the engine loads voice 0 at a
+song start) and command 23's mute, which the engine never heard
+(next_audio_driver_bus_mute(), from next_sound_command23()); the engine's
+audio is unchanged by either. It answers the handshake in sound RAM, so
+docs/port-zones.json gives it the $1B20/$1B21 bytes (touchers 249 -> 250,
+allowances 47 -> 48).
+
+The playtest route now runs inside 10 of 10 steps, and the picture is the
+reference arrangement's on every frame. headless's --no-driver-bus leaves the
+model out; it is the control, and it gives the numbers before this commit.
+
+port/Makefile: next/audio_driver_bus.c joins NEXT_SRC, and the audio-engine
+harness links it (the engine calls it; it does nothing until installed).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
