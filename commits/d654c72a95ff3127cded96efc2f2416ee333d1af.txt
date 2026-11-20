@@ -1,0 +1,33 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d654c72a95ff3127cded96efc2f2416ee333d1af
+date: 2026-11-20T20:04:47+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D150 -- the driver's bus, measured, modelled and what it leaves
+docs/decisions.md D150 records the measurement (the reference's charges and
+handshake answers replayed into the played build make the two identical on
+every frame; the degraded replays say how close a model has to be), the model
+(next/audio_driver_bus.c), the engine's tick correction it needs, the two
+engine gaps it found and left for the audio's owner (command 23's mute, the
+song channel's voice slot), the result (10 of 10 steps, the picture the
+reference's on every frame, 511 559 bus accesses against 513 633) and what the
+model's grain leaves (a few cycles at a VBlank, work RAM at 46 of the route's
+10 400 VBlanks, never a step or a picture).
+
+docs/project-status.md's item 3 and its honest limitation, docs/goals.md,
+docs/port-architecture.md, docs/native-port.md and docs/build-and-test.md
+say what the played build measures now; docs/native-port.md has the stand-in
+on the machine's side and docs/next-engine.md the model on the engine's. The
+older decision that first recorded the six steps keeps its history and its
+live facts. The model's header said 490 cycles a frame (the front end's first
+7 400 frames); over the route it is about 400.
+
+docs/html is not regenerated here: the site is rebuilt once after the merge.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
