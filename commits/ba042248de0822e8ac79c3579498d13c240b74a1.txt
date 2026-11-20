@@ -1,0 +1,40 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ba042248de0822e8ac79c3579498d13c240b74a1
+date: 2026-11-20T18:37:40+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+port: the Makefile is by zone, and a binary links zones instead of object lists (D149)
+port/Makefile was 1 127 lines and 64 754 bytes, a kilobyte under the 64 KiB
+bound, because every binary had a hand-written link line of objects: a new
+module (app/directory.c) needed its object in five recipes.
+
+* port/Makefile is the targets and one include per zone (5 KB). port/mk/ has
+  config.mk (toolchain, flags, identity, the obj/swap/lib/LINK helpers), one
+  file per zone (machine, chips, output, platform, next, game, state, app), the
+  optional vulkan.mk and the fixtures' tests.mk and tests_host.mk. Each zone
+  declares its sources, objects and archive build/lib<zone>.a; machine, chips,
+  output, platform, next, game and state take their directory by wildcard, so a
+  new module there needs no edit.
+* A recipe names archives and `$(LINK)` puts them in one --start-group. A member
+  is pulled only when referenced, so the harness still links no SDL (it names
+  libplatform_names.a, the SDL-free tables, never libplatform.a), the fast tier
+  no Vulkan (libvulkan.a is its own archive) and binding-file-test no device.
+* The control builds keep their variables (NEXT_SWAP, PLAY_SWAP, STATE_SWAP,
+  PLATFORM_SWAP, old=new). A swapped zone is archived under build/swap/, so a
+  control never replaces the archive every other binary links.
+* The test binaries are objects with .d files instead of compiles in the link
+  line against a $(HEADERS) wildcard. MD68K_STATE_NOTES, which
+  tests/test_state_layer.sh overrides, is followed by a stamp, because the
+  link-line compile that used to pick the new value up is an object now.
+* The default goal is `all` (a bare make built flavor_played.o, the first rule in
+  the file), and .PHONY names the fixture targets it lacked.
+* tests/test_pipeline_inputs.py tracks port/mk/, docs/disassembly.md lists it,
+  and scripts/gate_scope.py selects the port's build checks for a change to it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
