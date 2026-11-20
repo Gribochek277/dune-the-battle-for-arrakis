@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: aed6d6d38620709c021b852679fd56f70b7e9f9a
+date: 2026-11-20T20:03:40+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+audio engine: the music tick counts from the driver's restart, not from command 22
+The engine cleared its tempo accumulator ($0887) and step ($0885) at command 22
+and ticked on every VBlank. The driver does neither: `$0AB9` (command 22) clears
+the channels and calls `$0CD2` and leaves the accumulator alone, which counts
+from the driver's own power-on -- the restart LoadSoundDriver's upload ends
+with -- and the VBlank the 68000 takes between that upload and its reset never
+reaches the Z80 (the reset drops the pending interrupt). So the engine's music
+ticks were the driver's on only 1 248 of the driver's 1 922 over the playtest
+route's first 3 000 frames; the accumulator now restarts at
+next_audio_engine_select_set_from_tables() (LoadSoundDriver's entry) and a
+frame taken while the Z80's bus is held or its reset asserted is not a tick,
+and the two agree on 1 920.
+
+This moves the engine's notes onto the cartridge's frames, so what the played
+audio does and when changes with it; the audio gates hold
+(tests/test_audio_engine.sh, tests/test_audio_modern.sh,
+tests/test_sound_events.sh). It is what D150's driver bus model needs: the
+model's copies follow the engine's ticks.
+
+port/tests/audio_engine_main.c's engine mode now releases the Z80's reset
+line, because the machine comes up with it held and the engine treats a held
+reset as no driver to hear the VBlank.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
