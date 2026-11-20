@@ -1,0 +1,54 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b58553f3e1956c53a174e078c1f5fad41e9ac222
+date: 2026-11-20T13:21:07+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D145: the mission's world fills the target, and the HUD has a frame of its own
+A review found the credits counter above the top edge of a 2560x1080 window.
+Ticket 159 raised the world's scale to ceil(W / 447) so the picture is the
+target's width, and D77 drew the HUD at that same scale, anchored to the
+world's composition -- which is taller than the target whenever the raised
+scale cuts the world: at 2560x1080 the world is 6x, 1440 lines in 1080, and
+the credits landed at y = -30 (at 1120x480 they were off the top too).
+
+The owner's direction: while a mission is played the world takes every pixel,
+and the HUD adapts to the screen without shrinking. So:
+
+* the world's scale is max(wish, ceil(W / 447), ceil(H / 240)): it fills the
+  target on both axes (16:10 no longer gets bars above and below), and what is
+  taller is centred and cut;
+* the HUD's scale is min(world, fit), in a frame of its own: the cartridge's
+  320x240 at that scale, held against the target's right edge and centred on
+  its height (md_layout_interface_frame());
+* the layers split the sprite list instead of the screen: a sprite with the
+  priority bit that starts on a region's measured tiles and touches its
+  rectangle is the HUD's (md_scene_sprite_is_interface()); the world layer
+  draws every other sprite, the HUD layer draws its own over the world. The CPU,
+  GL and Vulkan backends take the same decision, and scene-gl-test and
+  scene-vk-test hold them to the CPU byte for byte;
+* the pointer reads what the target shows: a click on the HUD's frame is the
+  HUD's pixel, not the map under its old world-scale rectangle.
+
+1920x1200 (the owner's display) is the picture it was. D77's per-pixel clip of
+the world inside the HUD's source rectangles was only right while the two
+placements coincided -- with the HUD elsewhere a unit under that rectangle
+would vanish -- and it also compared an active line with a picture row (nine
+lines apart) on the CPU but not on the GPU; the per-sprite rule replaces it.
+
+Edited, not deleted (D31/D36), because they asserted D77's single scale: the
+interface layer fixture in port/tests/test_scene.c (now with a HUD sprite and a
+control without it), the frame's interface region in test_frame.c, the region
+placement and HUD scale in test_mission_wide.c, the 4X/1X plan that is
+buildable now in test_display_layout.c, the 1920x1200 and 1280x720 cycles in
+test_scale_cycle.c (6x and 4x are wide pictures at 320 columns), the 21:9 line
+and the interface section of tests/test_mission_wide.sh, and the 1708x960 and
+1920x1200 lines of tests/test_display_settings.sh. Not done: the cartridge's
+vertical camera and cursor bounds (D145, "Not done").
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
