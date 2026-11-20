@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 60a7dcfa340d2337b6feaa5e22b947ac7b9ab670
+date: 2026-11-20T22:33:58+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+driver bus: the machine asks the model only when something can happen
+The stand-in was asked after every 68000 instruction -- some 11 400 calls a
+frame on the played route for a driver that does something a few hundred
+times a frame. mdz80_stand_in_wake() lets the stand-in name the next clock it
+needs to be asked at: the next byte of a copy, the end of a piece of the
+driver's work, the player's next output while a sample plays, never while the
+driver is idle and silent. The machine asks then, or as soon as the Z80's
+stopped state changes (the model's clock stops with it), and the engine's
+events wake it at once: before queueing, the model simulates to the last
+instruction boundary the machine reached (mdz80_mclks()), which is where the
+per-instruction version always stood.
+
+The charges do not move: the played route's state log and step log are byte
+for byte the ones the per-instruction stand-in wrote, and
+tests/test_final_proof.sh's record still holds. The played build's CPU time
+over 3 000 frames is the same with and without the model within this host's
+noise (eight rounds each way), where it had been a few per cent over.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
