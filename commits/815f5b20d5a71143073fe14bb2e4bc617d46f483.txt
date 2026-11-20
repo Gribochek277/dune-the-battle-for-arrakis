@@ -1,0 +1,59 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 815f5b20d5a71143073fe14bb2e4bc617d46f483
+date: 2026-11-20T18:03:02+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D151: the leaf helpers are game functions behind adapter rows
+The seven leaf helpers were the cartridge's instructions in C, one STEP per
+instruction with the emulated registers and flags. They are now the game's
+logic in port/game/ -- typed values in and out, the records through the state
+layer, ordinary control flow and arithmetic, no register, no flag, no cycle --
+and seven adapter rows in next/leaf_helpers.c around them:
+
+* game/order_entry.c: whether an order entry is ready (HasOrderScript), its
+  parameter block, and starting the script a type or an order's index selects
+  (InitOrderScript, InitOrderScriptByIndex);
+* game/linked_unit.c: a unit by its index (GetUnitByIndex) and the unit a
+  record's +$03 names (GetLinkedUnit);
+* game/play_clock.c: the console's frames a minute and the frame count split
+  into hours and minutes (SplitFramesToClock);
+* game/scatter.c: a position moved along a bearing through the sine and cosine
+  tables (ScatterPosition);
+* game/structure_cells.c: a structure's footprint and posting it into the map
+  cells, with an observer told about each cell (PostStructureToMapCells).
+
+Each adapter marshals the routine's arguments where and when the cartridge reads
+them, calls the game function with the state layer's routine view (a pointer
+the cartridge handed over is read through its bus), writes back every register,
+flag and stack byte the routine leaves -- each comment names the instruction
+that leaves it -- and prices the path the game function's answer describes:
+next/routine_cost.h charges each cartridge instruction on the path at its own
+address through the machine's model, in order, with the branch arms and the
+MULU/MULS/shift-by-register operands the adapter supplies, so the dispatch's
+steps are the cartridge's (D134). The cartridge's quirks are kept and said next
+to the code: the signed-word slot and the index's high byte in the order
+script, the double read of +$03, the divu overflow and ext.l in the clock, the
+effective radius and the zero-radius return that leaves d0 alone, the unbounded
+type byte and the double read of the descriptor's +$3C.
+
+The fixtures pass unchanged (seven, recording + live cartridge + fuzz), and
+under 64 fuzzed states a seed over eight seeds every routine agrees with the
+cartridge; the transcription this replaces failed PostStructureToMapCells on
+every seed there ("address error vs no fault": it read the record's fields
+through the strict view, so a fuzzed record pointer outside the windows
+faulted where the cartridge reads zero). The 9 500-frame pair is
+the cartridge's to the cycle, the YM timeline and the work RAM, and still saves
+exactly 8 587 instructions.
+
+port/Makefile: the five game modules join PORT_GAME_SRC. docs/port-zones.json:
+next/routine_cost.h joins the next zone, and the memory map's touchers fall
+from 249 to 248 (next/leaf_helpers.c no longer names the bus).
+analysis/porting-stages.json: the group's modules and its shape.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
