@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 91425f70d2728c08c24a4bc23173f8cc815e1a7f
+date: 2026-11-20T12:53:48+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+windows: the port builds, runs and is gated on Windows (D146)
+The owner wants one tree for every platform. Under MSYS2's UCRT64 toolchain
+(docs/toolchain.md, "Windows") the port now builds, `make -C port test` is
+green, and the GL and Vulkan backends draw the CPU's picture byte for byte on
+an Intel GPU (scene-gl-test, scene-vk-test, present-gl-test).
+
+The port:
+* app/directory.{c,h}: `mkdir -p` in one place, with `_mkdir()` and either
+  slash on Windows. It replaces three copies (debug_session.c,
+  oracle_corpus.c, headless_options.c) that called POSIX `mkdir(path, mode)`.
+* platform/vk_context.c: the Vulkan loader is LoadLibrary("vulkan-1.dll") on
+  Windows, dlopen() elsewhere, behind four small functions.
+* platform/window.c: the window declares itself per-monitor DPI aware and asks
+  for SDL_WINDOW_ALLOW_HIGHDPI, so a display scaled to 125% or more gets the
+  integer scale's pixels instead of a compositor-stretched copy. The pointer's
+  chain already converts window points to drawable pixels.
+* app/headless_report.c: the harness wrote its own path into the JSON
+  unescaped; a Windows path's backslashes made the document invalid. It goes
+  through json_string() like every other string.
+* port/host.mk: the host's link differences (no -ldl, no -mwindows, no
+  SDL2main) and host_path, which gives make the MSYS spelling of a control
+  build's swapped file. port/Makefile includes it and stays under the zone
+  check's 64 KiB bound.
+
+The gate:
+* tests/lib/windows_host.sh, sourced by tests/run_all.sh: the scratch
+  directory in the spelling native programs read (C:/msys64/tmp/...), and
+  tests/lib/python/sitecustomize.py on PYTHONPATH with PYTHONUTF8, so a native
+  Python writes the bytes Linux writes.
+* tests/test_baseline.sh includes the tree's sources by the relative path
+  src/main.asm uses, which a native assembler reads on every host.
+* port/tests/test_binding_file.c: "a path that cannot be opened" was
+  /dev/null/not-a-file, which is ENOENT on Windows; it is a path with `|` there.
+  The assertion is unchanged.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
