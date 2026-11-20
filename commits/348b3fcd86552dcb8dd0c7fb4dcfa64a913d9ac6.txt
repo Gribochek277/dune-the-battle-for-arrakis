@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 348b3fcd86552dcb8dd0c7fb4dcfa64a913d9ac6
+date: 2026-11-20T13:29:45+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D143's --scroll: the flag is parsed, and no flag is the file's pace
+play_options.h grew `scroll` ("-1 = the file's, else an mda_scroll_speed")
+with D143, but play_options.c never set its default or parsed `--scroll`. The
+options are zeroed, 0 is MDA_SCROLL_SLOW, and run_play.c applies any value
+>= 0 -- so every window run forced the camera to SLOW, over the row's NORMAL
+default and over a `scroll = fast` the player had saved in display.ini, and
+`--scroll slow|fast` (which tests/test_mission_key_scroll.sh passes) was an
+unknown option. tests/test_display_settings.sh's defaults case caught it:
+the display line said `scroll slow` where the defaults are `normal`.
+
+The default is -1 now, and `--scroll slow|normal|fast` is read through the
+display file's own vocabulary (mda_display_scroll_parse()) and documented in
+the usage.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
