@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4238224af3918da79d05ea9fd0c6c41c58926258
+date: 2026-11-20T22:45:02+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+driver bus: a clock that goes backwards wakes the model too
+When the machine's clock goes back (a reset), the model already restarted its
+own clock from it, but kept the wake it had computed on the old one, so it would
+not have simulated again until the new clock caught up with the old wake. It
+is now reset with the clock. The playtest route never takes this branch.
+
+D150's description of where the stand-in is consulted says "the 68000's
+instruction boundaries" rather than "after every instruction", which the
+machine no longer does.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
