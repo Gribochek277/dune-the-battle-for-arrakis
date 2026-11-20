@@ -1,0 +1,65 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f7b160dd6dc02f5890fcaf6992e11311f0cd9fb0
+date: 2026-11-20T18:55:34+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D147: the wide mission's vertical bounds are the lines the target shows
+D145 fills the target with the world and centres a world taller than the target,
+so at 2560x1080 30 picture lines are cut above and 30 below -- 21 and 23 of the
+cartridge's 224-line screen. The cartridge's bounds did not know: held up on the
+Atreides mission, the camera stopped at the map's top (512) with its first 21
+lines off the target, and the cursor's record went on to the cartridge's 24,
+putting 13 of its bracket's 32 lines off the screen; at 1120x480 the cursor was
+half off the screen even mid-map. The owner's requirement is that the whole map
+stays reachable and visible and the pad's cursor scrolls at the visible edge.
+
+* app/wide_mission.c: mda_wide_mission_cut_lines() reads the cut lines from
+  the built layout (a line shown only partly counts as cut); play_display keeps
+  them beside the extra and prints a `mission cut lines:` line when there are
+  some; run_play hands them to the mission once a frame from the same layout.
+* next/mission_wide.c: the cut lines less the VDP's border (9 above, 7 below)
+  are the screen lines hidden. next_mission_wide_apply() now moves six words
+  from their captured bases: ticket 152's two, the camera's world-y bounds
+  $FFFFE3CE/$FFFFE3D0 outwards by the hidden lines (the map's first and last
+  lines are then the target's), and the record's y clamps $FFFFBF1C/$FFFFBF20
+  inwards (24 lines from the *visible* edge), each relearned after the
+  placement mode's per-frame rewrite and put back once when its move is 0.
+  The clamps stop one line outside the pad's dead zone at a cut that deep.
+* the transcriptions read the clamps where the cartridge had constants, with the
+  reason next to each case: $18/$C8 at $003C22/$003C2A/$003C44/$003C4C and the
+  mission handler's screen bottom $DF at $003366 and $003620.
+
+With no cut nothing is written (4:3, 854x480, 1920x1200).
+
+Measured: port/tests/test_mission_wide.c pins the cut lines at six targets and
+a partial line, the hidden lines, the clamps and the guard, and the six words
+written, relearned and restored. The new tests/test_mission_vertical_bounds.sh
+(slow tier, run_build) holds the pad up and down from the shared head at 7 700
+at six targets: the camera stops at 491/1334 at 2560x1080, 481/1344 at
+1120x480, 509/1316 at 1920x1080 and the cartridge's 512/1311 with no cut; the
+cursor at 45/177, 55/167, 27/195 and 24/200; the bracket is on the visible lines
+every frame; and the edge's terrain is the 4:3 screen's, line for line (212 160
+pixels). A control build with the cut handed to nothing fails the camera, the
+bracket and the picture at both cutting targets. make -C port test,
+test_mission_wide.sh, test_mission_map_scroll.sh, test_engine_equivalence.sh and
+test_playtest_route.sh pass unchanged.
+
+The pad's dead zone stays the cartridge's, so at 2560x1080 the pad scrolls at
+2.3 pixels a frame instead of 3 with the cursor at its new clamp; D147 lays out
+the alternatives for the owner. Found and recorded, not fixed: ticket 152's
+$FFFFBF1A = 24 + extra is the placement handler's cursor clamp too -- at 106
+extra a held left never scrolls the camera -- and reversing that is the owner's
+decision (D147, docs/reverse-engineering-notes.md).
+
+docs: D147, D145's "Not done" now points at it, the reverse-engineering notes
+("The vertical bounds, and what the record is"), docs/widescreen.md,
+docs/next-engine.md, docs/native-port.md and CONTEXT.md (**cut lines**, not a
+**cut**). docs/html is left for the integrator to rebuild.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
