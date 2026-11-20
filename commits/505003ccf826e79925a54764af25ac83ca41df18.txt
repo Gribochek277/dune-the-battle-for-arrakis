@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 505003ccf826e79925a54764af25ac83ca41df18
+date: 2026-11-20T18:34:52+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+--report-scroll: the line carries the cursor's record
+The mission map's scroll line now ends with the cursor's record
+`$FFFFBF12`/`$FFFFBF14` (`cursor=X,Y`), its screen position -- the centre of
+the placement cursor's bracket -- read through the machine's public surface
+like the camera's two words. D147's check holds the cursor to the lines a cut
+target shows from it, frame by frame. The field is appended, so the two checks
+that read the line (tests/test_mission_pointer_scroll.sh,
+tests/test_mission_key_scroll.sh) match the first three fields as before;
+the header's format and the flag's help say so.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
