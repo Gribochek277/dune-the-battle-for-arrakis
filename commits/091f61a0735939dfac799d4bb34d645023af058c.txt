@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 091f61a0735939dfac799d4bb34d645023af058c
+date: 2026-11-20T17:52:27+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D148 and the bring-up's structure in the port architecture
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
