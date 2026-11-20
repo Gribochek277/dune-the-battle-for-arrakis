@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3b42d41bf4d5a2919e142d0f9022edcc1090ad42
+date: 2026-11-20T13:53:15+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+windows: the checks find the port's binaries by their names, and the shared heads by a path the harness reads
+Two more of the gate's Windows differences, both in the host shim:
+
+* tests/lib/python/sitecustomize.py: the scripts ask whether
+  `port/build/headless` exists before they run it; on Windows the file is
+  `headless.exe`, which MSYS2's programs and Windows' process creation both
+  find by the short name but Python's existence checks did not. os.stat,
+  os.path.exists, os.path.isfile and os.access look at NAME.exe for a
+  suffix-less NAME that is not there (scripts/compare_port_state.py was the
+  first to say "does not exist").
+* tests/lib/gate_shared.sh: the cache's heads are written through
+  `--state-save FRAME:PATH`, an argument MSYS2 does not rewrite, so the cache
+  directory is spelled the native way when cygpath is there.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
