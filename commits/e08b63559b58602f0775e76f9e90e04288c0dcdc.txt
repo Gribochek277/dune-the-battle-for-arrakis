@@ -1,0 +1,27 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e08b63559b58602f0775e76f9e90e04288c0dcdc
+date: 2026-11-20T14:23:33+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the dispatch's cost is measured with a clock that can see it, and the state layer's control is put back on a busy host
+* port/tests/dispatch_cost_main.c timed its rounds with clock(), which is the
+  process's CPU time on a POSIX host but the wall clock in milliseconds on
+  Windows -- a tenth of a round -- so the 652-row/1-row ratio jumped between
+  88% and 160% from run to run and the check failed one run in three. Windows
+  reads the performance counter now; the check warms the core up for a third
+  of a second first, and the three table sizes are measured in turn five times
+  over, each keeping its fastest, so a drifting host moves them together.
+  Five runs in a row: 99-113% (the bound is 125%), and the linear-scan control
+  617-684%, still refused.
+* tests/test_state_layer.sh copies the layer's own fixture back over a control
+  build it has just run; Windows can hold an executable that just exited for a
+  moment, so the copy is retried for up to five seconds (the first copy is
+  the only one elsewhere).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
