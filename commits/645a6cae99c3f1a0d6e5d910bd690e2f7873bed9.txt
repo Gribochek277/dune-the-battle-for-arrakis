@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 645a6cae99c3f1a0d6e5d910bd690e2f7873bed9
+date: 2026-11-20T17:52:26+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+run_play: one run struct owns what the window creates, and one close frees it
+main() was ~880 lines with ~24 early returns that each freed by hand what had
+been made so far. The window's resources are now members of play_run, brought up
+in thirteen named steps and freed newest-first by play_run_close(); a failed
+step prints why and returns -1. The loop's callbacks and their shared state move
+to app/play_front_end.{c,h}, which creates and frees nothing. Output lines, exit
+codes and files are unchanged except on the two failure exits that used to skip
+the audio path's close (D148). Adds app/play_front_end.c to APP_PLAY_SRC and the
+module to docs/port-zones.json.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
