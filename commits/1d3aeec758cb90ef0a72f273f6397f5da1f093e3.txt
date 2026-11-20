@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 1d3aeec758cb90ef0a72f273f6397f5da1f093e3
+date: 2026-11-20T20:04:07+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+final proof: the played build is inside every gate, and the control says why
+analysis/final-proof.json is rewritten from the instrumented route
+(scripts/final_proof.py --write, the runs tests/test_final_proof.sh makes):
+the played build is inside 10 of 10 banked steps and its per-frame picture is
+the reference arrangement's on every frame (first_differing_frame null). The
+68000 runs 350 898 fewer instructions on the route -- the cycles the driver's
+copies take from it -- and the cartridge's own VDP writes at $013C44 are 5 more
+(a status poll that waits a little longer).
+
+tests/test_final_proof.sh's assertion that the played build *differs* is
+edited, not deleted: it was the known gap, and a record claiming otherwise was
+stale. D150 closed it, so the claim is now that every step is inside its gate
+and no frame's picture differs, and the new control keeps it a claim that can
+fail -- the route to the mission step with --no-driver-bus must leave the
+mission step's gate (it does: the picture and the work RAM).
+
+scripts/final_proof.py's first_difference() said it compared the RAM below the
+stack's floor; a frame line does not carry it, so the comparison was, and is,
+the picture's -- the docstring says so now, and that null means the same
+picture on every frame. scripts/build_docs.py renders that null as "none"
+rather than 0.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
