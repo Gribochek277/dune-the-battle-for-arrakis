@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0748ae55f5affa1e7ad9a83f7e17b06cc636447f
+date: 2026-11-20T13:33:21+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: the site for D145 and D146, and a subsystem diagram every host draws alike
+The site is rebuilt for the decisions, the display and widescreen pages and
+the toolchain's Windows section, and app/directory joins the structure
+diagram.
+
+scripts/build_docs.py's subsystem diagram placed its nodes with math.cos and
+math.sin and wrote the coordinates with repr(): glibc and Windows' UCRT
+disagree in the last bit of a few of those values, so a site built on Windows
+was stale on Linux by six bytes of game-subsystems.svg. The positions are
+rounded to six decimals where they are computed; everything drawn from them is
+exact arithmetic. The committed site was rebuilt on Windows and
+`python3 scripts/build_docs.py --check` passes on Linux (python:3.13-slim).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
