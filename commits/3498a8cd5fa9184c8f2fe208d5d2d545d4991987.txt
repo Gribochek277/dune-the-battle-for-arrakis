@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 3498a8cd5fa9184c8f2fe208d5d2d545d4991987
+date: 2026-11-20T18:37:40+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D149 and the pages that describe the Makefile
+D149 records the by-zone Makefile, what it leaves out of each binary and what is
+not byte-for-byte the old build. docs/port-architecture.md gets "The build
+follows the zones" and the adding-a-module recipe says where a new file goes in
+the build; port/README.md's "Build and test" points at both.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
