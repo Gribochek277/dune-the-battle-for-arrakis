@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 86d9fb21725ce262b588ae0413ab6129ef712827
+date: 2026-11-21T23:29:27+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the wide mission's gates measure the world from the game's state (D156)
+These gates measured the VDP-picture model that D156 replaced, so each one is
+edited with that reason; none is deleted.
+
+* test_mission_band.sh and scripts/compare_band.py: the band cells the port's
+  fill wrote no longer exist. The gate now compares the world drawn with its
+  parts off (vdp-render --world RAM --world-parts off) against the map's
+  colour at every sampled viewport pixel. compare_band.py computes that
+  colour from MapCells, the art table and the dump's patterns, without port
+  code. It runs at 16:9, 21:9 and 2560x1440 at 3x through a horizontal,
+  vertical, diagonal and upward scroll. The controls are a changed cell and
+  the VDP's own band. The old helpers stay, because test_mission_scroll_by.sh
+  imports them.
+* test_mission_wide.sh:
+  - 21:9 is 560 columns at the fit's 2x, not 3x.
+  - The reported 1920x1200 case is the row's 1x, with the HUD at 2x. Its
+    cartridge window is checked against the cartridge's picture.
+  - The matrix is not raised any more.
+  - The allowed work-RAM differences include the cursor's wider reach.
+  - The band's unit is checked as a part held to the cartridge's builder
+    (mission-world-test on a harness stretch), not as a pixel. At 8 120 the
+    unit is under the void, as it would be on the cartridge's own picture.
+  - A held left scroll takes the cursor's record to 24 - 107, inside the band.
+* test_mission_vertical_bounds.sh: the border is the world's, so 854x480
+  and 1920x1200 stop the camera 9 and 7 lines inside the map. The 1920x1080
+  AUTO and 2560x1440 3x viewports show more lines (negative cuts). D147's cut
+  cases now come from a world scale passed as --world-scale, because a saved
+  state's settings outrank the file's.
+* test_mission_world.sh and mission-world-test count the parts of nodes the
+  pre-D156 append never drew.
+* present-vk-test asks for world 3x explicitly at 1280x540, because AUTO is
+  the fit's 2x there now.
+
+play_display's cut-lines line says that a negative count is lines shown.
+run_all.sh lists test_mission_world.sh.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
