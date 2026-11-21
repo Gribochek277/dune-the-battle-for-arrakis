@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 648eb9474803a48ecf0416c3349291b3504857ec
+date: 2026-11-21T06:25:45+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+Merge refactor/run-play-session: the front ends' bring-up as a session with one close (D148)
+# Conflicts:
+#	docs/decisions.md
+#	port/Makefile
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
