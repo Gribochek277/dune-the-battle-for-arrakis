@@ -1,0 +1,56 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: bfd68f65c9c52833ee5b8410cfbe8d7d26652a76
+date: 2026-11-21T14:30:12+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D153: Vulkan is the only GPU renderer -- the picture at the cartridge's resolution, scaled once into the window
+The window's GPU presenter is Vulkan's (`--presenter gpu`, renderer `vk`, the
+default) and OpenGL is gone: output/render_scene_gl*.c, platform/gl_context.*,
+the GL window target, `--renderer gl`, scene-gl-test, present-gl-test and
+tests/test_scene_gl.py.
+
+The backend is five files behind output/render_scene_vk_private.h: the engine
+(the loader's entry points, the instance with the window's surface extensions,
+the surface, one queue that draws, computes and presents, at HIGH global
+priority where the device offers it), the first pass (a state packed into one
+72 KB buffer, uploaded with one copy and drawn once by one compute dispatch at
+the cartridge's resolution -- the world up to 447x240 and the HUD's 320x240 --
+into a state slot later pictures reuse), the present (one fragment pass a
+target pixel: the composition at its integer scales, the blend, the backdrop's
+art and the overlay layer read inside its shapes' box), the window's FIFO
+swapchain (rebuilt on a resize, fullscreen and an out-of-date present) and the
+seam's object. Three frames in flight with their own fences, semaphores and
+persistent mapped staging (the overlay's dirty rectangles, D142/D152; the art
+once a screen); a frame the device is still drawing is a skipped picture --
+with its overlay rectangles and its snapshot kept -- never a wait, so a busy
+GPU costs a picture and not a cartridge frame.
+
+The window (platform/window.c) is an SDL_WINDOW_VULKAN window and hands the
+backend SDL's loader, the surface's extensions and the surface call as
+function pointers; a host without a Vulkan window or device plays through the
+surface path with the CPU scene renderer and one printed reason, and a run
+that named `vk` keeps Vulkan through a readback (platform/vk_context.c). A
+state a GL run wrote is read as `vk` with one line saying so.
+
+Tests: present-vk-test replaces present-gl-test and adds D152's empty-list
+rule, a skipped present's debts and D145's HUD frame over the wide world with
+the blend; present-vk-window-test holds the swapchain across a resize and
+fullscreen; test_shell.c's GL case is a host-backed backend's layout hook
+instead (the assertion's subject changed with the backend, not its claim);
+test_present_gpu.sh's window comparison runs 120 frames with two retries
+instead of one frame, because the cold start's first frame is late and both
+paths dropped it, comparing two undrawn targets (the shell's target is now
+zeroed, so such a run is black rather than whatever malloc returned);
+test_renderer_default.sh names `vk` and the new display-settings sentence.
+
+Makefile: mk/vulkan.mk archives output/render_scene_vk*.c and both shaders,
+mk/tests_host.mk gains present-vk-test and present-vk-window-test and loses the
+two GL targets, mk/app.mk compiles app/play_presenter.c with MDP_HAVE_VK.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
