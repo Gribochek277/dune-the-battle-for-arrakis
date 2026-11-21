@@ -1,0 +1,52 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 043d9a73951060ab840f5cd6c8e11976b64fb60b
+date: 2026-11-21T21:59:08+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D156: the wide mission's world from the game's state, at any viewport
+The owner's direction: a widescreen mission shows everything, at any width and
+height, with no fake. The wide picture was the VDP's 320x224 window plus a band
+of sprites appended after BuildSpriteTable and plane cells rewritten in the
+cartridge's V-RAM, capped at the sprite field's 127 columns; the band lost the
+cursor and the selection box (screen and non-unit nodes were never appended),
+the effects (records outside UnitArray) and every frame another build site made,
+drew the units' facing from the record's +$66 instead of the +$68 the builder
+reads, and could not grow past 447 columns or 240 lines.
+
+next/mission_world.c reads the world from the cartridge's memory -- MapCells and
+the art table data_059FBE (with DrawMapCellTile's $FFFFC195 void switch), and
+every node of the mission pool with the game's own rules for whether it is drawn
+(the hidden bit, the blink read back from the state the build left), its
+position (world or screen node, the facing step at +$68) and its parts' tile
+words -- and the renderer draws it for the viewport. The append and the band
+fill are gone, so the two cursor rows and the map view are the cartridge's
+instructions again and nothing writes the cartridge's sprite table or V-RAM.
+
+The viewport is the target over the world scale, both ways, up to the largest
+map (2048): the world scale is the player's wish (no 447-column raise, no
+cover-the-height raise) and the HUD is its own layer at the interface's scale.
+The bounds follow it: the camera's left limit +extra, the cursor's record clamp
+-extra (it reaches the viewport, D147's open question), the vertical words by
+the signed lines the viewport shows or cuts (the border is the world's now), a
+window wider than the map closed on its centre, and a bound never moved past
+the camera (the edge scroll hands such an overflow to the cursor unclamped --
+measured: the record thrown to -3 102 in eleven frames). The pointer reaches the
+viewport's lines.
+
+tests/test_mission_world.sh measures it against the cartridge's own picture on
+stretches of the Atreides mission and battle at 854x480 and at 2560x1440 (AUTO,
+3x, 2x): the cartridge's window pixel for pixel, the timing differences named,
+and every part beyond the window the one the cartridge's own BuildSpriteTable
+draws there with its camera moved (run by the interpreter on the frame's RAM),
+the cursor and the selection box included; the VDP's own band and a dropped part
+are its controls. The fixtures whose numbers were the VDP picture's (the 447
+cap, D145's height raise and HUD scale, ticket 152's +extra record clamp, the
+unsigned cut lines) are edited with that reason.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
