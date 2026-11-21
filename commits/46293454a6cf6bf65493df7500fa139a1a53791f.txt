@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 46293454a6cf6bf65493df7500fa139a1a53791f
+date: 2026-11-21T14:19:47+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D154 -- the picture's one clock, the display's, and what the player saw
+decisions.md: the decision, the two clocks it replaces, the measurement and its
+model's limits, the host's presenters measured with trivial loops, the
+interleaved before/after table at 2560x1440 fullscreen and 1920x1080 windowed
+(title, and the mission from a state the GL renderer wrote), the cost, the
+late-slot rule that was measured and not kept, and the swaps lock.
+native-port.md ("Presentation time"), port-architecture.md (the module table
+and "Presentation time"), port/README.md: the grid, the order of instants and
+the presentation line. docs/html is the integrator's to rebuild.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
