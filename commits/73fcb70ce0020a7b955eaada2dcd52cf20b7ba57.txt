@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 73fcb70ce0020a7b955eaada2dcd52cf20b7ba57
+date: 2026-11-21T23:12:54+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+next: the pointer's target and drag box reach the wide viewport (D156)
+The wide world is drawn for the whole viewport, so a unit can be drawn in
+the extra columns left of the cartridge's screen or on the lines above and
+below it. next_mission_selection_pointer_at() still refused every line
+outside the cartridge's 224, and scan_box() clipped the drag box to the
+320x224 screen, so a click or a box there named nothing.
+
+Both now use next/mission_wide.h's viewport. The columns run from -extra to
+319. The lines run from hidden_top() to screen_bottom(), which are the
+screen's 0..223 outside the wide world, so 4:3 is unchanged. A selftest
+fixture shows both cases: the 4:3 picture refuses the band and the border
+line, and the wide viewport accepts them.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
