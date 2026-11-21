@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cc0f32ecdb0bfcfce14f24466c98fb95d5f6a0b7
+date: 2026-11-21T09:14:54+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D154: what the player saw is measured -- a picture's refresh, its frame on screen, its motion
+The window counted presents and schedule slots, and neither is a picture on
+screen: a present that returns at once is queued, one that waits for the
+display returns after it showed the picture, and a slot that went by without a
+present call says nothing about either. The measurement is now the display's:
+
+* app/present_log.{c,h}: every picture's hand-over and return, what was drawn
+  (the pair's newest frame, the alpha, a cut) and the display's grid, through a
+  FIFO model -- on screen from the first vblank after its hand-over and never
+  in its predecessor's refresh. The totals: how many refreshes each picture
+  stayed up, the cartridge frame nearest each picture refresh by refresh
+  (repeated, skipped) and the content step's error against the display's
+  clock. Arithmetic over the times the loop hands in, so it measures the GL
+  swap, a Vulkan queue and SDL's blit alike.
+* platform/window.c: mdp_window_refresh(), the display's period and a vblank
+  from Windows' compositor (dwmapi.dll at run time, primary display, SDL's
+  windows driver only); 0 everywhere else. The app reaches it through
+  mda_platform.refresh.
+* --report-present PATH writes one line per picture; the exit line's
+  'presentation:' totals are printed with or without it.
+
+The loop itself is unchanged here, so the same instrument measures the before.
+Its first reading, the title at 2560x1440 fullscreen on the GL presenter: 898
+pictures over 902 refreshes of 59.9999 Hz, 33 cartridge frames repeated and 30
+skipped on screen, content steps off by up to 216/256 of a frame.
+
+test_present.c: the model's fixtures (a picture per refresh, a late one, a
+burst, the beat, a jittering clock, a cut). test_presentation.sh: every run
+writes the report and it must agree with the totals; a control drops a line.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
