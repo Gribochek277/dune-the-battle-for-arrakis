@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4e6c59eef356279a0e41b66345b2ccf9235a6e48
+date: 2026-11-21T23:37:08+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the playtest route allows the wide view's vertical and cursor bounds (D156)
+The route's wide check compares the 4:3 and 16:9 runs' work RAM at entry 62
+of the mission step. Any difference outside the wide view's own writes fails
+it. Under D156 the wide view writes more of the bounds than before:
+
+* the camera's vertical words $FFFFE3CE/$FFFFE3D0 move by the signed lines
+  the viewport shows. At 854x480 the border's 9 and 7 lines are the world's
+  now, so the words differ (measured: $FFE3CF and $FFE3D1).
+* the cursor record's clamps $FFFFBF1A..$FFFFBF21 move with the extra.
+
+The allowed set now names the four camera words, the clamps and the sprite
+table. The cartridge builds the table from a cursor record that the wider
+clamps can place differently; before D156 the table also held the port's
+appended band entries. The assertion is edited with that reason, not
+dropped. Nothing else in work RAM may differ.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
