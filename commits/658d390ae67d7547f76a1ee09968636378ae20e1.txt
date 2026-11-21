@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 658d390ae67d7547f76a1ee09968636378ae20e1
+date: 2026-11-21T14:30:16+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D153, the Vulkan presenter -- the two passes, the swapchain, the measurements against GL, and OpenGL retired from the pages
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
