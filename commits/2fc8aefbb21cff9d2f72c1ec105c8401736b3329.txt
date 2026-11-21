@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 2fc8aefbb21cff9d2f72c1ec105c8401736b3329
+date: 2026-11-21T08:07:33+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D152: the GPU overlay is written whole when its texture is new, and not at all when nothing changed
+The owner's playtest on a 2560x1440 display: after leaving the build panel the
+mission was a black screen, repainted only where the pointer moved, and the
+whole game felt slow on the large screen.
+
+* The picture's layer width changes between the mission's wide world and the
+  panel's 4:3 picture, create_targets() recreates every target including the
+  overlay's texture, and the next present uploaded only the pointer's dirty
+  rectangles into it: the rest was the driver's leftover memory, opaque black
+  on Intel. A new texture is now uploaded whole.
+* An empty upload list meant 'upload the whole layer': every picture with no
+  shape on it re-specified the target-sized texture, 14.7 MB at 2560x1440,
+  sixty times a second. An empty list is now nothing to upload, and a whole
+  upload uses glTexSubImage2D on the existing storage.
+
+At 2560x1440 fullscreen the GPU's work per picture is 0.94 ms (was 3.65) and
+84 of 900 pictures drop with vsync (was 283). present-gl-test gains the
+layer-width case. tests/test_present_gpu.sh's trail comparison is timing-flaky
+on this machine with or without the change (old binary: 1 of 3 runs same).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
