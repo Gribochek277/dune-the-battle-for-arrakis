@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d8b0cbdf1f45b9d4121ff7f444bb5347b979a956
+date: 2026-11-22T00:06:48+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the overlay's transform takes the viewport's first line (D156)
+Since D156 the world region's source is the set of lines the viewport shows.
+The source row is -(height - 240) / 2:
+
+* 1920x1200 at 1x starts 480 lines above the cartridge's screen;
+* 1300x600 at 3x and 4x starts 20 and 45 lines into it.
+
+The check's transform assumed source row 0, so the owner case reported its
+box 480 rows "off". The transform now takes the row off, read from the
+run's own layout line.
+
+At 1300x600 the viewport cuts line 225, the box's bottom corner. The overlay
+drops a shape whose corner the picture does not cover, so the run reports
+the box outside the picture and draws no stroke. The markers and the badge
+whose corners are cut are absent too. Before D156 the source was the
+cartridge's 240 lines whatever the target cut, and the box was drawn with
+its bottom side off the target. The assertion is edited to state the
+overlay's rule at those two cases. Every other case keeps its box, markers
+and badge checks.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
