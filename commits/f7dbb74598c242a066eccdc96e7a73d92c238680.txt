@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f7dbb74598c242a066eccdc96e7a73d92c238680
+date: 2026-11-21T23:24:22+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+port-zones: the memory measurement for next/mission_world.c (D156)
+The world reader is a new toucher of two regions, work RAM and the cartridge.
+It reads both read-only from the buffers it is handed. next/mission_wide.c
+stopped reading the cartridge when the append and the band fill left it. The
+declaration's access lists already cover both modules through their zone's
+pattern, so the only change is the count: 249 becomes 250.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
