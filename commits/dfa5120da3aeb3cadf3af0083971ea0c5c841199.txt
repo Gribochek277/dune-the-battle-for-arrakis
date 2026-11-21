@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: dfa5120da3aeb3cadf3af0083971ea0c5c841199
+date: 2026-11-21T14:19:47+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D154: the lock's probe is four presents; test_play_audio counts the display's slots
+The probe sent eight presents back to back before deciding a host never
+blocks: on a cheap non-blocking present that is eight pictures in one refresh.
+A present that waits for the display blocks on the first, a FIFO of two on
+the third, so four is enough.
+
+tests/test_play_audio.sh: the paced window run asserted presented + dropped ==
+frames. That holds on the one-picture path; the window's default has presented
+between frames since ticket 151, where a run of N frames (N cartridge periods)
+has N or N + 1 refresh slots on a 60 Hz grid, depending on whether the loop
+reaches the last one before the run ends. The base meets `== frames` one run
+in three (120/0, 121/0, 121/0 here). The assertion is edited, not dropped:
+`== frames` on the one-picture path, `frames..frames + 1` on the display's.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
