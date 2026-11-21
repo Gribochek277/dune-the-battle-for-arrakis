@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 104c4c1b7e71882ea202975f65665717668387c4
+date: 2026-11-21T16:32:27+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+pacing: the platform's next reading keeps a given-up slot given up
+mda_pacing_present_grid() re-placed the next slot from the last picture's
+instant, which undid the slots mda_pacing_presented() had just given up after a
+late present; the draw then gave them up again and counted them twice (798
+dropped over 899 refreshes on a host whose presents took 28 ms). The slot is
+now the fresh grid's nearest to the one already chosen. Only the counter was
+wrong: the skip at the draw landed on the same slot, and the presentation line
+D154's table reads does not use it. test_present.c holds the case.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
