@@ -1,0 +1,39 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d5537ff1c0559bedc31e365dec323808adddc462
+date: 2026-11-21T21:26:58+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D155: the map is the screen only on its own layout, outside a mission load
+next_mission_wide_live() was "the window plane is off and the sprite pool
+holds a unit". OPTIONS opened with START from the map passes both -- the map
+resumes after it, so the units stay in the pool, and it draws on the two
+planes with the window off -- so at 2560x1440 it was drawn through the wide
+world and the band's fill wrote map cells into its planes (the owner's
+"porridge"). The answer now also asks the VDP for the map's own layout
+(plane A $E000, plane B $C000, sprites $F000, hscroll $F400, the window off,
+through chips/vdp.h's named questions) and the mission loop's phase
+$FFFFC1A6 for "not loading a mission" -- the campaign's end card is drawn
+inside LoadMission on the map's layout with the pool still full. Nothing in
+it is the layout's width, the extra or the band.
+
+Tests whose meaning changed, edited rather than deleted:
+- mission-wide-test's screen fixture plants the map's layout, and adds the
+  controls: OPTIONS, the password, the build panel, the won/lost windows,
+  the briefings, the house selection, each layout part alone, phase 1;
+- the band fill's fixture stood on bases no screen has ($4000/$A000) so a
+  wrong shift could not pass; the fill only runs on the map's bases now, so
+  it stands on those and asserts OPTIONS' planes get no fill instead;
+- the debug session's fixture plants the map's layout beside its pool;
+- the playtest route's baseline is regenerated: its options step now says
+  "mission no, scroll none" (it recorded the bug); no other field of the ten
+  steps moved.
+
+md68k-selftest's plan table gains 2560x1440 and 1920x1080 off the map.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
