@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5a36dea17a4e485ec30a2b3ce3a4dbb12f1aab5c
+date: 2026-11-21T16:30:07+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+app: the presentation loop's comment above the loop, and the alpha's words
+The helper that hands the platform's grid to the pacing had taken the loop's
+long comment, and app_show_picture() still called the alpha the wall clock's
+fraction: it is the picture's slot instant's (D154).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
