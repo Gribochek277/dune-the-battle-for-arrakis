@@ -1,0 +1,34 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 20e68fa84a33887316786de58fb50ca437ca7712
+date: 2026-11-21T21:58:24+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+scene: the mission's world as a layer of the scene, drawn by both backends at any viewport (D156)
+A scene state carries a world beside the VDP's picture (md_scene_world): the
+map's cell words and the art table they index, every part the game draws with
+no cull and no per-line or per-table limit, and the camera. When a state's
+world is active the world pass draws it instead of the VDP's planes and
+sprites -- for every row and column of the viewport, the VDP's border lines
+included -- with the reference's priority comparison, and leaves the
+interface's sprites to the interface layer as before.
+
+The world comes from a source the app hands the renderer
+(md_renderer_set_world_source()); the scene fills it after each capture
+(md_scene_fill_world()) and calls a world that appears or goes a cut. The
+picture has a vertical source too (`source_y`): a viewport taller than the
+cartridge's 240 lines shows rows above and below the frame, and the scene
+draws up to MD_SCENE_MAX_WIDTH x MD_SCENE_MAX_HEIGHT (2048, the largest map).
+
+Vulkan draws the same world in its first pass (the cells, the table, the parts
+and per-band part masks in the state's buffer) and grows the pictures' buffer
+to the tallest viewport asked for; scene-vk-test holds it to the CPU backend's
+bytes on a viewport larger than the frame both ways, thirty parts on a band, an
+interface part, the blend's two worlds and the switch back to the VDP.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
