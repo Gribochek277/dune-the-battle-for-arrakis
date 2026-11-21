@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0bec3c36624482c51e853253ff4ae72e32487978
+date: 2026-11-22T01:49:06+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the mission's screens check takes the wide view's widened bounds (D155 with D156)
+D156 widens the cartridge's camera and cursor bounds to the viewport, so at
+1920x1080 the route to OPTIONS ran 59 instructions fewer than the 4:3 run
+(118 606 799 against 118 606 858) on the same 410 frames and the same clock.
+test_mission_full_screens.sh required the three totals to be equal; it now holds
+the frames exactly, the clock within a frame and the instructions within a
+clamp's branches -- tests/test_mission_wide.sh's rule for the same writes. The
+assertion is edited, not deleted; the work-RAM comparison is unchanged and
+passes.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
