@@ -1,0 +1,38 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4afee43a45d4b393a5494552e97a84e1a42fa56c
+date: 2026-11-21T06:21:54+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the leaf helpers' two halves each fail their fixture when wrong
+D151 split each leaf helper into a game function and an adapter, and the
+fixtures are the contract for both. tests/test_leaf_helpers.sh now builds two
+control binaries through the Makefile's NEXT_SWAP (which covers port/game/
+too) and runs ScatterPosition's fixture on each:
+
+* the game function's arithmetic changed -- the scatter's rounding +$3F
+  instead of +$40 -- must fail with the register named
+  (`recorded vs C: d0: $2080133F vs $2080133E`);
+* the adapter's price changed -- the second MULS charged with MULU's formula --
+  must fail with the cost named (`cost: 300 cycles vs 298 cycles`).
+
+The real oracle-run is copied back after each, as tests/test_oracle.sh does
+for its ReadController control -- with retries, because on Windows the copy
+failed with "Permission denied" right after the control binary had run (the
+host can hold an executable that has just exited; tests/test_state_layer.sh
+retries for the same reason), and from the EXIT trap if the check stops while
+a control build is in place. The group-off run (--no-replace) stays the
+whole-recording control.
+
+tests/run_all.sh: the check is a `run_build` now, not `run_slow`. It relinks
+the binary other checks run, so in the parallel batch another check could run
+the control build -- the first scoped run of this branch failed on exactly
+that. `tests/run_all.sh --only 'the shared leaf helpers are the port'`: PASS
+(394 s), both controls caught and named.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
