@@ -1,0 +1,30 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 23bff116e7fc62e15f8943ec776d77514403a78c
+date: 2026-11-21T23:13:13+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+world: the HUD's screen nodes are the interface's; vdp-render draws the world (D156)
+The mission pool's screen nodes are the HUD and the cursor's bracket. The HUD
+nodes are the credits and icons, the radar frame $FFFFBF76 and its marker
+$FFFFBF4C. The bracket's record is the view record $FFFFBF12. Before this
+change the world layer drew every screen node at its cartridge screen place,
+so at a HUD scale different from the world's the HUD's sprites appeared twice.
+
+next_mission_world_build() now marks every screen node except the bracket as
+the HUD's (md_scene_world's new hud[]). Both backends then leave those parts
+to the interface layer whenever the layout has one; the CPU backend's
+world_sprite_line and Vulkan's pack_world use the same rule. A
+mission-world fixture checks the mark.
+
+vdp-render gains --world RAM [--world-rom PATH] [--world-parts off]. It reads
+the world from a work-RAM dump of the same entry and draws it for the wide
+layout's viewport, as the window does from the machine. The band and wide
+gates draw their pictures with it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
