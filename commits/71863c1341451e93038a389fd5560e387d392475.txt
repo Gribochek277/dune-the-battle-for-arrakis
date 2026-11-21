@@ -1,0 +1,51 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 71863c1341451e93038a389fd5560e387d392475
+date: 2026-11-21T14:10:57+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+D154: one picture per refresh of the display, its alpha the instant it stands for
+The picture was drawn on a 60.00 Hz grid of the run's own while the swap waited
+for the display's vblank -- two clocks -- and its alpha was the wall clock's at
+the moment the loop happened to draw, after whatever cartridge frame ran first.
+Measured (cc0f32ec): every 900-frame run at 2560x1440 and 1920x1080 had the
+nearest cartridge frame repeat and skip 50-170 times and content steps off by
+10-60/256 of a frame on average, up to 350.
+
+The picture now has one clock, the display's (app/pacing.h, "The picture's grid"):
+
+* platform: Windows' compositor names the period and a vblank
+  (mdp_window_refresh(), asked once per picture); a slot is 2 ms after each
+  vblank, so a picture has nearly a refresh to be drawn and handed over before
+  the vblank that shows it.
+* swaps: no platform to ask -- a FIFO present that blocks returns on vblanks,
+  and a phase-locked loop follows the returns from SDL's integer rate to the
+  display's own (59.94, 143.98); a probe of back-to-back presents fills a queue
+  that only blocks when full; a present that never blocks leaves the nominal
+  grid, and one whose 'returns' walk the period off by 2% was not a display.
+* rate: --present-rate keeps its meaning, a wall-clock grid from the start.
+
+A cartridge frame and a picture are taken in the order of their instants
+(mda_pacing_next(), app.c's dispatch): a frame due after the picture's instant
+waits until it is drawn, so the pair always holds the instant and the alpha is
+the slot's -- never clamped, never the clock's at the draw. The cartridge's
+deadlines are untouched: no frame runs early, none is slowed or sped by a
+picture, MDA_PACING_MAX_LATE still gives up lost time.
+
+Measured with the same instrument, rounds interleaved on the owner's host: the
+content step error falls to 0.8-7/256 mean and the repeated/skipped frames to
+15-51 a run where the presenter keeps up (D154's table). A variant that gave
+up a slot after a present returned late was measured and not kept: no
+consistent gain, and fewer pictures under load.
+
+MDP_WINDOW_TEST_NO_REFRESH puts a Windows host on the swaps lock.
+test_present.c: the grids, the order, the skip, the lock against simulated
+presenters (waits for the display / a queue of two / never blocks / costs a
+refresh) and the whole loop simulated at 60, 59.94, 120 and 50 Hz.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
