@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 0696735a92bd9d1dd8ac14aaf0c6d0f69f57d32b
+date: 2026-11-21T09:33:15+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+present log: the frames either side of a cut are not compared
+A cut snaps the picture to the current state, so the blended picture after it
+is nearest the same frame and a fade that cuts every few frames read as a skip
+and a repeat each time: the title's palette fades put fifty of each into a
+180-frame run that had no judder. The counters are about motion, as the
+content step already was; a refresh a cut stayed up for is still a repeat.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
