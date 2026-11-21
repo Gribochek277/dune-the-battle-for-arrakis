@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 68021ffc89f4ada2a671e68d86262f07e22715c6
+date: 2026-11-21T21:27:05+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the screens the mission opens are the 4:3 picture (D155)
+tests/test_mission_full_screens.sh: the detection's fixture, the committed
+recordings' screens from the played harness's step line (the map, the HUD
+and the map after OPTIONS are the mission; the build panel, OPTIONS and its
+sound test, the password, the won and lost windows, the end's prelude page
+and the campaign's end card are not), and OPTIONS opened from the map in the
+window from a head at entry 9 990 of the playtest route at 2560x1440,
+1920x1080 and 854x480: the fit-height layout line, the 4:3 picture block for
+block against vdp-render of the same VDP state, the backdrop's art in the
+bars, and the 4:3 run's instructions, cycles and work RAM. A control build
+with the detection before D155 must fail at 2560x1440, and does (the wide
+world's line, 34 685 of 76 800 blocks off). A run_build check: it relinks
+the window for the control.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
