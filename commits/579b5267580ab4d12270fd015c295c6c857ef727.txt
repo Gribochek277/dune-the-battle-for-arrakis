@@ -1,0 +1,16 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 579b5267580ab4d12270fd015c295c6c857ef727
+date: 2026-11-21T17:46:38+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+Merge feat/present-pacing: one picture per refresh of the display, measured (D154)
+# Conflicts:
+#	docs/decisions.md
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
