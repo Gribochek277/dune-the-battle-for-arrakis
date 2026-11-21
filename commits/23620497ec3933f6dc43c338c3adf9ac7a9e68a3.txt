@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 23620497ec3933f6dc43c338c3adf9ac7a9e68a3
+date: 2026-11-21T21:27:14+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+docs: D155 -- the wide world is the map's alone, and what tells the map from the screens it opens
+D155 in docs/decisions.md; docs/widescreen.md's "The screens the mission
+opens" and its checks; docs/reverse-engineering-notes.md's measurement per
+screen (the registers, the pool, the loop's phase and the frame handler on
+every screen the committed recordings open from the map) and the signals
+measured and not used; docs/build-and-test.md's row and paragraph for the
+new gate. The site (docs/html) is the integrator's to regenerate.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
