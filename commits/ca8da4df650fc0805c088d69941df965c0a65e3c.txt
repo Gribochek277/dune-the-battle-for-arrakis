@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ca8da4df650fc0805c088d69941df965c0a65e3c
+date: 2026-11-22T01:15:15+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+Merge fix/wide-band-sprites: the wide mission's world from the game's state, at any viewport (D156)
+# Conflicts:
+#	docs/build-and-test.md
+#	docs/decisions.md
+#	docs/widescreen.md
+#	port/tests/test_mission_wide.c
+#	tests/run_all.sh
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
