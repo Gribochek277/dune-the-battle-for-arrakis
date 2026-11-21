@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d7ce3d57c8c825ea465c12df06f03cb9b38b0168
+date: 2026-11-21T06:21:52+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+state layer: a routine's view reads the cartridge's bus, and the order block and the map cells are named
+The layer the leaf helpers' game functions (D151) stand on needed four things
+it did not have:
+
+* **a routine's view.** `cartridge_state_for_routine()` is the same view with
+  one edge moved: an address outside the three windows is the cartridge's own
+  bus -- an unmapped read is zero and in the machine's access log, a write to
+  the cartridge is ignored and counted -- instead of the layer's fault. A
+  whole-routine replacement is handed the cartridge's pointers, and the corpus's
+  fuzzer makes them point into nothing by flipping one bit; the cartridge's
+  answer there is the bus's. Ticket 182 solved it with a read_bus_*() copy in
+  each next/ file; a game module cannot name the bus (machine/md68k.h is its
+  denied direction), so the rule moves into the layer as a value the caller
+  chooses. cartridge_state_of() is unchanged and still refuses.
+* `cartridge_order_reset_script()`: the four writes InitOrderScript and
+  InitOrderScriptByIndex make before they read the parameter block -- the
+  first four of InitOrderEntry's reset, which now calls it.
+* the order parameter block (`cartridge_order_parameters`: the base at +$04
+  and the word offset table at +$08) and `cartridge_order_of()`.
+* the map cells (`cartridge_map_cell`: the tile word at +$0 and the object
+  word at +$2 of MapCells' 4 096 cells), and
+  `cartridge_structure_descriptor_of()` for a descriptor address the cartridge
+  computed itself (its type lookups do not bound the type).
+
+port/tests/test_state_layer.c: the new fields carry the notes' phrases and
+are one access of their width each; the script reset is four writes that
+leave +$04 alone; a routine's view reads an unmapped address as zero with no
+fault and one logged access, writes the cartridge without a fault, and still
+takes the 68000's address error on an odd word. 829 checks, the three
+controls fail as before.
+
+scripts/name_check.py reads every cartridge_*_descriptor_NAME( in the layer
+as a field accessor that analysis/descriptor-fields.txt must name; the new
+`_of` wraps an address, as `_at` wraps the table's lookup, so both are skipped
+(tests/test_names.py passes with its controls).
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
