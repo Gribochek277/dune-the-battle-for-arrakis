@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 21922014b4ed71323b931139c5be470eed9bae8b
+date: 2026-11-21T08:15:13+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+the window takes Vulkan as a widescreen renderer: the seam says which renderers take a layout
+app/play_presenter.c decided whether a renderer is a v2 one (takes the
+widescreen shell's layout) by name, and its Vulkan case sat behind
+MDP_HAVE_VK, which the build defines for run_play.c alone. So the window never
+recognised Vulkan: `--renderer vk` with `--fullscreen`, `--aspect` or any
+shell flag was refused as 'not the v2 path' (the run-play review saw it as
+test_scene_vk's 16:9 run being refused).
+
+md_renderer_takes_layout() is the seam's answer -- the scene renderer, the GL
+backend, or a backend that registered a layout hook (Vulkan does) -- and the
+presenter asks it, with no build flag. `--renderer vk --fullscreen` now opens
+at the display's 2560x1440.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
