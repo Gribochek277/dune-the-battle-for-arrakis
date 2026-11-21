@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 548e2cd1297cf304672ced6d59b146b584029ae4
+date: 2026-11-21T06:29:05+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+Merge lift/leaf-helpers: the leaf helpers as game functions behind adapter rows (D151)
+# Conflicts:
+#	docs/decisions.md
+#	docs/port-zones.json
+#	port/Makefile
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
