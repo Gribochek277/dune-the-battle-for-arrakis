@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: beeb164a8622a3c8e2cc39f025b0c757cba501cc
+date: 2026-11-21T06:26:47+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+Merge fix/vertical-bounds: the wide mission's vertical bounds (D147)
+# Conflicts:
+#	docs/decisions.md
+#	port/app/run_play.c
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
