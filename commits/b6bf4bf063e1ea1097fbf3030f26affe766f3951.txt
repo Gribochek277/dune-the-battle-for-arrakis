@@ -1,0 +1,32 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b6bf4bf063e1ea1097fbf3030f26affe766f3951
+date: 2026-11-22T19:36:23+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: review/windows-widescreen
+
+message:
+tests: the display settings' presses say what the world resolves to now (D156)
+The review's P1: three checks in tests/test_display_settings.sh still demanded
+the message D145/D156 removed -- "this target can show at most 447 world
+columns" -- so the file could not pass on any host with Xvfb and xdotool. They
+sat behind the sections' `command -v Xvfb` guard, which is why a Windows gate
+never ran them, and the base failed this file earlier (on D143's `scroll slow`),
+so nothing had reached them since.
+
+Two are the ones the review named: the keyboard walk on a 640x480 target (1X is
+1X there -- the world is drawn from the game's state, and nothing raises the
+wish) and the F5/F6 run on a 1280x720 one (1X is 1X, and the line says the 960
+columns the world shows beyond the cartridge's 320). The third was past the
+point the review could reach: the mission's press checks still expected ticket
+159's pictures (auto -> 5x -> 6x, 341x240 at extra 21 and the 4:3 fit), while
+the presses now walk the row's own scales -- auto -> 1x -> 2x -- and draw
+1708x960 at extra 1388 and 854x480 at extra 534 (1920x1200: 1600 and 640).
+
+Edited, not deleted, with the reason at each assertion (D31/D36). Verified by
+running the whole file on this host under Xvfb: it is green to the end.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
