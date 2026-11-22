@@ -1,0 +1,15 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 18be8bea277c3b2c86942400bf5a0654fb4ef8f8
+date: 2026-11-22T20:57:24+02:00
+author: serhii <serhii@localhost>
+branches: main
+
+message:
+Merge pull request 'Windows, Vulkan-only renderer, wide mission from the game state, fixes (D145-D156)' (#1) from review/windows-widescreen into main
+Reviewed-on: http://100.110.77.11/serhii/dune-the-battle-for-arrakis/pulls/1
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
