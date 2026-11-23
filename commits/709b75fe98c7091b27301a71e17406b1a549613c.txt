@@ -1,0 +1,47 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 709b75fe98c7091b27301a71e17406b1a549613c
+date: 2026-11-23T09:01:19+02:00
+author: Serhii <36171312+Gribochek277@users.noreply.github.com>
+branches: main
+
+message:
+wide mission: the HUD is its frame, so the bars are in neither layer no more (2)
+The owner's playtest: order a structure and the progress bar under the build
+strip is missing -- and with the default (GPU) presenter, which is how it looked
+like a `--renderer vk` bug. It is not: `--renderer software`, `scene` and `vk`
+draw the bar's frame byte for byte, and `--presenter gpu` matches `surface`
+exactly. The bar is lost in the composition.
+
+The bar is VDP sprite 5 of the sidebar block, tile $7B2, at picture (272,112).
+The layer map's measured tile ranges are credits $7B6-$7B8, structure-icon
+$794-$7A6, radar $680-$6B0 and the rest; $7B2 is none of them -- no checkpoint
+had a build in progress, so the bar was on none of their screens. The class test
+therefore called the sprite the world's, and the world layer draws the map out of
+the game's state, not the VDP's sprite table: nothing drew it. Its 4:3 picture has
+it because that path draws the whole VDP frame.
+
+D156's own words are the fix: "the HUD has a frame of its own". The frame is now
+an interface region -- the picture's 320x240 at the HUD's scale, held right -- so
+the layer's pass covers it, and the VDP's sprite list is judged by priority
+inside that frame (`md_scene_sprite_in_interface_frame()`), whatever tile each
+sprite names. The measured classes keep their rectangles, tiles and anchors; the
+frame classifies nothing (its tile range is empty on purpose) and a layout that
+declares no frame is the union of its regions, so every fixture's picture is
+what it was.
+
+Also fixed by the same rule, and seen in the same frame: the cursor bracket's top
+line, which the class's rectangle cut by one picture row.
+
+The checks follow the rule instead of the class list: `compare_band.py` and
+`tests/test_mission_wide.sh` skip the HUD's *sprites* at the frame's scale, and
+`vdp-render` prints the frame's region on its own line (`layout interface
+frame:`) so a reader cannot mistake the pass for a measured class.
+`port/tests/test_scene.c` carries the bar's case as a fixture: a priority sprite
+whose tile is no class's is the frame's, a priority sprite outside the frame is
+the world's, and a layout with no frame keeps its union.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
