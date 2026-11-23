@@ -1,0 +1,36 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: f34b733f8e8935b5e1847c0eb1f3a7303d576bff
+date: 2026-11-23T23:36:55+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the wiki is gated, counted and written down (D158, D159, ticket 229)
+The pages are the repository's, and the gate says so. `tests/test_wiki.sh` runs
+`scripts/wiki.py check` on the real checkout -- the prose is the corpus, `Home`
+and `_Sidebar` are what the repository would render, and every published number
+is the measurement's -- and then provokes five failures on a copy: a number
+edited, `Home` edited, `_Sidebar` deleted, a Ukrainian page without its English
+pair, and a marker naming a measurement that does not exist. It is in the fast
+tier beside the site's gate.
+
+The published form grew the value's record: `803<!--fact:c_routines=803-->`
+instead of `803<!--fact:c_routines-->`. A reader still sees only the number, but
+the publisher can now *move* it -- `refresh` rewrites both halves when a
+measurement changes, which is what D159 promised and what the first form could
+not do without a human retyping the number. It bit immediately: adding this
+check to the gate moved `gate_fast` 56 → 57 and `gate_all` 154 → 155, and
+`build-and-test` and `project-status` had published the old ones.
+
+Also here, the change written down where the repository says findings live:
+`AGENTS.md` ("the documentation lives in the wiki" in Layout, and the section
+that used to describe the site as the only medium), `CONTEXT.md` (the wiki, the
+site, a published number, a generated page, a translation), `README.md`'s
+documentation list, decisions D158 and D159 in the wiki's `decisions.md`, and
+ticket 229 with its criteria.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
