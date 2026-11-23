@@ -1,0 +1,28 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a8b0cb61e4c60ba77b863da6f22ed4de1703aa2c
+date: 2026-11-23T23:59:14+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+wiki: the translation's glossary, and the first Ukrainian pages (D158, ticket 229)
+The documentation is published in two languages, and the second one has to say
+the same things with the same words: `Glossary` fixes the vocabulary (the three
+poles of D144, the machinery the port names, and the rule that an identifier, a
+path, a command and a code block are never translated) and `Glossary-UKR` is its
+Ukrainian half.
+
+Every translated page is the English page's `-UKR` sibling, links back, and is
+linked from it; `scripts/wiki.py check` refuses a pair that is one-way or
+unpaired, and the site renders both beside each other in the English page's
+group ("Environment (українською)"). First batch: `environment`,
+`scenarios`, `rom-analysis` and the two glossary pages.
+
+The site is rebuilt and its gate is green: 1407 files, 23,668 links, 40 document
+pages.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
