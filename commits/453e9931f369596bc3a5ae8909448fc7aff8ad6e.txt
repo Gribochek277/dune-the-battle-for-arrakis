@@ -1,0 +1,44 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 453e9931f369596bc3a5ae8909448fc7aff8ad6e
+date: 2026-11-23T23:25:08+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the prose lives in the wiki (D158, ticket 229)
+The markdown left the repository: `docs/wiki` is a submodule of the project's
+Gitea wiki, and the pages are published there with `scripts/wiki.py publish`.
+The site keeps being generated -- now from the submodule -- and its gate keeps
+proving the pages, their links and their anchors, so the reading and the checks
+did not change; what changed is where a person edits.
+
+Mechanical where it could be:
+
+* the prose's own links are relative page names (`build-and-test.md`) and needed
+  no rewriting: `docs/wiki/<name>.md` sits at the same depth as
+  `docs/<name>.md` did, and Gitea and the site resolve the same targets;
+* the citations (`docs/x.md` in 262 files) became `docs/wiki/x.md`, which is
+  what a reader who follows one finds in the checkout -- 677 replacements in
+  hand-written and generated files alike, so a regeneration agrees;
+* six consumers of the old paths learned the new one: `build_docs` (PROSE,
+  RULES_DOC, the extras glob), `name_check`, `porting_stages`, the audit table's
+  `AUDIT` in tests/test_pipeline_inputs.py, and the page paths in
+  tests/test_modding.sh and tests/test_names.py;
+* the site maps the wiki's mirrored diagram (`docs/wiki/html/...`, where a wiki
+  page's image link has to resolve) to its own build, and
+  `tests/test_terminology.sh` reads the submodule's files: the parent's
+  `git ls-files` lists the gitlink and not the pages, so D144 would have stopped
+  checking exactly where the documents are written now;
+* the wiki's shell and the generator's pages are not documents: `doc_plans`
+  skips `Home`, `_Sidebar`, the three root mirrors and the `GENERATED` prefixes,
+  so the site's 35 document pages stay 35.
+
+Green on this tree: tests/test_docs.sh (1402 pages, 23,604 links),
+test_terminology.sh, test_pipeline_inputs.py (10/10 controls), test_stages.py,
+test_names.py, test_modding.sh, test_game_rules.py, test_data.sh.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
