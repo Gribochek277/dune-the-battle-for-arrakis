@@ -1,0 +1,63 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 465ed97b9ec981e97b33953bdf7752504ec0d0ed
+date: 2026-11-23T22:29:17+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the order path on one page, from the press to the program (ticket 4)
+The owner asked how orders actually work, because the answer decides whether the
+port should queue them. The pieces were recorded in four module headers and two
+rules sections, and nobody could read them in one place.
+
+docs/orders.md follows one command end to end: the press (the pointer's five
+meanings, the box and the pan, the A that the click posts at $003118/$003AD0 and
+UpdateInputState $002608 copies), the selection (the cartridge's one
+SelectedRecord and its +$6 bit 15, the port's set, the pointer's own target), the
+command ($0089AA -> sub_016FF6 -> SetUnitOrder, and the port's snapshot-and-copy),
+the contract (+$54/+$55, +$4E/+$50, +$14, +$22, +$5A/+$5C/+$7C, the pins 0A/0D,
+the dispatch table $022098's measured mode words 0,0,0,0,0,0,0,0,0,0,1,0,0,1),
+the 56-byte entry at +$16 (InitOrderEntry $00CB3C, InitOrderScriptByIndex
+$00CBA0 and data_025B6E), and the program (RunOrderScript $00CBFC, the action
+table $00CC36, the budget of 14 or 46 words, the dispatcher $020E2C).
+
+The worked example is the D157 run: ten units, the right button on the yard at
+7 722, the ten fields at 7 725, and the program the type loads --
+data_025B6E[13] = 13, the block's word $07FB, $02037A + 2 * $07FB = $021370, whose
+first words are $4500 $440A $5102 $2F00 $880B $4E1A $4501 $44FF.
+
+The refusal table is thirty-two rows in the order a press meets them: the
+gesture (no pointer, a drag, a panel, the placement mode, an empty set), the
+selection (the pointer's target, the side, a dead record, an empty box, a reused
+record, the mission's exit), the cartridge's pass (the cursor mode $0089C0, a
+carried unit $0089D8, the marker $01733A, a structure's panel, the placement
+$0171E6, the pins, a queued order, a docked harvester, the target's checks, an
+order the set does not follow), and the program (the 5-frame slice, the straight
+line, an occupied cell, a harvest off spice, the traps, the two ids with no
+committed caller). Each row cites its address, its check or its measurement.
+
+The page says which part is the cartridge's and which is the port's: the press's
+meaning, the set, the copy, the spread and the report are the port's; the
+classification, the writers, the entry and the program are the cartridge's.
+
+Links: docs/game-rules.md §6 names the page, and the generator's new
+SECTION_DOCUMENTS map puts "Reading this subsystem" on the three subsystem pages
+the path runs through (orders/links/visibility, the order-script interpreter,
+the unit update pass) -- a hand-written map, because a link is a claim no rule in
+the tree can infer.
+
+Also edited: docs/next-engine.md's ticket-129 section still said a move whose
+target is a structure is "refused rather than linked" and listed it among the
+refusals; D157 made it land, so the two sentences now say so. docs/scenarios.md
+and docs/orders.md are declared in the site's PROSE list (architecture and port
+groups) instead of falling into the default group.
+
+Verification: docs rebuilt and `tests/test_docs.sh` green (the site is
+byte-identical on a rebuild, every link resolves); the fast tier ends with ALL
+CHECKS PASSED (26 min). No behaviour changed: the ticket is a reading.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
