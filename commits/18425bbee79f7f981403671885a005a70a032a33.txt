@@ -1,0 +1,75 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 18425bbee79f7f981403671885a005a70a032a33
+date: 2026-11-23T14:58:49+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: a command on a structure lands for the set, and every unit is named (D157, ticket 3)
+The owner's report: about ten units box-selected, the command pressed on a
+structure, and no unit reacted. Measured before anything changed: a box from
+cartridge (10,10) to (310,230) selects the Atreides mission's whole current side
+(seven units, primary 0x00FF120C), the right button on the construction yard
+(structure index 123, type 8, row 35, column 24) gives the primary order 1 with
+0x807B in +$5C, and the report said only
+
+    dune-port: group order: kind=refused order=1 selected=7 primary=0x00FF120C target=0x807B
+
+The six followers got nothing and no line named them or the rule. The cartridge's
+own answer is in the command pass: order 1 with the structure's handle in +$5C
+(sub_016FF6 $017468's sub_002C0A test and $017496's `moveq #1,d4`; the enemy
+structure is order 0 with a $8000 handle at $01745A, the repair facility order 3
+at $017490). Order 4 (enter) comes only from the pad's PadExtraHeld bit 2 and a
+click never produces it -- which is the statement the module header had wrong.
+
+What changed:
+
+* next/mission_orders: a move whose +$5C is a structure handle is
+  NEXT_MISSION_ORDER_MOVE_STRUCTURE, and every follower takes the primary's own
+  order 1 and handle, so each unit's order program decides what it does with the
+  link; an attack accepts a structure's $8000 handle as well as a unit's $4000.
+  Every write returns the decision -- taken, queued, or refused and by which rule
+  -- and the store keeps one entry per member of the set, so a refusal is a named
+  unit and not a count.
+* app/play_report: the summary line keeps its fields exactly and appends
+  `skipped=`; one `group order unit:` line per member names handle, record,
+  outcome, rule and cell.
+* The store is state version 6, with app/state_file's writer/reader and
+  port/tests/test_state.c following, so a resumed run prints the same lines.
+* The conditions a run starts from: the harness's --scenario applies a text
+  recipe (app/mission_conditions.{c,h}, docs/scenarios.md). A `unit` line is one
+  call to the cartridge's own CreateUnitFromType $01C2EA through md68k_step, so
+  the record, counters, team list, map cells, order entry and sprite are the
+  game's; a `field` line writes one documented record byte. A recipe the game
+  refuses fails the run. analysis/scenarios/ holds the two recipes.
+* Checks: tests/test_group_order_structure.sh replays the committed gesture
+  analysis/recordings/group-order-structure.pad from the gate's mission head plus
+  the recipe -- the report names ten units, all ten records hold order 1 and
+  0x807B at the entry after the command, and the pinned recipe is count=9
+  skipped=1 with 0x4037 named rule=pinned-order-0x0A and its record untouched.
+  tests/test_conditions.sh proves the recipe's cells from the machine's own RAM
+  and three refusals by line. port/tests/test_orders.c adds the ten-unit
+  structure case, the enemy-structure attack and the named refusal;
+  scripts/group_order_check.py reads the new kind and the unit lines.
+* Docs: game-rules C5 edited to the measurement with C6 and C7 added, D157, the
+  module header rewritten to the measured classification, docs/scenarios.md, the
+  mouse/port-architecture/build-and-test rows, the site rebuilt, the app zone and
+  the memory toucher count (250 -> 251).
+
+Drive-by, measured at the merge base: tests/test_debug_session.sh failed on this
+host because the F12 state was written with "scene" under Xvfb and loaded with
+the "vk" default under the dummy driver; the run and the load now name the
+renderer.
+
+Verification: the fast tier ends with ALL CHECKS PASSED (24 min); the slow
+checks the diff touches were run one by one -- group orders, selection box,
+mission mouse, state file, playtest route, debug session, the two new checks and
+the docs gate. One pre-existing slow-tier failure remains on this host, measured
+at the merge base with the same command: tests/test_binding_flow.py ("leaving the
+mapping screen wrote no file"), which is not this change's.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
