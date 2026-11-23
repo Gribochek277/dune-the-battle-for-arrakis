@@ -1,0 +1,35 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 99069967398ec49d582f98d698043666d84c500c
+date: 2026-11-23T23:52:29+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+wiki: the analysis as pages, and the shell counts them (D158, ticket 229)
+The wiki now carries the whole documentation and not only its prose: 1358
+generated pages -- one per routine (815), per curated name that is not code
+(126), per work-RAM address (366), per subsystem (49), the porting dashboard and
+the diagrams -- so a reader who searches the wiki finds the routine they were
+looking for. `scripts/wiki_pages.py` renders them from the same model the site
+uses, and each page is a summary that links: the address, the evidence line, the
+callers and callees as links to other pages, the work RAM and the hardware it
+touches, its first instructions, and the site's page for the body. Links stay
+inside the wiki (`[Name](r-Name.md)`) because a relative `.md` link is a page
+link in both worlds (D158).
+
+They are the generator's, never a person's: the names carry a `GENERATED`
+prefix, `build_docs` refuses to read one as a document, and `check` holds every
+page to this render -- `tests/test_wiki.sh` provokes exactly that (a
+hand-written line appended to `r-EntryPoint.md` must be reported).
+
+The two costs the design pays, named: the wiki's page list is 1396 entries in
+one flat list (Gitea's wiki has no folders), and the publisher's check now
+builds the analysis. The check takes ~19 s and the gate's six runs ~46 s, so the
+test dumps the measurement table once (`facts --json`) and the controls read it
+instead of measuring the tree six times.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
