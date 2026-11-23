@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 7beac61e2caa7895e4806658ec3265d10598b887
+date: 2026-11-23T22:59:48+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: a count inside a fence is a number, not a placeholder (ticket 201, 229)
+`README.md`'s quick start says "# verify everything: {{fact:gate_all}} checks"
+inside a fenced block, and the renderer only substituted placeholders in
+paragraphs -- so the one page a newcomer reads first was the one page that still
+showed a placeholder after ticket 201. The substitution now lives in
+`Markdown._facts`, which paragraphs and fenced blocks share, and the site's
+README page says 154 checks, 56 of them needing no emulator and no display.
+
+The same module (`scripts/wiki_facts.py`) carries the form the wiki publishes
+(D159): `<value><!--fact:KEY-->`, the number a reader sees with the measurement
+it came from named beside it. `Markdown.render` strips the marker and keeps the
+value, so the page and the wiki show one number from one text; the wiki's own
+check (`scripts/wiki.py check`) is what refuses a stale value.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com

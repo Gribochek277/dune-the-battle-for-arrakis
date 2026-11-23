@@ -1,7 +1,7 @@
 > Sanitized mirror of Forgejo `serhii/dune-the-battle-for-arrakis`. Source code is not published here.
 >
 > Commit texts: `commits/`. Need the code? Email: sergeyalpatov1@gmail.com
-> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-24T00:21:31Z
+> Source: Forgejo `serhii/dune-the-battle-for-arrakis` | Synced: 2026-11-24T09:07:57Z
 
 ---
 
@@ -57,7 +57,7 @@ counted (`analysis/final-proof.json`). The picture, the clock and the RAM are th
 reference's because the C leaves the state the cartridge's own instructions would
 have; the one measured exception is the played build's audio engine, whose
 timing moves the mission's state a frame apart
-(`docs/project-status.md`, "What is still the cartridge's").
+(`docs/wiki/project-status.md`, "What is still the cartridge's").
 
 | what it does | the check that proves it |
 |---|---|
@@ -92,55 +92,67 @@ gamepad screens, the save file, and `--debug`.
 
 ## Documentation
 
+The prose lives in the project's **wiki** (D158), and `docs/wiki` is its
+submodule: the same files are the wiki's pages for a reader and the sources of
+the site below, so a document has one history and one review. The wiki carries
+every page in English and, where the translation exists, a `-UKR` page beside
+it.
+
+* [the wiki](http://100.110.77.11/serhii/dune-the-battle-for-arrakis/wiki) —
+  the documentation as pages: what the project is, the game, the cartridge, the
+  port, the measurements and the decisions behind them. Edit it here or in a
+  checkout of `docs/wiki`; `python3 scripts/wiki.py publish` owns the pages a
+  person does not write (`Home`, `_Sidebar`, the published numbers) and
+  `tests/test_wiki.sh` is its gate.
 * [the HTML documentation site](docs/html/index.html) — every routine (named or
   not), every curated name, the work-RAM map, the game's subsystems and the
   port's zones as generated pages and diagrams. Committed, so it reads from a
-  `file://` URL; `python3 scripts/build_docs.py` rebuilds it and
-  `tests/test_docs.sh` is the gate that keeps it current.
-* [`docs/project-status.md`](docs/project-status.md) — **what the project is,
+  `file://` URL; `python3 scripts/build_docs.py` rebuilds it from the wiki's
+  pages and `tests/test_docs.sh` is the gate that keeps it current.
+* [`docs/wiki/project-status.md`](docs/wiki/project-status.md) — **what the project is,
   what works today and what is being built next**, with the command that
   measures every number on the page.
-* [`docs/game-rules.md`](docs/game-rules.md) — **the game's rules**: what a
+* [`docs/wiki/game-rules.md`](docs/wiki/game-rules.md) — **the game's rules**: what a
   side can see, what a hit does, where credits and spice come from, how a
   structure is placed, built, repaired and lost, how a mission decides it is
   over, and what a selection and an order are. Every rule cites the instruction
   that implements it or the committed measurement that established it, and the
   page's §9 is the honest list of what is not known yet.
-* [`docs/native-port.md`](docs/native-port.md) — the port: every subsystem, its
+* [`docs/wiki/native-port.md`](docs/wiki/native-port.md) — the port: every subsystem, its
   measurement and the decisions behind it, including the frame's cost and the
   audio's tolerance.
-* [`docs/port-architecture.md`](docs/port-architecture.md) — the port's zones and
-  the allowed include directions, and [`docs/next-engine.md`](docs/next-engine.md)
+* [`docs/wiki/port-architecture.md`](docs/wiki/port-architecture.md) — the port's zones and
+  the allowed include directions, and [`docs/wiki/next-engine.md`](docs/wiki/next-engine.md)
   — the replacement seam, the dispatch's price and the group's own C.
-* [`docs/game-architecture.md`](docs/game-architecture.md) — the game's own
+* [`docs/wiki/game-architecture.md`](docs/wiki/game-architecture.md) — the game's own
   subsystems, from the boot to the mission's loop.
-* [`docs/display.md`](docs/display.md) — the window, the integer scales, the
+* [`docs/wiki/display.md`](docs/wiki/display.md) — the window, the integer scales, the
   widescreen shell and `display.ini`.
-* [`docs/widescreen.md`](docs/widescreen.md) — the widescreen shell: a target
+* [`docs/wiki/widescreen.md`](docs/wiki/widescreen.md) — the widescreen shell: a target
   that is the window's pixels, regions and anchors, the fit-height and
   wide-world modes, and the integer-scale policy that keeps the 4:3 picture's
   shape (`--aspect 16:9`).
-* [`docs/data.md`](docs/data.md) and [`docs/assets.md`](docs/assets.md) — the
+* [`docs/wiki/data.md`](docs/wiki/data.md) and [`docs/wiki/assets.md`](docs/wiki/assets.md) — the
   unit and structure tables, the missions and the text as editable source, and
   the extracted graphics and music with their manifests.
-* [`docs/saves.md`](docs/saves.md), [`docs/locale.md`](docs/locale.md),
-  [`docs/keyboard.md`](docs/keyboard.md), [`docs/mouse.md`](docs/mouse.md) and
-  [`docs/gamepad.md`](docs/gamepad.md) — the player's side: the save, the
+* [`docs/wiki/saves.md`](docs/wiki/saves.md), [`docs/wiki/locale.md`](docs/wiki/locale.md),
+  [`docs/wiki/keyboard.md`](docs/wiki/keyboard.md), [`docs/wiki/mouse.md`](docs/wiki/mouse.md) and
+  [`docs/wiki/gamepad.md`](docs/wiki/gamepad.md) — the player's side: the save, the
   language, and the three input devices with their files.
-* [`docs/goals.md`](docs/goals.md) — the two goals (playable PC binary; ROM to
+* [`docs/wiki/goals.md`](docs/wiki/goals.md) — the two goals (playable PC binary; ROM to
   source + assets), their definitions of done and the roadmap
-* [`docs/modding.md`](docs/modding.md) — **three worked changes**: a gameplay, a
+* [`docs/wiki/modding.md`](docs/wiki/modding.md) — **three worked changes**: a gameplay, a
   balance and a cosmetic change, each with the file that is edited and the check
   that proves it took effect
-* [`docs/collecting-coverage.md`](docs/collecting-coverage.md) — how to play the game so the analysis grows
-* [`docs/environment.md`](docs/environment.md) — host, tool inventory, how the ROM was found
-* [`docs/rom-analysis.md`](docs/rom-analysis.md) — what the dump is, header, vectors, checksum
-* [`docs/disassembly.md`](docs/disassembly.md) — the split, the 14 decoder fixes, why each was needed
-* [`docs/build-and-test.md`](docs/build-and-test.md) — commands and what each check proves
-* [`docs/debugging.md`](docs/debugging.md) — `--debug`, the run's session directory, and the machine snapshot (`--debug-load`) that restores a run exactly
-* [`docs/toolchain.md`](docs/toolchain.md) — install commands, revisions, REA integration and its limits
-* [`docs/decisions.md`](docs/decisions.md) — autonomous decisions and reasoning
-* [`docs/reverse-engineering-notes.md`](docs/reverse-engineering-notes.md) — findings, the applied modification, and the plans
+* [`docs/wiki/collecting-coverage.md`](docs/wiki/collecting-coverage.md) — how to play the game so the analysis grows
+* [`docs/wiki/environment.md`](docs/wiki/environment.md) — host, tool inventory, how the ROM was found
+* [`docs/wiki/rom-analysis.md`](docs/wiki/rom-analysis.md) — what the dump is, header, vectors, checksum
+* [`docs/wiki/disassembly.md`](docs/wiki/disassembly.md) — the split, the 14 decoder fixes, why each was needed
+* [`docs/wiki/build-and-test.md`](docs/wiki/build-and-test.md) — commands and what each check proves
+* [`docs/wiki/debugging.md`](docs/wiki/debugging.md) — `--debug`, the run's session directory, and the machine snapshot (`--debug-load`) that restores a run exactly
+* [`docs/wiki/toolchain.md`](docs/wiki/toolchain.md) — install commands, revisions, REA integration and its limits
+* [`docs/wiki/decisions.md`](docs/wiki/decisions.md) — autonomous decisions and reasoning
+* [`docs/wiki/reverse-engineering-notes.md`](docs/wiki/reverse-engineering-notes.md) — findings, the applied modification, and the plans
 
 ## What this project does *not* contain
 
@@ -151,7 +163,7 @@ redistributes the game.
 
 ## Requirements
 
-See `docs/toolchain.md`. The analysis is user-local: sega2asm (patched),
+See `docs/wiki/toolchain.md`. The analysis is user-local: sega2asm (patched),
 ClownAssembler, BlastEm 1.0.0, Ghidra 12.1.4, REA 6.4.0 — no system packages and
 no `sudo`. The port needs a C99 compiler, `make` and SDL2; `--renderer vk`
 additionally needs the Vulkan headers and `glslc`, and is built only where they
