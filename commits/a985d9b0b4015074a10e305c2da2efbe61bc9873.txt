@@ -1,0 +1,42 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: a985d9b0b4015074a10e305c2da2efbe61bc9873
+date: 2026-11-23T22:59:56+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+wiki: the documentation is published to the project's wiki (D158, ticket 229)
+The prose moves to the project's Gitea wiki, and `docs/wiki` is a submodule of
+the wiki's repository: the same files are the wiki's pages for a reader and the
+site's sources for `scripts/build_docs.py`, so the documentation keeps one
+history, one review, and the site keeps being generated and gated from it.
+
+`scripts/wiki.py` owns what a person does not:
+
+* `publish` writes the prose with `{{fact:KEY}}` resolved to
+  `<value><!--fact:KEY-->` (D159) -- the reader sees the measurement, the marker
+  keeps it honest, and `check` fails when a published number stops being the
+  measurement's;
+* the three links only the repository can resolve are rewritten: `docs/html/` to
+  the repository URL (the site is an artifact, Gitea cannot render it), the
+  structure diagram to the file the wiki carries beside the page, and the
+  `docs/` prefix the root files use;
+* `Home` and `_Sidebar` are generated from the same page list, in both
+  languages once a translation exists;
+* `check` is the gate's half: pages current, markers true, every Ukrainian page
+  paired with its English one and linked both ways.
+
+Naming (`scripts/wiki_names.py`): Gitea's wiki is flat -- its routes do not
+support subdirectories -- and a page name may not carry a space or a
+parenthesis, because both renderers end a link destination there. So a page is
+the repository's own file stem and the reader sees "build and test" for
+`build-and-test.md`; a translation is `<name>-UKR`, not `<name> (UKR)`.
+
+`scripts/install-tools.sh` initialises the submodule: a fresh worktree has no
+pages without it, and `tests/test_docs.sh` cannot build the site.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
