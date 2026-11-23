@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 4d42d2ebc685c875d45ad5ff068915dcb8ed98ac
+date: 2026-11-24T00:04:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+wiki: four more Ukrainian pages, and the gate counts them as translations
+`modding` and `formats-compression` join `environment`, `scenarios` and
+`rom-analysis`; with the glossary pair the wiki carries six Ukrainian pages, and
+`Home` says so by counting the pages that exist rather than by a number someone
+typed. The site renders all of them beside their English pages (42 documents).
+
+`tests/test_wiki.sh` learns the one thing that changed: a `-UKR` page is not an
+English page, so the count it holds the check to excludes them -- and a page
+without its pair still is one, which is what the census is for.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
