@@ -1,0 +1,53 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: e66a9ac6ec773311b2ca277772813d54c39e08ab
+date: 2026-11-24T17:38:03+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+port: the engine keeps the driver's voice slot and obeys command 23's mute
+D150's items 2 and 3, the two audio differences it recorded and left to the
+audio's owner (ticket 7, D161).
+
+Command 23 (`$0AD9`, `$0D557C`) mutes one channel of a song; the sequence pass
+tests the channel's flag bit 1 at `$0512` and dispatches none of its notes. The
+port had the field and nobody wrote it: `sequence_channel.flags` documented bits
+0, 3, 4, 5, 6 and 7 and left bit 1 blank. `next_audio_engine_mute()` writes it
+and `note_on()` -- the one place every note passes -- returns before the effect's
+restart and before either allocator, which is `$0512`'s position. The bus model's
+second copy of the bit (`bus.muted`) is gone; it charges the command's cost
+(`next_audio_driver_bus_command23()`) and nothing else.
+
+A channel's voice is the driver's slot (`$1861 + 39n`), written only by a voice
+opcode and filled by the start-up at `$088A`. The primary site was the song
+start, not the reset: `next_audio_engine_play()` cleared the channel and then
+loaded voice record 0 on every song. It now keeps the 39 bytes and loads no
+voice; `next_audio_engine_reset()` starts every slot at the fill, and
+`next_audio_engine_reset_channels()` keeps the slots across `$0C04`.
+
+Measured. The driver's own fill, run to its main loop in `port/tests/test_z80.c`,
+is `$FF` in the slot's type byte and `$00` in the other 38 -- all sixteen slots,
+not two. On the playtest route the briefing sends command 23 once, frame 7548,
+song 7, channel 2; the control (`--no-audio-mute`, the new diagnostic, modelled
+on `--no-driver-bus`) names the eight drum notes the cartridge silences (7555,
+7562, 7570, 7577, 7600, 7622, 7630, 7638, song stops 7644); the played path
+dispatches none of them and no other event on the route moves. Against the
+cartridge's own driver in that window the residual drops 562 -> 499 RMS.
+
+The slot's finding is that it was latent here: every song of set 0 played through
+a HEAD build and this one differs in no note event at all, and the route's
+YM2612 timeline is byte-identical -- no song in this cartridge plays a note
+before setting its voice. D161 records that rather than claiming an audible fix.
+
+`port/tests/test_audio_engine.c` (area `audio_engine`) proves the mechanism:
+the power-on slot, the slot across a song start and a channel reset, and command
+23 silencing the channel with the most notes while the other fifteen are
+untouched. `tests/test_audio_modern.sh` proves the route's mute and its control.
+The audio comparisons needed no re-basing: the reference engine obeys the same
+command on the same frame, which is what makes it the driver's model.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
