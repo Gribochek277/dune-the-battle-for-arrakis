@@ -1,0 +1,20 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 30f0e72989a7acb81cdc704fa8338eebebb476d2
+date: 2026-11-24T19:13:28+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: nine tickets for the two-language translation, one phase per session
+The prose is 2 MB and a newcomer cannot enter the project from it, and ticket
+229 left the Ukrainian translation open. The work is phased so each session
+fits its context: 230 fixes the conventions and shortens the entry pages,
+231-237 take one group of pages each (both languages), 238 closes the gate and
+publishes Home and _Sidebar. The wiki submodule moves to its tip so a publish
+from this branch is not based on a stale tree.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
