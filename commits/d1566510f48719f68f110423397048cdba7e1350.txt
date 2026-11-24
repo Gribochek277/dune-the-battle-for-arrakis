@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d1566510f48719f68f110423397048cdba7e1350
+date: 2026-11-25T00:31:04+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+Merge branch 'main' into 230-translation
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
