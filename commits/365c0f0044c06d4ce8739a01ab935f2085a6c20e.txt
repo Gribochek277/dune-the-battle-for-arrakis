@@ -1,0 +1,43 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 365c0f0044c06d4ce8739a01ab935f2085a6c20e
+date: 2026-11-24T10:02:50+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the order path and the queue in the wiki, and the queue's decision becomes D160
+The merge of the `docs` worktree moves the prose into the project's wiki
+(`docs/wiki`, a submodule, D158), and two things had to be carried across:
+
+* **the prose main added after the merge base.** The order path page is the
+  wiki's `orders.md` (and the site's `docs/orders.html`); `game-rules.md` gains
+  the §6 link and C8 (the port's queue); `build-and-test.md` the queue's check
+  row; `mouse.md` the check's row; `next-engine.md` the two ticket-129 sentences
+  D157 made false; `port-architecture.md` the queue sentence; `saves.md` the
+  snapshot's version 7. `scripts/wiki.py publish` rendered `Home`, `_Sidebar`,
+  the analysis pages and the published numbers (gate_slow 98 → 99, gate_all 155
+  → 156, recordings 14 → 15) and pushed the wiki at `95b2e01`.
+* **the decision number.** The wiki's D158 (the prose lives in the wiki) and
+  D159 (a published number carries its measurement) were written and published
+  before the queue's D158 (02:21 against 23:25), so the queue's is renumbered
+  **D160** in the code, the tests, the page and the wiki's `decisions.md`.
+
+Two defects in the branch found by carrying the merge through:
+
+* `scripts/wiki.py publish` pushed with a bare `git push`; the submodule is
+  checked out at a gitlink, so its HEAD is detached and the push has no upstream
+  — the pages were committed and never reached the wiki. It now pushes
+  `origin HEAD:main`.
+* `port/mk/config.mk`'s `STATE_NOTES` (and the test's fallback) still named
+  `docs/reverse-engineering-notes.md`, which the branch had moved: the
+  state-layer fixture's `CHECK(notes_load())` could not read the notes. Both now
+  name `docs/wiki/reverse-engineering-notes.md`.
+
+The site is rebuilt from the wiki (43 documents) and `tests/test_docs.sh` and
+`tests/test_wiki.sh` are green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
