@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 137a6bb25a2f40e8c0837246e684bb42484aa47f
+date: 2026-11-25T00:30:29+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the entry pages in both languages, shortened (ticket 230)
+README, AGENTS and CONTEXT at the root and goals, project-status, environment and
+Glossary in the wiki: each rewritten short with its facts, commands and links kept,
+and each Ukrainian page beside it (README-UKR, AGENTS-UKR, CONTEXT-UKR, goals-UKR,
+project-status-UKR, environment-UKR, Glossary-UKR). The Ukrainian pages follow
+Glossary-UKR's vocabulary and are no longer than their English page.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
