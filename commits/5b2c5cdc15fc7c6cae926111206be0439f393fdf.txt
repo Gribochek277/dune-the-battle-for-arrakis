@@ -1,0 +1,23 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5b2c5cdc15fc7c6cae926111206be0439f393fdf
+date: 2026-11-24T17:42:40+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+orders: the generated module is the transpiler's again (not ticket 7's)
+`python3 scripts/transpile_next.py --check` reported `port/next/order_move.c`
+stale on `365c0f00` -- before this branch's change, verified on a worktree of
+that commit -- so the slow tier's "the orders are the port's C" was already red.
+The drift is the generated header's comment re-wrap: `docs/wiki/game-rules.md`'s
+pathfinding section is named differently now, and the transpiler wraps its
+citation over two lines instead of three. Two lines in, two out; no code.
+
+Regenerated, not hand-edited: this is the tool's own output, and it is kept apart
+from the audio change so the review can see it is not that change's.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
