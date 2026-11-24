@@ -1,0 +1,69 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d67c245379576dc3637080ad8adeddb7017985fd
+date: 2026-11-24T02:21:20+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+port: the order queue keeps what the cartridge's one slot cannot (D158, ticket 5)
+The owner's report: a moving group gets a second command and it looks swallowed.
+The cartridge has one deferred order -- SetUnitOrder's mode-0 table entry records
+the new id in +$55 when the record's +$4E is busy -- and it is one deep: the next
+command overwrites +$55 and the target.
+
+Measured before anything changed (tests/test_order_queue.sh's first run): a cell
+move keeps its destination in +$5C and +$4E stays zero, so the cartridge's own
+slot never engages for one and every command *replaced* the route. The port's
+question is therefore "will the unit act on the order it has?" -- a move or an
+enter until it stands on the destination, an attack while its target is live --
+and that is order_in_flight().
+
+What changed:
+
+* next/order_queue.{c,h}: the port's own FIFO, four orders deep per record, and
+  its store (state version 7). legacy never sees it.
+* next/mission_orders.c: a unit following an order keeps it and the new command
+  waits in the queue; the primary is the cartridge's record, so its own order is
+  put back field for field (+$54/+$55/+$4E/+$14, the targets, the marker and the
+  entry's script and id word) from the click's wider snapshot, and the new order
+  queues. queue_fire() writes the head through the cartridge's own writers when
+  the order ends, so the record is always a state the cartridge wrote. A stop
+  clears the queue and is written at once; a queued order the cartridge refuses
+  is named with its rule and that record's queue dropped with the count.
+* app/play_report + play_front_end: the summary and the unit lines carry
+  `queued=`, and one `order queue:` line per event -- a poll that fires a whole
+  set prints every line.
+* app/selection_overlay + play_backend: the badge reads `10+5`, the set and the
+  orders it has waiting, from the live poll.
+* Checks: tests/test_order_queue.sh (the committed gesture
+  analysis/recordings/order-queue.pad from the seeded mission state, the
+  queued=0/10/20 sequence, the fires in the order given, the badge's width, and
+  the control build with next/order_queue.c stubbed -- queued=0 everywhere);
+  port/tests/test_orders.c's four queue cases (three orders in sequence against
+  the cartridge's writers, the bound, the stop, the named refusal);
+  port/tests/test_state.c's version 7 fields.
+* Docs: D158, game-rules C8, docs/orders.md's seventh stage and three refusal
+  rows, the build-and-test row, the site rebuilt.
+
+Two pre-existing defects fixed on the way, both found by this work:
+* state_parse() freed the state object on a format refusal and mda_state_load()
+  freed it again: a malformed state file crashed the run with a double free
+  (valgrind: "invalid free" at state_file.c:1356) instead of being refused.
+* the spread skipped only the set's own units, so a follower could be sent to a
+  cell a mission unit stood on and walk at a wall for ever; it now skips any
+  cell the map's object word says is occupied.
+
+Verification: the fast tier ends with ALL CHECKS PASSED; the slow checks the
+diff touches were run one by one -- the engine equivalence, the state file, the
+debug session, the conditions, the group-order structure, the group orders, the
+selection box, the mission mouse, the playtest route, the final proof, the order
+queue, and the docs gate. tests/test_renderer_budget.sh failed once under load
+(107 % of the budget, then "the two runs differ by 28.9 %") and passes at 45 %
+twice on a quiet machine; it measures the renderer, which this change does not
+touch.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
