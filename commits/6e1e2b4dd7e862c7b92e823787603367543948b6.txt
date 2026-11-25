@@ -1,0 +1,17 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 6e1e2b4dd7e862c7b92e823787603367543948b6
+date: 2026-11-25T03:41:39+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: CONTEXT carries ticket 7's hold and quit prompt (ticket 230)
+t13 added the two terms (D162) to CONTEXT.md while this page was being rewritten,
+so the branches would have conflicted on the same paragraph. The shortened page now
+carries both, in English and in Ukrainian, and the site is rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
