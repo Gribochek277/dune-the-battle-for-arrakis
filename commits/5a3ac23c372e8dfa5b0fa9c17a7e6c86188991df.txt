@@ -1,0 +1,26 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 5a3ac23c372e8dfa5b0fa9c17a7e6c86188991df
+date: 2026-11-25T16:44:22+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the cartridge's pages are short in both languages (ticket 232)
+The nine pages that describe what the cartridge contains — rom-analysis, formats
+and its four format pages, data and assets — are rewritten short, each with a
+Ukrainian page beside it that links back and is no longer than the English one.
+The field tables, the addresses, the counts and the fact markers stay verbatim;
+the prose around them is one line per field or per decision.
+
+  rom-analysis 124 ->  93   formats 115 ->  73   formats-compression 102 ->  82
+  screen-res   112 ->  91   graphics 143 -> 118   missions 207 -> 149
+  music        401 -> 259   data     362 -> 242   assets   304 -> 173
+
+The family went from 1 870 lines to 1 015. The wiki is published, the site is
+rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
