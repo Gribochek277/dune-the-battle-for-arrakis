@@ -1,0 +1,29 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 94016ba184c9f373980deea86b5617f56da4b331
+date: 2026-11-27T00:08:56+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+analysis: the cursor traces are the generator's again (ticket 9)
+`tests/test_menu_cursor.sh` regenerates both traces and compares them byte
+for byte; on `main` it failed on one comment line. The generator's header cites
+the prose the rule is explained in, and `453e9931` (D158) moved that prose into
+the wiki: it now writes `# (docs/wiki/native-port.md, 'Work RAM')` where the
+traces committed on 2026-11-19 say `docs/native-port.md`.
+
+Regenerated, not hand-edited -- `scripts/capture_cursor_trace.py --front-end`
+and `--mission` -- and the diff is that line in each file and nothing else: the
+front-end trace's 286 frames and the mission trace's data are identical, so this
+is the citation and not a change in what the cartridge does. The traces' own
+provenance comment (the command that made them, the columns, the list) is the
+generator's.
+
+The check is green again: the fixtures, the module's replay of every frame, and
+the 8-pixel-per-frame control build that must fail it.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
