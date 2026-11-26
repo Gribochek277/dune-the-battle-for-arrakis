@@ -1,0 +1,25 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 72358c4490d2c9eb61649fe9485dec8c7855173a
+date: 2026-11-26T14:21:13+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the port's internals in two languages (ticket 234)
+toolchain 269 -> 195, build-and-test 1231 -> 227, port-architecture 2256 -> 325,
+with three -UKR pages beside them (133, 225, 317), none longer than its English
+page.
+
+build-and-test keeps the gate's measured table -- one row per check, rendered by
+scripts/gate_table.py -- because the page promises to be a copy of a measurement,
+and the prose around it became one line per strategy, build and capture.
+
+port-architecture keeps the zone table, the declared directions, the denial grain,
+the five rules the check enforces and the recipes; the detail behind each section
+lives in the tickets and decisions the page names.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
