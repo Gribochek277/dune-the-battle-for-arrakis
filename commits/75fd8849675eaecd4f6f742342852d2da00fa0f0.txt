@@ -1,0 +1,48 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 75fd8849675eaecd4f6f742342852d2da00fa0f0
+date: 2026-11-27T01:16:56+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+platform: a failed window attempt stops ending every SDL subsystem (ticket 10)
+Two checks were red on `main` for one cause, and it was not the pad:
+`port: the gamepad drives the machine's pads` saw an empty timeline and
+`port: the whole binding flow...` never moved its menus, because its whole press
+schedule is the same scripted pad.
+
+Measured in the run: the pad is attached and reported (`gamepad "Virtual
+Controller" on port 1`, no missing control), but at the first scripted press
+`SDL_WasInit(SDL_INIT_JOYSTICK)` and `SDL_WasInit(SDL_INIT_GAMECONTROLLER)` are
+**0** -- the subsystem `mdp_gamepad_open()` started before the window is gone --
+so `SDL_JoystickSetVirtualButton` is a no-op and the controller reads zeros.
+`--record-input` stays empty and `PadHeld` `$FFFFE41B` stays 0, while the same
+run's keyboard path is recorded; SDL itself is fine (a standalone probe reads the
+same virtual pad with the same default mapping).
+
+The taker is the presenter's fallback (D153). `--presenter gpu` tries the Vulkan
+window first; a host that cannot give one -- SDL's dummy driver, a VM, a build
+without Vulkan -- fails the attempt, and the failure path called
+`mdp_window_close()`, whose last line is `SDL_Quit()`: every subsystem. The
+fallback surface window then works and the run plays with a pad whose subsystem
+is dead, which the backend cannot know (`pad->started` is still 1).
+
+`mdp_window_abandon()` is that attempt's own undo -- the objects, the cursor and
+itself -- next to `mdp_window_close()`, which stays the process's teardown and
+keeps `SDL_Quit()` (the Vulkan loader is unloaded there, in the order
+`mda_play_presenter_free()` already uses). The window's own open failures use it,
+and so do the presenter's two Vulkan fallbacks (no loader, no device/surface):
+one window that was never there ends nothing that another module started.
+
+Proved: `tests/test_gamepad.py` green (every control, hot-plug, the latch, the
+union -- "A ran 52..412 and B 241..281" -- and the file), `tests/test_binding_flow.py`
+green (bind, swap, save, reload, the game's own screens intact), and the checks
+that drive the same fallback still green: `tests/test_input_map.py`,
+`tests/test_mouse.sh`, `tests/test_play_teardown.sh`, `tests/test_quit_prompt.sh`
+and the fast tier.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
