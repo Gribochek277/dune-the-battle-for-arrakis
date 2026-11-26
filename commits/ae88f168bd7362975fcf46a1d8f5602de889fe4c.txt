@@ -1,0 +1,22 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: ae88f168bd7362975fcf46a1d8f5602de889fe4c
+date: 2026-11-26T04:05:08+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the analysis pages in two languages (ticket 233)
+disassembly 538 -> 251 (the input audit keeps one row per declared input, which
+tests/test_pipeline_inputs.py parses), collecting-coverage 344 -> 202, orders
+330 -> 250, game-architecture 1057 -> 490, game-rules 1011 -> 554. Five -UKR
+pages beside them, none longer than its English page.
+
+Every rule keeps its id, its citation and its measurement: the citations now
+name a routine and an address that the listing has, so the rules gate resolves
+each one instead of trusting a pasted range.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
