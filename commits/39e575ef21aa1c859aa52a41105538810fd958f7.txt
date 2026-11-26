@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 39e575ef21aa1c859aa52a41105538810fd958f7
+date: 2026-11-26T22:25:40+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the port's two big pages in two languages (ticket 235)
+native-port 5 758 -> 175, next-engine 5 949 -> 268, with two -UKR pages beside
+them (169, 238), neither longer than its English page.
+
+The retelling went. What stayed is what each subsystem is measured by: a table
+row per subsystem with the check that holds it, the dispatch's four measured
+ratios, the 27 groups with their rows and stage, and the 43 slices with their
+tickets and checks. The history of a fixed defect is one bullet each.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
