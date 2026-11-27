@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 97236bd5689442da94f337a9742068e5a20f7a76
+date: 2026-11-27T19:26:41+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+Merge origin/main into 230-translation: the trunk's ticket 163 folded in (D91's table and the numbers regenerated)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
