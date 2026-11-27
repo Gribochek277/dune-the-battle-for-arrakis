@@ -1,0 +1,21 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 38dc958da52482dccd99d15d945f5918cec95b01
+date: 2026-11-27T02:26:21+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the mouse and the widescreen shell in two languages (ticket 236)
+mouse 1 219 -> 181, widescreen 632 -> 174, with two -UKR pages beside them (170,
+169), neither longer than its English page.
+
+The per-ticket history went; what stayed is the contract each page states -- the
+five pointer functions and the three button rows with SDL's masks, the gesture
+order, the band per device, the twelve layout words, the nine-target wide-world
+table and the checks that hold each claim.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
