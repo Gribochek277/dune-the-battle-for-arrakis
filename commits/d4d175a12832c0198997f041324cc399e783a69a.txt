@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: d4d175a12832c0198997f041324cc399e783a69a
+date: 2026-11-27T18:43:07+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+docs: the record pages in two languages (ticket 237)
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
