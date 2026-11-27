@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: cfd51bb71b955fe27755f4d958710e7a893c346b
+date: 2026-11-27T19:48:38+02:00
+author: RE Workspace <re@localhost>
+branches: 230-translation
+
+message:
+wiki: the pointer follows D91's table
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
