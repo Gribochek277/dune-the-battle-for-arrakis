@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9c585595977aba9ce2b1c849d1117c157a9e055d
+date: 2026-11-28T06:10:30+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The state layer's notes phrases follow the prose's controlled register
+The register pass capitalised the drawing-position sentence and joined the
+descriptor sentence with a comma, and the two phrases the fixture greps for were
+the old wording. The fixture says what the notes say -- its whole point -- so the
+phrases follow them; the fields, their offsets and their widths are unchanged.
+make -C port test: green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
