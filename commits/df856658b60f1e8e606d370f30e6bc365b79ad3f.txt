@@ -1,0 +1,19 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: df856658b60f1e8e606d370f30e6bc365b79ad3f
+date: 2026-11-28T04:50:57+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: every prose page in the controlled register
+Seven parallel batches, merged: all 39 English pages and their 39 Ukrainian pairs now
+follow ASD-STE100 and the STU profile. The mechanical measure across the wiki: 2 336
+errors before, 0 after; 0 pairs differ in headings, markers or code blocks. The site is
+rebuilt from the same text, so tests/test_wiki.sh, test_docs.sh and test_terminology.sh
+stay green.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
