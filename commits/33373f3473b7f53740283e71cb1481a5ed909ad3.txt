@@ -1,0 +1,45 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 33373f3473b7f53740283e71cb1481a5ed909ad3
+date: 2026-11-28T06:08:32+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The aspect row is the window's shape, and the picture fills the target (ticket 11)
+The owner's rule: the picture may never be cropped, so the row stops naming
+layouts and names shapes -- auto plus 1:1, 5:4, 4:3, 3:2, 16:10, 16:9, 21:9 and
+32:9, narrowest first. A chosen shape sizes the window at the interface scale
+(height = 240s, width from the shape), so the plan fills it; auto is the
+display's own shape, so a windowed run opens at the display's and a fullscreen
+one is pixel for pixel. The mode is the screen's now: the mission is the wide
+world wherever the picture would not fill exactly (640x480, 960x720 and
+1280x960 keep the cartridge's own view), every other screen is the picture with
+the backdrop's art, and void past the map's edge is the owner's accepted
+answer where there is no art. The retired values wide and fit-height are
+refused with their line; the layout's fit-height name stays.
+
+Checked: make -C port test green; tests/test_display_window.sh,
+tests/test_display_settings.sh (the keyboard walk now says what 5x resolves to,
+and the 2x resize is the display's 16:9 shape), the two gate reds re-based on
+the rule -- tests/test_mission_band_window.sh (1280x720 at 4x is the world
+320x180, so no bar is left to be part of the band) and
+tests/test_mission_pointer_scroll.sh (auto at 1600x900 is 3x, and the pace's
+step is its own nearest rounding, 3) -- the border pair in
+tests/test_mission_edge_band.sh (the world fills 854x480: window 20,240 is the
+world pixel -97, 400,240 is 93), tests/test_mission_wide.sh and
+tests/test_renderer_default.sh (a display file naming wide or fit-height is
+refused with its line; a portrait target no whole scale can fill keeps the
+picture whole with bars). Full gate: 134 checks, 4 failures, each re-run green
+here -- two were this change's stale expectations (fixed above), and
+tests/test_quit_prompt.sh and tests/test_presentation.sh are host-load flakes
+(the presentation flake asks 120 pictures/s from a host the same log measures at
+117.5).
+
+D164 recorded in docs/wiki/decisions.md; docs/wiki/display.md rewritten in both
+languages; the site rebuilt.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
