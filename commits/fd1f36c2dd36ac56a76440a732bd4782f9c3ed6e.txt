@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: fd1f36c2dd36ac56a76440a732bd4782f9c3ed6e
+date: 2026-11-28T04:53:38+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: D12's swallowed sentence
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
