@@ -1,0 +1,63 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 396fb754d51e6c79df3c51f85e4593d6e35a7e6c
+date: 2026-11-28T20:22:53+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+The run keeps its own files, and a stop leaves a bundle (D165)
+A windowed run's log went to the terminal and nowhere else, and a stop the
+cartridge decides on -- its halt routine, $0009AA: mask every interrupt and spin
+-- left nothing behind. The halt at $0009AE after 125 607 frames of play was
+diagnosed from a paste and could not be replayed: no log on disk, no input
+timeline, no machine state.
+
+Now every windowed run keeps, in $XDG_STATE_HOME/dune-port (or
+~/.local/state/dune-port):
+
+* logs/run-<stamp>.log -- the transcript: a tee of stdout and stderr (glibc
+  fopencookie), unbuffered, so a printed line is on disk before the next
+  instruction. The newest 20 are kept and older ones removed.
+* last.pad -- the input timeline, when --record-input names no file.
+* reports/<stamp>-stalled/ -- a stop's bundle: report.txt (the reason, the
+  frame, the PC and SR, the build identity, the command line, the last 600
+  frames with their PC and SR and the replay commands), state.bin (the machine
+  in the --debug session's format, so --debug-load replays the halt in seconds),
+  ram.bin, vdp.bin, log.txt and input.pad. The console says where it is and how
+  to replay it.
+* crash.txt -- from SIGSEGV/SIGBUS/SIGABRT/SIGFPE/SIGILL: the signal, its
+  address, the machine's point and a backtrace; then the default action, so a
+  crash stays a crash and the core dump still happens.
+
+--state-dir PATH moves the directory; --no-log turns the files off. The cost is
+a few stores a frame (a 600-entry ring, 12 KiB), one unbuffered write a printed
+line and one line per input change.
+
+The rest of the proposal:
+
+* scripts/soak.sh [MINUTES] [RECORDING] -- the windowed build under SDL's dummy
+  drivers for a long time, with the files on: a stop is a failure and its bundle
+  is copied out. Not in the gate; a night job or a pre-release run.
+* make -C port SANITIZE=address,undefined -- the same script under the C
+  library's checks.
+* DUNE_PORT_VK_VALIDATION=1 -- the Khronos validation layer when the loader has
+  it (off by default: it slows the GPU path).
+* -rdynamic in the window's link, so a backtrace carries the port's names.
+
+Checked: make -C port test (829 + 98 + 99 + 617 checks, 0 failures, the new
+fixtures included), tests/test_play_incident.sh (a halt replayed from a state
+written by md68k-selftest --only stall_state: exit 4, every file of the bundle,
+the report's reason and PC; SIGSEGV leaves crash.txt; --no-log leaves nothing),
+tests/test_play_teardown.sh, tests/test_locale.sh, the docs, wiki and
+terminology gates, the fast tier green.
+
+The docs register's game-rules rewrite had changed the rule separator from an em
+dash to a colon, which the rules gate and the site generator both keyed on: both
+accept either now (the separator is prose), and the rule page's structure
+section says "captures" where it used to say "captured".
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
