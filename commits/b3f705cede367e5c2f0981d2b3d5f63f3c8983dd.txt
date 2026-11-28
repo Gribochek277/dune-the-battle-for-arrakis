@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: b3f705cede367e5c2f0981d2b3d5f63f3c8983dd
+date: 2026-11-28T03:55:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the ROM analysis in the controlled register
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
