@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 9f9b9e9be49b841dfb6996105a3b7752810f4e7b
+date: 2026-11-28T03:35:23+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the register written down in AGENTS.md
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
