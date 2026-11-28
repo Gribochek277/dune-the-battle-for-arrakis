@@ -1,0 +1,14 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 15de0f851e20d2fd3b36c4e62efb8d989aebfe87
+date: 2026-11-28T04:06:26+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: collecting coverage in the controlled register
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
