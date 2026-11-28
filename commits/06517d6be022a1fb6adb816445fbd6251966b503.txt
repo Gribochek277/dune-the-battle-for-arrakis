@@ -1,0 +1,18 @@
+repository: serhii/dune-the-battle-for-arrakis
+commit: 06517d6be022a1fb6adb816445fbd6251966b503
+date: 2026-11-28T03:26:11+02:00
+author: RE Workspace <re@localhost>
+branches: main
+
+message:
+docs: the entry pages in the controlled register
+README, AGENTS, CONTEXT and the glossary now follow ASD-STE100 in English and the
+STU profile in Ukrainian: short sentences, active voice, no semicolons, no -ing
+forms, no phrasal verbs. The three root mirrors and the site are regenerated from
+them; tests/test_wiki.sh, tests/test_docs.sh and tests/test_terminology.sh pass.
+
+---
+Source code is NOT published on GitHub.
+My code is hosted on a private server - this repository only reflects my working activity.
+README (if any) is available in the repo root.
+If you need the code, email: sergeyalpatov1@gmail.com
